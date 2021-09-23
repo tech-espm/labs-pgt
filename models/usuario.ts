@@ -1,7 +1,6 @@
 ﻿import app = require("teem");
 import { randomBytes } from "crypto";
 import appsettings = require("../appsettings");
-import DataUtil = require("../utils/dataUtil");
 import GeradorHash = require("../utils/geradorHash");
 import intToHex = require("../utils/intToHex");
 import Perfil = require("../enums/perfil");
@@ -12,6 +11,7 @@ interface Usuario {
 	email: string;
 	nome: string;
 	idperfil: Perfil;
+	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 
 	// Utilizados apenas através do cookie
@@ -216,11 +216,9 @@ class Usuario {
 			return "Não é possível excluir o usuário administrador principal";
 
 		return app.sql.connect(async (sql) => {
-			const agora = DataUtil.hojeISOComHorario();
-
 			// Utilizar substr(email, instr(email, ':') + 1) para remover o prefixo, caso precise desfazer a exclusão (caso
 			// não exista o prefixo, instr() vai retornar 0, que, com o + 1, faz o substr() retornar a própria string inteira)
-			await sql.query("update usuario set email = concat('@', id, ':', email), token = null, exclusao = ? where id = ?", [DataUtil.hojeISOComHorario(), id]);
+			await sql.query("update usuario set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ?", [id]);
 
 			return (sql.affectedRows ? null : "Usuário não encontrado");
 		});

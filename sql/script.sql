@@ -6,7 +6,7 @@ CREATE TABLE perfil (
   id int NOT NULL,
   nome varchar(50) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY nome_UN (nome)
+  UNIQUE KEY perfil_nome_UN (nome)
 );
 
 -- Manter sincronizado com enums/perfil.ts e models/perfil.ts
@@ -29,3 +29,26 @@ CREATE TABLE usuario (
 );
 
 INSERT INTO usuario (email, nome, idperfil, token, criacao) VALUES ('admin@espm.br', 'Administrador', 1, NULL, NOW());
+
+-- DROP TABLE IF EXISTS fase;
+CREATE TABLE fase (
+  id tinyint NOT NULL,
+  nome varchar(50) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY fase_nome_UN (nome)
+);
+
+-- Manter sincronizado com enums/fase.ts e models/fase.ts
+INSERT INTO fase (id, nome) VALUES (1, 'PGT 1'), (2, 'PGT 2'), (3, 'Concluído');
+
+-- DROP TABLE IF EXISTS pgt;
+CREATE TABLE pgt (
+  id int NOT NULL AUTO_INCREMENT,
+  nome varchar(100) NOT NULL,
+  idfase tinyint NOT NULL,
+  exclusao datetime NULL,
+  criacao datetime NOT NULL,
+  PRIMARY KEY (id),
+  KEY pgt_fase_exclusao_FK_IX (idfase, exclusao),
+  CONSTRAINT pgt_fase_exclusao_FK FOREIGN KEY (idfase) REFERENCES fase (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
