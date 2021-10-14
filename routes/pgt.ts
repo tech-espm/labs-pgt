@@ -1,5 +1,5 @@
 ﻿import app = require("teem");
-import perfis = require("../models/perfil");
+import tipos = require("../models/tipo");
 import PGT = require("../models/pgt");
 import Usuario = require("../models/usuario");
 
@@ -12,7 +12,8 @@ class PGTRoute {
 			res.render("pgt/editar1", {
 				titulo: "Criar PGT 1",
 				usuario: u,
-				item: null
+				item: null,
+				tipos: tipos.lista
 			});
 	}
 
@@ -30,7 +31,7 @@ class PGTRoute {
 					titulo: "Editar PGT 1",
 					usuario: u,
 					item: item,
-					perfis: perfis.lista
+					tipos: tipos.lista
 				});
 		}
 	}
@@ -49,7 +50,7 @@ class PGTRoute {
 					titulo: "Editar PGT 2",
 					usuario: u,
 					item: item,
-					perfis: perfis.lista
+					tipos: tipos.lista
 				});
 		}
 	}

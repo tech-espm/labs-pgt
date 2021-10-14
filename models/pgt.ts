@@ -7,6 +7,7 @@ interface PGT {
 	id: number;
 	nome: string;
 	idfase: number;
+	idtipo: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 }
@@ -25,6 +26,9 @@ class PGT {
 
 		if (!pgt.nome || !(pgt.nome = pgt.nome.normalize().trim()) || pgt.nome.length > 100)
 			return "Nome inválido";
+
+		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
+			return "Tipo inválido";
 
 		// @@@ Validar o restante dos campos para a fase 1 do PGT
 

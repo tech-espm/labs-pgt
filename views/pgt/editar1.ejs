@@ -1,22 +1,27 @@
 ﻿<form id="form" class="card shadow mb-5" action="#">
 	<div class="card-header py-3">
-		<h6 class="m-0 font-weight-bold text-primary">Informações do Usuário</h6>
+		<h6 class="m-0 font-weight-bold text-primary">Informações do PGT 1</h6>
 	</div>
 	<div class="card-body">
 		<input type="hidden" id="id" name="id" value="<%=(item ? item.id : 0) %>" />
 
-		<div class="row">
-		
-			<div class="col-sm-6">
-				<div class="form-group">
-					<label for="nome">Nome</label>
-					<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
-				</div>
-			</div>
+		<div class="form-group">
+			<label for="nome">Nome</label>
+			<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
+		</div>
+
+		<div class="form-group mb-0">
+			<label for="idtipo">Tipo</label>
+			<select id="idtipo" name="idtipo" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < tipos.length; i++) { %>
+				<option value="<%= tipos[i].id %>" <%-((item && item.idtipo === tipos[i].id) ? 'selected="selected"' : '') %>><%= tipos[i].nome %></option>
+				<% } %>
+			</select>
 		</div>
 	</div>
 	<div class="card-footer">
-		<input value="<%=(item ? 'Salvar Alterações' : 'Criar PGT') %>" class="btn btn-primary btn-lg btn-block" type="submit" />
+		<input value="<%=(item ? 'Salvar Alterações' : 'Criar PGT 1') %>" class="btn btn-primary btn-lg btn-block" type="submit" />
 	</div>
 </form>
 
@@ -27,22 +32,13 @@
 
 	$("#form").validate({
 		rules: {
-
 			nome: {
 				required: true
-
-
 			}, 
-			
 			idtipo: {
-				
+				required: true
 			}
-
-
 		}, 
-
-
-
 		submitHandler: function (form) {
 			if (JsonWebApi.active)
 				return;
@@ -51,9 +47,9 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar1", form, function (response) {
 				if (response.success)
-					Swal.success("PGT alterado com sucesso! " + emoji.happy);
+					Swal.success("PGT 1 alterado com sucesso! " + emoji.happy);
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
@@ -63,7 +59,7 @@
 			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
-					Swal.success("PGT criado com sucesso! " + emoji.happy);
+					Swal.success("PGT 1 criado com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}

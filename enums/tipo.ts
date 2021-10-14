@@ -1,4 +1,4 @@
-// Manter sincronizado com models/fase.ts e sql/script.sql
+// Manter sincronizado com models/tipo.ts e sql/script.sql
 enum Tipo {
 	PE = 1,
 	PA = 2,

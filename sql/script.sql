@@ -48,8 +48,8 @@ CREATE TABLE tipo (
   UNIQUE KEY fase_nome_UN (nome)
 );
 
--- Manter sincronizado com enums/fase.ts e models/fase.ts
-INSERT INTO tipo(id, nome) VALUES (1, 'Projeto Empreendor'), (2, 'Projeto Acadêmico'), (3, 'Estudo de Caso');
+-- Manter sincronizado com enums/tipo.ts e models/tipo.ts
+INSERT INTO tipo (id, nome) VALUES (1, 'Projeto Empreendor'), (2, 'Projeto Acadêmico'), (3, 'Estudo de Caso');
 
 -- DROP TABLE IF EXISTS pgt;
 CREATE TABLE pgt (
