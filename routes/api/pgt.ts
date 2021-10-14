@@ -1,32 +1,25 @@
 ﻿import app = require("teem");
 import Perfil = require("../../enums/perfil");
+import PGT = require("../../models/pgt"); 
 import Usuario = require("../../models/usuario");
 
-class UsuarioApiRoute {
-	@app.http.post()
-	public static async alterarPerfil(req: app.Request, res: app.Response) {
+class PGTApiRoute {
+
+	public static async listar1(req: app.Request, res: app.Response) {
 		const u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 
-		const erro = await Usuario.alterarPerfil(u, res, req.body.nome);
+		res.json(await PGT.listar1()); 
+	} 
 
-		if (erro) {
-			res.status(400).json(erro);
-			return;
-		}
-
-		res.sendStatus(204);
-	}
-
-	public static async listar(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
+	public static async listar2(req: app.Request, res: app.Response) {
+		const u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 
-		res.json(await Usuario.listar());
+		res.json(await PGT.listar2());
 	}
-
 
 	@app.http.post()
 	public static async criar(req: app.Request, res: app.Response) {
@@ -34,7 +27,7 @@ class UsuarioApiRoute {
 		if (!u)
 			return;
 
-		const erro = await Usuario.criar(req.body);
+		const erro = await PGT.criar(req.body);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -45,21 +38,14 @@ class UsuarioApiRoute {
 	}
 
 	@app.http.post()
-	public static async editar(req: app.Request, res: app.Response) {
+	public static async editar1(req: app.Request, res: app.Response) {
 		const u = await Usuario.cookie(req, res, true);
 		if (!u)
 			return;
 
-		const usuario: Usuario = req.body;
+		const pgt: PGT= req.body;
 
-		if (usuario) {
-			if (parseInt(usuario.id as any) === u.id) {
-				res.status(400).json("Um usuário não pode editar a si próprio");
-				return;
-			}
-		}
-
-		const erro = await Usuario.editar(usuario);
+		const erro = await PGT.editar1(pgt);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -67,7 +53,27 @@ class UsuarioApiRoute {
 		}
 
 		res.sendStatus(204);
-	}
+	} 
+ 
+	@app.http.post()
+	public static async editar2(req: app.Request, res: app.Response) {
+		const u = await Usuario.cookie(req, res, true);
+		if (!u)
+			return;
+
+		const pgt: PGT= req.body;
+
+		const erro = await PGT.editar2(pgt);
+
+		if (erro) {
+			res.status(400).json(erro);
+			return;
+		}
+
+		res.sendStatus(204);
+	} 
+	
+
 
 	@app.http.delete()
 	public static async excluir(req: app.Request, res: app.Response) {
@@ -82,12 +88,7 @@ class UsuarioApiRoute {
 			return;
 		}
 
-		if (id === u.id) {
-			res.status(400).json("Um usuário não pode excluir a si próprio");
-			return;
-		}
-
-		const erro = await Usuario.excluir(id);
+		const erro = await PGT.excluir(id);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -98,4 +99,4 @@ class UsuarioApiRoute {
 	}
 }
 
-export = UsuarioApiRoute;
+export = PGTApiRoute;

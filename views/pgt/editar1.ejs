@@ -6,13 +6,7 @@
 		<input type="hidden" id="id" name="id" value="<%=(item ? item.id : 0) %>" />
 
 		<div class="row">
-			<div class="col-sm-6">
-				<div class="form-group">
-					<label for="email">E-mail</label>
-					<input id="email" name="email" maxlength="85" class="form-control" type="email" spellcheck="false" value="<%=(item ? item.email : '') %>" <%=(item ? 'readonly="readonly"' : '') %> />
-				</div>
-			</div>
-
+		
 			<div class="col-sm-6">
 				<div class="form-group">
 					<label for="nome">Nome</label>
@@ -33,16 +27,21 @@
 
 	$("#form").validate({
 		rules: {
-			email: {
-				required: true
-			},
+
 			nome: {
 				required: true
-			},
-			idperfil: {
-				required: true
+
+
+			}, 
+			
+			idtipo: {
+				
 			}
-		},
+
+
+		}, 
+
+
 
 		submitHandler: function (form) {
 			if (JsonWebApi.active)
@@ -52,19 +51,19 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/usuario/editar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
 				if (response.success)
-					Swal.success("Usuário alterado com sucesso! " + emoji.happy);
+					Swal.success("PGT alterado com sucesso! " + emoji.happy);
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
 
 			//<% } else { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/usuario/criar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
-					Swal.success("Usuário criado com sucesso! " + emoji.happy);
+					Swal.success("PGT criado com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}

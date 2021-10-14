@@ -39,13 +39,24 @@ CREATE TABLE fase (
 );
 
 -- Manter sincronizado com enums/fase.ts e models/fase.ts
-INSERT INTO fase (id, nome) VALUES (1, 'PGT 1'), (2, 'PGT 2'), (3, 'Concluído');
+INSERT INTO fase (id, nome) VALUES (1, 'PGT 1'), (2, 'PGT 2'), (3, 'Concluído'); 
+
+CREATE TABLE tipo (
+  id tinyint NOT NULL,
+  nome varchar(50) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY fase_nome_UN (nome)
+);
+
+-- Manter sincronizado com enums/fase.ts e models/fase.ts
+INSERT INTO tipo(id, nome) VALUES (1, 'Projeto Empreendor'), (2, 'Projeto Acadêmico'), (3, 'Estudo de Caso');
 
 -- DROP TABLE IF EXISTS pgt;
 CREATE TABLE pgt (
   id int NOT NULL AUTO_INCREMENT,
-  nome varchar(100) NOT NULL,
-  idfase tinyint NOT NULL,
+  nome varchar(100) NOT NULL, 
+  idfase tinyint NOT NULL, 
+  idtipo tinyint NOT NULL,
   exclusao datetime NULL,
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
