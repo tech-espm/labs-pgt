@@ -32,11 +32,37 @@
 	</li>
 	<% } %>
 
+	
+	<!-- PGT_1 SIDEBAR -->
 	<li class="nav-item">
-		<a class="nav-link" href="<%- root %>/">
-			<i class="fas fa-fw fa-tachometer-alt"></i>
-			<span>PGTs</span>
+		<a class="nav-link collapsed" href="<%- root %>/" data-toggle="collapse" data-target="#collapsePGT_1" aria-expanded="true" aria-controls="collapsePGT_1">
+			<i class="fas fa-fw fa-users"></i>
+			<span>PGT_1</span>
 		</a>
+
+		<div id="collapsePGT_1" class="collapse" data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+				<a class="collapse-item" href="<%- root %>/pgt/editar1">Criar</a>
+				<a class="collapse-item" href="<%- root %>/pgt/listar1">Gerenciar</a>
+			</div>
+		</div>
+
+	</li>
+
+	<!-- PGT_2 SIDEBAR -->
+	<li class="nav-item">
+		<a class="nav-link collapsed" href="<%- root %>/" data-toggle="collapse" data-target="#collapsePGT_2" aria-expanded="true" aria-controls="collapsePGT_2">
+			<i class="fas fa-fw fa-users"></i>
+			<span>PGT_2</span>
+		</a>
+
+		<div id="collapsePGT_2" class="collapse" data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+				<a class="collapse-item" href="<%- root %>/pgt/editar2">Criar</a>
+				<a class="collapse-item" href="<%- root %>/pgt/listar2">Gerenciar</a>
+			</div>
+		</div>
+
 	</li>
 
 	<hr class="sidebar-divider">
