@@ -61,5 +61,7 @@ CREATE TABLE pgt (
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   KEY pgt_fase_exclusao_FK_IX (idfase, exclusao),
-  CONSTRAINT pgt_fase_exclusao_FK FOREIGN KEY (idfase) REFERENCES fase (id) ON DELETE RESTRICT ON UPDATE RESTRICT
+  KEY pgt_tipo_FK_IX (idtipo),
+  CONSTRAINT pgt_fase_exclusao_FK FOREIGN KEY (idfase) REFERENCES fase (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT pgt_tipo_FK FOREIGN KEY (idtipo) REFERENCES tipo (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );

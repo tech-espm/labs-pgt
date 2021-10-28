@@ -62,7 +62,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase 1
-			lista = await sql.query("select id, nome, idtipo from pgt where idfase = ? and exclusao is null", [Fase.PGT1]) as PGT[];
+			lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo where p.idfase = ? and p.exclusao is null", [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
@@ -73,7 +73,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase Fase.PGT2 ou Fase.Concluido (concluídos também entram aqui)
-			lista = await sql.query("select id, nome, idtipo from pgt where idfase > ? and exclusao is null", [Fase.PGT1]) as PGT[];
+			lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo where p.idfase > ? and p.exclusao is null", [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
