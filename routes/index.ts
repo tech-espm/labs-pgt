@@ -8,7 +8,11 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("index/index", { titulo: "Dashboard", usuario: u });
+			res.render("index/index", {
+				layout: "layout-sem-form",
+				titulo: "Dashboard",
+				usuario: u
+			});
 	}
 
 	@app.http.all()
@@ -20,11 +24,19 @@ class IndexRoute {
 			if (token) {
 				const [mensagem, u] = await Usuario.efetuarLogin(token, res);
 				if (mensagem)
-					res.render("index/login", { layout: "layout-externo", mensagem: mensagem, ssoRedir: appsettings.ssoRedir });
+					res.render("index/login", {
+						layout: "layout-externo",
+						mensagem: mensagem,
+						ssoRedir: appsettings.ssoRedir
+					});
 				else
 					res.redirect(app.root + "/");
 			} else {
-				res.render("index/login", { layout: "layout-externo", mensagem: null, ssoRedir: appsettings.ssoRedir });
+				res.render("index/login", {
+					layout: "layout-externo",
+					mensagem: null,
+					ssoRedir: appsettings.ssoRedir
+				});
 			}
 		} else {
 			res.redirect(app.root + "/");
@@ -36,7 +48,11 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("index/acesso", { titulo: "Sem Permissão", usuario: u });
+			res.render("index/acesso", {
+				layout: "layout-sem-form",
+				titulo: "Sem Permissão",
+				usuario: u
+			});
 	}
 
 	public static async perfil(req: app.Request, res: app.Response) {
@@ -44,7 +60,10 @@ class IndexRoute {
 		if (!u)
 			res.redirect(app.root + "/");
 		else
-			res.render("index/perfil", { titulo: "Meu Perfil", usuario: u });
+			res.render("index/perfil", {
+				titulo: "Meu Perfil",
+				usuario: u
+			});
 	}
 
 	public static async logout(req: app.Request, res: app.Response) {

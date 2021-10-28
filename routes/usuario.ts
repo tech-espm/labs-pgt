@@ -10,6 +10,7 @@ class UsuarioRoute {
 		else
 			res.render("usuario/editar", {
 				titulo: "Criar Usuário",
+				textoSubmit: "Criar",
 				usuario: u,
 				item: null,
 				perfis: perfis.lista
@@ -41,6 +42,7 @@ class UsuarioRoute {
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("usuario/listar", {
+				layout: "layout-tabela",
 				titulo: "Gerenciar Usuários",
 				datatables: true,
 				usuario: u,

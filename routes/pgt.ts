@@ -61,6 +61,7 @@ class PGTRoute {
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("pgt/listar1", {
+				layout: "layout-tabela",
 				titulo: "Gerenciar PGT's 1",
 				datatables: true,
 				usuario: u,
@@ -74,6 +75,7 @@ class PGTRoute {
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("pgt/listar2", {
+				layout: "layout-tabela",
 				titulo: "Gerenciar PGT's 2",
 				datatables: true,
 				usuario: u,
