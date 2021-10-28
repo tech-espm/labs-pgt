@@ -47,7 +47,10 @@ class PGT {
 		}
 
 		if (!pgt.nome || !(pgt.nome = pgt.nome.normalize().trim()) || pgt.nome.length > 100)
-			return "Nome inválido";
+			return "Nome inválido"; 
+
+		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
+			return "Tipo inválido";
 
 		// @@@ Validar o restante dos campos para a fase 2 do PGT
 
@@ -59,7 +62,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase 1
-			lista = await sql.query("select id, nome from pgt where idfase = ? and exclusao is null", [Fase.PGT1]) as PGT[];
+			lista = await sql.query("select id, nome, idtipo from pgt where idfase = ? and exclusao is null", [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
@@ -70,7 +73,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase Fase.PGT2 ou Fase.Concluido (concluídos também entram aqui)
-			lista = await sql.query("select id, nome from pgt where idfase > ? and exclusao is null", [Fase.PGT1]) as PGT[];
+			lista = await sql.query("select id, nome, idtipo from pgt where idfase > ? and exclusao is null", [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
@@ -81,7 +84,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT1
-			lista = await sql.query("select id, nome from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
+			lista = await sql.query("select id, nome, idtipo from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
 		});
 
 		return ((lista && lista[0]) || null);
@@ -92,7 +95,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT2 ou Fase.Concluido
-			lista = await sql.query("select id, nome from pgt where id = ? and idfase > ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
+			lista = await sql.query("select id, nome, idtipo from pgt where id = ? and idfase > ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
 		});
 
 		return ((lista && lista[0]) || null);
@@ -105,7 +108,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Ao criar, o PGT sempre é criado na fase Fase.PGT1
-			await sql.query("insert into pgt (nome, idfase, criacao) values (?, ?, now())", [pgt.nome, Fase.PGT1]);
+			await sql.query("insert into pgt (nome, idfase, idtipo, criacao) values (?, ?, ?, now())", [pgt.nome, Fase.PGT1, pgt.idtipo]);
 		});
 
 		return res;
@@ -119,7 +122,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
-			await sql.query("update pgt set nome = ? where id = ? and idfase = ?", [pgt.nome, pgt.id, Fase.PGT1]);
+			await sql.query("update pgt set nome = ?, idtipo = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.id, Fase.PGT1]); 
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
@@ -133,7 +136,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT2 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT2, o usuário alteraria a fase do PGT para Fase.Concluido!
-			await sql.query("update pgt set nome = ? where id = ? and idfase = ?", [pgt.nome, pgt.id, Fase.PGT2]);
+			await sql.query("update pgt set nome = ?, idtipo = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.id, Fase.PGT2]);
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
