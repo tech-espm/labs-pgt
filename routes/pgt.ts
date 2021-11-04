@@ -13,7 +13,8 @@ class PGTRoute {
 				titulo: "Criar PGT 1",
 				usuario: u,
 				item: null,
-				tipos: tipos.lista
+				tipos: tipos.lista,
+				usuarios: await Usuario.listarCombo()
 			});
 	}
 
@@ -31,7 +32,8 @@ class PGTRoute {
 					titulo: "Editar PGT 1",
 					usuario: u,
 					item: item,
-					tipos: tipos.lista
+					tipos: tipos.lista,
+					usuarios: await Usuario.listarCombo()
 				});
 		}
 	}
@@ -50,7 +52,8 @@ class PGTRoute {
 					titulo: "Editar PGT 2",
 					usuario: u,
 					item: item,
-					tipos: tipos.lista
+					tipos: tipos.lista,
+					usuarios: await Usuario.listarCombo()
 				});
 		}
 	}

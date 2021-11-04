@@ -23,7 +23,8 @@ CREATE TABLE usuario (
   criacao datetime NOT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY usuario_email_UN (email),
-  KEY usuario_exclusao_IX (exclusao),
+  KEY usuario_nome_IX (nome),
+  KEY usuario_exclusao_nome_IX (exclusao, nome),
   KEY usuario_idperfil_FK_IX (idperfil),
   CONSTRAINT usuario_idperfil_FK FOREIGN KEY (idperfil) REFERENCES perfil (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );

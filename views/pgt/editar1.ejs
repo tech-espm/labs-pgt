@@ -5,12 +5,22 @@
 	<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
 </div>
 
-<div class="form-group mb-0">
+<div class="form-group">
 	<label for="idtipo">Tipo</label>
 	<select id="idtipo" name="idtipo" class="form-control" size="1">
 		<option value="">Selecione...</option>
 		<% for (let i = 0; i < tipos.length; i++) { %>
 		<option value="<%= tipos[i].id %>" <%-((item && item.idtipo === tipos[i].id) ? 'selected="selected"' : '') %>><%= tipos[i].nome %></option>
+		<% } %>
+	</select>
+</div>
+
+<div class="form-group mb-0">
+	<label for="idorientador">Orientador</label>
+	<select id="idorientador" name="idorientador" class="form-control" size="1">
+		<option value="">Selecione...</option>
+		<% for (let i = 0; i < usuarios.length; i++) { %>
+		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 		<% } %>
 	</select>
 </div>
@@ -26,6 +36,9 @@
 				required: true
 			}, 
 			idtipo: {
+				required: true
+			}, 
+			idusuario: {
 				required: true
 			}
 		}, 
