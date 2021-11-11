@@ -7,7 +7,8 @@ interface PGT {
 	id: number;
 	nome: string;
 	idfase: number;
-	idtipo: number;
+	idtipo: number; 
+	idusuario: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 }
@@ -62,7 +63,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase 1
-			lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo where p.idfase = ? and p.exclusao is null", [Fase.PGT1]) as PGT[];
+			lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo where p.idfase = ? inner join usuario u on u.id = p.idusuario where p.idusuario = ? and p.exclusao is null", [Fase.PGT1, ]) as PGT[];
 		});
 
 		return (lista || []);
@@ -108,7 +109,7 @@ class PGT {
 
 		await app.sql.connect(async (sql) => {
 			// @@@ Ao criar, o PGT sempre é criado na fase Fase.PGT1
-			await sql.query("insert into pgt (nome, idfase, idtipo, criacao) values (?, ?, ?, now())", [pgt.nome, Fase.PGT1, pgt.idtipo]);
+			await sql.query("insert into pgt (nome, idfase, idtipo, idusuario, criacao) values (?, ?, ?, ?, now())", [pgt.nome, Fase.PGT1, pgt.idtipo, pgt.idusuario]);
 		});
 
 		return res;
@@ -122,7 +123,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
-			await sql.query("update pgt set nome = ?, idtipo = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.id, Fase.PGT1]); 
+			await sql.query("update pgt set nome = ?, idtipo = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idusuario, pgt.id, Fase.PGT1]); 
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
@@ -136,7 +137,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT2 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT2, o usuário alteraria a fase do PGT para Fase.Concluido!
-			await sql.query("update pgt set nome = ?, idtipo = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.id, Fase.PGT2]);
+			await sql.query("update pgt set nome = ?, idtipo = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.id, Fase.PGT2]);
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});

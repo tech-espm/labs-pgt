@@ -16,11 +16,11 @@
 </div>
 
 <div class="form-group mb-0">
-	<label for="idorientador">Orientador</label>
-	<select id="idorientador" name="idorientador" class="form-control" size="1">
+	<label for="idusuario">Orientador</label>
+	<select id="idusuario" name="idusuario" class="form-control" size="1">
 		<option value="">Selecione...</option>
 		<% for (let i = 0; i < usuarios.length; i++) { %>
-		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+		<option value="<%= usuarios[i].id %>" <%-((item && item.idusuario === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 		<% } %>
 	</select>
 </div>
