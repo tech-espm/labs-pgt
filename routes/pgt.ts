@@ -1,4 +1,5 @@
 ﻿import app = require("teem");
+import fases = require("../models/fase");
 import tipos = require("../models/tipo");
 import PGT = require("../models/pgt");
 import Usuario = require("../models/usuario");
@@ -14,7 +15,8 @@ class PGTRoute {
 				usuario: u,
 				item: null,
 				tipos: tipos.lista,
-				usuarios: await Usuario.listarCombo()
+				usuarios: await Usuario.listarCombo(),
+				fases: fases.lista
 			});
 	}
 
@@ -33,7 +35,8 @@ class PGTRoute {
 					usuario: u,
 					item: item,
 					tipos: tipos.lista,
-					usuarios: await Usuario.listarCombo()
+					usuarios: await Usuario.listarCombo(),
+					fases: fases.lista
 				});
 		}
 	}
