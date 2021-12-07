@@ -5,7 +5,7 @@ import Perfil = require("../enums/perfil");
 // Manter sincronizado com enums/perfil.ts e sql/script.sql
 const perfis = new ListaNomeada([
 	new ItemNomeado(Perfil.Administrador, "Administrador"),
-	new ItemNomeado(Perfil.Comum, "Comum")
+	new ItemNomeado(Perfil.Professor, "Professor")
 ]);
 
 export = perfis;
