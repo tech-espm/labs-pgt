@@ -64,9 +64,9 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/editar1", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar2", form, function (response) {
 				if (response.success)
-					Swal.success("PGT 1 alterado com sucesso! " + emoji.happy);
+					Swal.success("PGT 2 alterado com sucesso! " + emoji.happy);
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
@@ -76,7 +76,7 @@
 			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
-					Swal.success("PGT 1 criado com sucesso! " + emoji.happy);
+					Swal.success("PGT 2 criado com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}

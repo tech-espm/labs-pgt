@@ -29,7 +29,10 @@ class PGT {
 			return "Nome inválido";
 
 		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
-			return "Tipo inválido";
+			return "Tipo inválido"; 
+		
+		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
+			return "Fase inválida";
 
 		if (isNaN(pgt.idusuario = parseInt(pgt.idusuario as any)))
 			return "Orientador inválido";
@@ -55,6 +58,9 @@ class PGT {
 
 		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
 			return "Tipo inválido";
+
+		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
+			return "Fase inválida";
 
 		if (isNaN(pgt.idusuario = parseInt(pgt.idusuario as any)))
 			return "Orientador inválido";
@@ -135,7 +141,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
-			await sql.query("update pgt set nome = ?, idtipo = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idusuario, pgt.id, Fase.PGT1]); 
+			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.idusuario, pgt.id, Fase.PGT1]); 
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
@@ -149,7 +155,7 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT2 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT2, o usuário alteraria a fase do PGT para Fase.Concluido!
-			await sql.query("update pgt set nome = ?, idtipo = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idusuario, pgt.id, Fase.PGT2]);
+			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.idusuario, pgt.id, Fase.PGT2]);
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
