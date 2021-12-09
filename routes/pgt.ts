@@ -121,7 +121,7 @@ class PGTRoute {
 
 	public static async listar1(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u || !u.admin)
+		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("pgt/listar1", {
@@ -129,13 +129,13 @@ class PGTRoute {
 				titulo: "Gerenciar PGT's 1",
 				datatables: true,
 				usuario: u,
-				lista: await PGT.listar1()
+				lista: await PGT.listar1(u.admin ? 0 : u.id)
 			});
 	}
 
 	public static async listar2(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u || !u.admin)
+		if (!u)
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("pgt/listar2", {
@@ -143,7 +143,7 @@ class PGTRoute {
 				titulo: "Gerenciar PGT's 2",
 				datatables: true,
 				usuario: u,
-				lista: await PGT.listar2()
+				lista: await PGT.listar2(u.admin ? 0 : u.id)
 			});
 	}
 }
