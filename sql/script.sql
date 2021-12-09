@@ -10,7 +10,7 @@ CREATE TABLE perfil (
 );
 
 -- Manter sincronizado com enums/perfil.ts e models/perfil.ts
-INSERT INTO perfil (id, nome) VALUES (1, 'Administrador'), (2, 'Comum');
+INSERT INTO perfil (id, nome) VALUES (1, 'Administrador'), (2, 'Professor');
 
 -- DROP TABLE IF EXISTS usuario;
 CREATE TABLE usuario (
