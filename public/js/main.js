@@ -55,7 +55,7 @@ window.encode = (function () {
 })();
 window.prepareCopyHandler = function (modal, selector) {
 	function copyError() {
-		alert("Por favor, tecle Ctrl+C / Command+C para copiar " + emoji.sad);
+		Swal.error("Por favor, tecle Ctrl+C / Command+C para copiar " + emoji.sad);
 	}
 
 	var lastTooltipBtn = null,
@@ -200,7 +200,7 @@ window.maskHour = function (field) {
 	$(field).mask("00:00");
 };
 window.maskTextId = function (field) {
-	$(field).mask("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", { translation: { Z: { pattern: /[A-Za-z0-9\.]/, optional: true } } });
+	$(field).mask("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", { translation: { Z: { pattern: /[A-Za-z0-9\-]/, optional: true } } });
 };
 window.maskMobilePhone = function (field) {
 	var reg = /\D/g, behavior = function (val) {
@@ -406,7 +406,7 @@ window.prepareDataTableMain = (function () {
 								shiftKey: true
 							}));
 						} else if (("createEvent" in document) &&
-							(a = document.createEvent("MouseEvent")) &&
+							(a = document.createEvent("MouseEvents")) &&
 							("initMouseEvent" in a)) {
 							a.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
 							ul[0].dispatchEvent(a);
@@ -656,6 +656,20 @@ window.resetForm = function (f) {
 		validator.formSubmitted = false;
 	}
 };
+window.validateColor = function (color) {
+	if (!color || color.length !== 7 || color.charCodeAt(0) !== 0x23)
+		return false;
+
+	var i, c;
+
+	for (i = 1; i < 7; i++) {
+		c = color.charCodeAt(i);
+		if (!((c >= 0x30 && c <= 0x39) || (c >= 0x41 && c <= 0x46) || (c >= 0x61 && c <= 0x66)))
+			return false;
+	}
+
+	return true;
+}
 window.validateCNPJ = function (cnpj) {
 	if (!cnpj || !(cnpj = trim(cnpj.replace(/\./g, "").replace(/\-/g, "").replace(/\//g, ""))) || cnpj.length !== 14)
 		return false;
@@ -1284,7 +1298,7 @@ window.BlobDownloader = {
 	supported: (("Blob" in window) && ("URL" in window) && ("createObjectURL" in window.URL) && ("revokeObjectURL" in window.URL)),
 
 	alertNotSupported: function () {
-		alert("Infelizmente seu navegador não suporta essa funcionalidade " + emoji.sad);
+		Swal.error("Infelizmente seu navegador não suporta essa funcionalidade " + emoji.sad);
 		return false;
 	},
 
@@ -1301,7 +1315,7 @@ window.BlobDownloader = {
 				BlobDownloader.saveAs.call(window.navigator, blob, filename);
 				return;
 			} catch (ex) {
-				alert("Ocorreu um erro durante o download dos dados " + emoji.sad);
+				Swal.error("Ocorreu um erro durante o download dos dados " + emoji.sad);
 			}
 		}
 
@@ -1309,7 +1323,14 @@ window.BlobDownloader = {
 		BlobDownloader.blobURL = URL.createObjectURL(blob);
 		a.href = BlobDownloader.blobURL;
 		a.download = filename;
-		if (document.createEvent && (window.MouseEvent || window.MouseEvents)) {
+		if (("MouseEvent" in window)) {
+			try {
+				a.dispatchEvent(new MouseEvent("click"));
+				return;
+			} catch (ex) {
+			}
+		}
+		if (("createEvent" in document)) {
 			try {
 				evt = document.createEvent("MouseEvents");
 				evt.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
@@ -1328,12 +1349,19 @@ window.BlobDownloader = {
 
 	function cbSearch_SetValue(select, value) {
 		select.value = value;
-		if ("createEvent" in document) {
+		if (("Event" in window)) {
+			select.dispatchEvent(new Event("change", {
+				bubbles: false,
+				cancelable: true
+			}));
+		} else if (("createEvent" in document)) {
 			var evt = document.createEvent("HTMLEvents");
 			evt.initEvent("change", false, true);
 			select.dispatchEvent(evt);
-		} else {
+		} else if (("fireEvent" in select)) {
 			select.fireEvent("onchange");
+		} else if (select.onchange) {
+			select.onchange();
 		}
 	}
 
@@ -1349,11 +1377,11 @@ window.BlobDownloader = {
 		var i, opt = this.selectedOptions, v;
 		if (opt) {
 			opt = opt[0];
-			this.cbSearchInput.value = ((opt && opt.value && opt.value !== "0") ? opt.textContent : "");
+			this.cbSearchInput.value = ((opt && opt.value && opt.value != "0") ? opt.textContent : "");
 		} else {
 			opt = this.options;
 			v = this.value;
-			if (v) {
+			if (v && v != "0") {
 				for (i = opt.length - 1; i >= 0; i--) {
 					if (opt[i].value == v) {
 						this.cbSearchInput.value = opt[i].textContent;
@@ -1368,7 +1396,7 @@ window.BlobDownloader = {
 	function cbSearch_MouseDown(e) {
 		if (e.button)
 			return;
-		if (e.offsetX < 38) { //(this.offsetWidth - 25)) {
+		if (e.offsetX >= 0 && e.offsetX < ((this.cbSearchSpan && this.cbSearchSpan.clientWidth) || 38) && e.offsetY >= 0 && (!e.target || e.target.tagName !== "OPTION")) { //(this.offsetWidth - 25)) {
 			this.cbSearchFocusByMouse = false;
 			this.cbSearchInput.focus();
 			if (this.cbSearchInput.setSelectionRange)
@@ -1418,8 +1446,8 @@ window.BlobDownloader = {
 			$(this.cbSearchInput).addClass("forced-focus");
 			if (this.cbSearchFocusByMouse)
 				this.cbSearchFocusByMouse = false;
-			else
-				this.cbSearchInput.focus();
+			//else
+			//	this.cbSearchInput.focus();
 		}
 	}
 
@@ -1518,6 +1546,10 @@ window.BlobDownloader = {
 			case 27: // escape
 				if (data.menuVisible) {
 					data.close();
+					return cancelEvent(e);
+				} else if (this.cbSearchSelect) {
+					this.cbSearchSelect.cbSearchFocusByMouse = true;
+					this.cbSearchSelect.focus();
 					return cancelEvent(e);
 				}
 				break;
@@ -1650,7 +1682,7 @@ window.BlobDownloader = {
 
 		for (i = 0; i < list.length; i++) {
 			li = list[i];
-			if (!(value = li.value))
+			if (!(value = li.value) || value == "0")
 				continue;
 			txt = li.textContent;
 			norm = li.cbSearchNormalized;
@@ -1722,19 +1754,14 @@ window.BlobDownloader = {
 		this.selection = -1;
 	}
 
+	window.getCbSearchRoot = function (select) {
+		return (select ? _(select).parentNode : null);
+	};
+
 	window.setCbSearch = function (select, value) {
 		if (!select)
 			return;
-		select.value = value;
-		if (("createEvent" in document)) {
-			var e = document.createEvent("HTMLEvents");
-			e.initEvent("change", false, true);
-			select.dispatchEvent(e);
-		} else if (("fireEvent" in select)) {
-			select.fireEvent("onchange");
-		} else if (select.onchange) {
-			select.onchange();
-		}
+		cbSearch_SetValue(select, value);
 		if (select.cbSearchChange)
 			select.cbSearchChange();
 	};
@@ -1767,11 +1794,13 @@ window.BlobDownloader = {
 
 		select.cbSearchData = data;
 		select.cbSearchInput = input;
+		select.cbSearchSpan = span;
 		select.onfocus = cbSearch_Focus;
 		select.onblur = cbSearch_Blur;
 		select.onmousedown = cbSearch_MouseDown;
 		select.addEventListener("change", cbSearch_Change);
 		select.cbSearchChange = cbSearch_Change;
+		select.setAttribute("tabindex", "-1");
 		outerdiv.className = "dropdown";
 		groupdiv.className = "form-group input-group";
 		groupdiv.style.position = "absolute";
@@ -1791,7 +1820,6 @@ window.BlobDownloader = {
 			input.className = "form-control upper select-arrow";
 		input.setAttribute("type", "text");
 		input.setAttribute("spellcheck", "false");
-		input.setAttribute("tabindex", "-1");
 		// In order to disable address autofill/autocomplete
 		// https://stackoverflow.com/a/30976223
 		input.setAttribute("autocomplete", "new-password");
@@ -1820,13 +1848,15 @@ window.BlobDownloader = {
 
 		parent.removeChild(select);
 		select.style.borderColor = "transparent";
+		select.style.webkitBoxShadow = "none";
+		select.style.boxShadow = "none";
 
 		outerdiv.appendChild(select);
 		outerdiv.appendChild(groupdiv);
 
 		parent.appendChild(outerdiv);
 
-		if (select.value)
+		if (select.value && select.value != "0")
 			cbSearch_Change.apply(select);
 	};
 

@@ -11,7 +11,7 @@
 // Example usage: change the default blue border and shadow to white for better
 // contrast against a dark gray background.
 @mixin form-control-focus($ignore-warning: false) {
-  &:focus {
+  &:focus, &.forced-focus {
     color: $input-focus-color;
     background-color: $input-focus-bg;
     border-color: $input-focus-border-color;
@@ -69,7 +69,7 @@
     // Align tooltip to form elements
     .form-row > .col > &,
     .form-row > [class*="col-"] > & {
-      left: $form-grid-gutter-width / 2;
+      left: $form-grid-gutter-width * 0.5;
     }
   }
 
