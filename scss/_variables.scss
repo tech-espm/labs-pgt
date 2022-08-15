@@ -21,6 +21,7 @@ $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
 $pink: #e83e8c !default;
 $red: #e74a3b !default;
+$red-dark: #a80532 !default;
 $orange: #fd7e14 !default;
 $yellow: #f6c23e !default;
 $green: #1cc88a !default;
@@ -28,7 +29,7 @@ $teal: #20c9a6 !default;
 $cyan: #36b9cc !default;
 
 // scss/bootstrap/_variables.scss
-$bs-primary: $blue !default;
+$bs-primary: $red-dark !default;
 $bs-secondary: $gray-600 !default;
 $bs-success: $green !default;
 $bs-info: $cyan !default;
@@ -36,6 +37,10 @@ $bs-warning: $yellow !default;
 $bs-danger: $red !default;
 $bs-light: $gray-100 !default;
 $bs-dark: $gray-800 !default;
+
+// scss/bootstrap/_card.scss
+$bs-card-header-color: null !default;
+$bs-card-header-font-weight: bold !default;
 
 // Custom Colors
 $brand-google: #ea4335 !default;

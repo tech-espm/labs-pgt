@@ -1,8 +1,7 @@
 ﻿<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/jquery-mask/jquery-mask-1.0.0.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/jquery-validate/jquery-validate-1.0.6.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/jquery-mask/jquery-mask-1.14.16.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/jquery-validate/jquery-validate-1.0.7.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/lib/jquery-validate/messages_pt_BR.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/js/jquery-validate-custom.js?20210910"></script>
 
 <% if (typeof datatables !== "undefined" && datatables) { %>
 <script type="text/javascript" src="<%- staticRoot %>/lib/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -18,6 +17,10 @@
 
 <% if (typeof clipboard !== "undefined" && clipboard) { %>
 <script type="text/javascript" src="<%- staticRoot %>/lib/clipboard/dist/clipboard.min.js"></script>
+<% } %>
+
+<% if (typeof cidades !== "undefined" && cidades) { %>
+<script type="text/javascript" src="<%- staticRoot %>/js/cidades.js"></script>
 <% } %>
 
 <script type="text/javascript" charset="utf-8" src="<%- staticRoot %>/js/admin.js?20210910"></script>

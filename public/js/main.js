@@ -47,10 +47,72 @@ window.parseQueryString = function () {
 	window.queryString = assoc;
 	return assoc;
 };
+/* https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+:: cookies.js ::
+
+A complete cookies reader/writer framework with full unicode support.
+
+Revision #1 - September 4, 2014
+
+https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
+https://developer.mozilla.org/User:fusionchess
+
+This framework is released under the GNU Public License, version 3 or later.
+http://www.gnu.org/licenses/gpl-3.0-standalone.html
+
+Modified by Carlos Rafael Gimenes das Neves
+*/
+window.Cookies = {
+	create: function (name, value, expires, path, domain, secure) {
+		if (!name || /^(?:expires|max\-age|path|domain|secure)$/i.test(name)) return false;
+		var exp = "";
+		if (expires) {
+			switch (expires.constructor) {
+				case Number:
+					if (expires === Infinity) {
+						exp = "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+					} else {
+						exp = new Date();
+						exp.setTime(exp.getTime() + (expires * 60 * 60 * 1000));
+						exp = "; expires=" + exp.toUTCString();
+					}
+					break;
+				case Date:
+					exp = "; expires=" + expires.toUTCString();
+					break;
+				case String:
+					exp = "; expires=" + expires;
+					break;
+			}
+		}
+		document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + exp + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "") + (secure ? "; secure" : "");
+		return true;
+	},
+	get: function (name) {
+		return (!name ? null : (decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null));
+	},
+	remove: function (name, path, domain) {
+		if (!Cookies.exists(name)) return false;
+		document.cookie = encodeURIComponent(name) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (path ? "; path=" + path : "") + (domain ? "; domain=" + domain : "");
+		return true;
+	},
+	exists: function (name) {
+		if (!name) return false;
+		return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(name).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+	},
+	names: function () {
+		var ns = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+		for (var len = ns.length, idx = 0; idx < len; idx++) ns[idx] = decodeURIComponent(ns[idx]);
+		return ns;
+	}
+};
 window.encode = (function () {
-	var lt = /</g, gt = />/g;
+	var amp = /\&/g, lt = /</g, gt = />/g, quot = /\"/g, apos = /\'/g;
+	window.encodeValue = function (x) {
+		return (x ? x.replace(amp, "&amp;").replace(lt, "&lt;").replace(gt, "&gt;").replace(quot, "&quot;").replace(apos, "&apos;") : "");
+	};
 	return function (x) {
-		return (x ? x.replace(lt, "&lt;").replace(gt, "&gt;") : "");
+		return (x ? x.replace(amp, "&amp;").replace(lt, "&lt;").replace(gt, "&gt;") : "");
 	};
 })();
 window.prepareCopyHandler = function (modal, selector) {
@@ -134,8 +196,48 @@ window.prepareCustomFilter = function (table, tableId, customFilterLabel, placeh
 	}
 };
 window.format2 = function (x) {
-	return ((x < 10) ? ("0" + x) : x);
+	return ((x < 10) ? ("0" + x) : x.toString());
 };
+window.formatCurrency = (function () {
+	var expr = /\B(?=(\d{3})+(?!\d))/g, thousands = (window.currentLanguageId === 1 ? "," : ".");
+	window.formatSizeLong = function (size) {
+		//if (size < 16384)
+		//	return size + " bytes";
+		//return ((size * 0.0009765625) | 0).toString().replace(expr, ".") + " KB";
+		if (size) {
+			size = (size * 0.0009765625) | 0;
+			if (size <= 0)
+				size = 1;
+		}
+		return size.toString().replace(expr, thousands) + " KB";
+	};
+	window.formatSize = function (size) {
+		//if (size < 16384)
+		//	return size + " bytes";
+		//return (size >>> 10).toString().replace(expr, ".") + " KB";
+		if (size) {
+			size >>>= 10;
+			if (size <= 0)
+				size = 1;
+		}
+		return size.toString().replace(expr, thousands) + " KB";
+	};
+	window.formatNumber = (window.currentLanguageId === 1 ? function (x, digits) {
+		return x.toFixed(digits | 0).replace(expr, thousands);
+	} : function (x, digits) {
+		return x.toFixed(digits | 0).replace(".", ",").replace(expr, thousands);
+	});
+	window.formatPercent = (window.currentLanguageId === 1 ? function (x, digits) {
+		return x.toFixed(digits | 0) + "%";
+	} : function (x, digits) {
+		return x.toFixed(digits | 0).replace(".", ",") + "%";
+	});
+	return (window.currentLanguageId === 1 ? function (x, digits) {
+		return "R$ " + x.toFixed(digits | 0).replace(expr, thousands);
+	} : function (x, digits) {
+		return "R$ " + x.toFixed(digits | 0).replace(".", ",").replace(expr, thousands);
+	});
+})();
 window.formatHex8 = function (x) {
 	var s = "0000000" + x.toString(16).toLowerCase();
 	return s.substr(s.length - 8);
@@ -148,37 +250,6 @@ window.formatDuration = function (duration) {
 	s = s % 60;
 	return format2(m) + ":" + format2(s);
 };
-window.formatSize = (function () {
-	var expr = /\B(?=(\d{3})+(?!\d))/g, thousands = (window.currentLanguageId === 1 ? "." : ",");
-	window.formatSizeLong = function (size) {
-		//if (size < 16384)
-		//	return size + " bytes";
-		//return ((size * 0.0009765625) | 0).toString().replace(expr, ".") + " KB";
-		if (size) {
-			size = (size * 0.0009765625) | 0;
-			if (size <= 0)
-				size = 1;
-		}
-		return size.toString().replace(expr, thousands) + " KB";
-	};
-	return function (size) {
-		//if (size < 16384)
-		//	return size + " bytes";
-		//return (size >>> 10).toString().replace(expr, ".") + " KB";
-		if (size) {
-			size >>>= 10;
-			if (size <= 0)
-				size = 1;
-		}
-		return size.toString().replace(expr, thousands) + " KB";
-	};
-})();
-window.formatNumber = (function () {
-	var expr = /\B(?=(\d{3})+(?!\d))/g;
-	return function (x) {
-		return x.toString().replace(expr, ".");
-	};
-})();
 window.formatHour = function (x) {
 	return format2(x >>> 6) + ":" + format2(x & 63);
 };
@@ -197,7 +268,12 @@ window.maskPhone = function (field) {
 	$(field).mask("(00) 0000-0000JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ", { translation: { "J": { pattern: /[\d\D]/g } } });
 };
 window.maskHour = function (field) {
-	$(field).mask("00:00");
+	$(field).mask("A0:B0", {
+		translation: {
+			A: { pattern: /[0-2]/, optional: false },
+			B: { pattern: /[0-5]/, optional: false },
+		}
+	});
 };
 window.maskTextId = function (field) {
 	$(field).mask("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ", { translation: { Z: { pattern: /[A-Za-z0-9\-]/, optional: true } } });
@@ -1667,11 +1743,14 @@ window.BlobDownloader = {
 		else if (this.selection >= this.menu.childNodes.length)
 			this.selection = this.menu.childNodes.length - 1;
 		var i, c;
-		for (i = this.menu.childNodes.length - 1; i >= 0; i--)
+		for (i = this.menu.childNodes.length - 1; i >= 0; i--) {
 			this.menu.childNodes[i].firstChild.style.background = "";
+			this.menu.childNodes[i].firstChild.style.color = "";
+		}
 		c = this.menu.childNodes[this.selection];
 		this.menu.scrollTop = c.offsetTop - 5;
-		c.firstChild.style.background = "rgba(102,175,233,.75)";
+		c.firstChild.style.background = "var(--primary)";
+		c.firstChild.style.color = "var(--primary-text)";
 	}
 
 	function cbSearch_DataOpen(normalized) {
@@ -1695,8 +1774,10 @@ window.BlobDownloader = {
 				if (value)
 					li.cbSearchValue = value;
 				a = document.createElement("a");
-				if (!ok)
-					a.style.background = "rgba(102,175,233,.75)";
+				if (!ok) {
+					a.style.background = "var(--primary)";
+					a.style.color = "var(--primary-text)";
+				}
 				a.className = "dropdown-item";
 				a.setAttribute("href", "#");
 				a.cbSearchData = this;
@@ -1934,7 +2015,7 @@ window.prepareFilteredCbState = function (cbState, cbCity, callback) {
 window.prepareCbState = function (cbState, cbCity, callback) {
 	if (cbCity) {
 		cbState.onchange = function () {
-			var i, id, opt, s = parseInt(cbState.value);
+			var i, id, opt, s = parseInt(cbState.value), extras;
 			s = ((!isNaN(s) && s > 0) ? window.cidades[s] : null);
 			while (cbCity.childNodes.length > 1)
 				cbCity.removeChild(cbCity.childNodes[1]);
@@ -1942,6 +2023,7 @@ window.prepareCbState = function (cbState, cbCity, callback) {
 			if (cbCity.cbSearchInput)
 				cbCity.cbSearchInput.value = "";
 			if (s && s.c && s.c.length) {
+				extras = s.extras;
 				id = s.i;
 				s = s.c;
 				for (i = 0; i < s.length; i++) {
@@ -1949,6 +2031,14 @@ window.prepareCbState = function (cbState, cbCity, callback) {
 					opt.setAttribute("value", id + i);
 					opt.textContent = s[i];
 					cbCity.appendChild(opt);
+				}
+				if (extras) {
+					for (i = 0; i < extras.length; i++) {
+						opt = document.createElement("option");
+						opt.setAttribute("value", extras[i].i);
+						opt.textContent = extras[i].n;
+						cbCity.insertBefore(opt, cbCity.childNodes[extras[i].idx + 1]);
+					}
 				}
 			}
 			if (callback)
@@ -1959,52 +2049,212 @@ window.prepareCbState = function (cbState, cbCity, callback) {
 			cbState.cbSearchChange();
 	}
 };
-window.converterDataISO = function (data, formatoBr) {
-	if (!data || !(data = trim(data)) || data.length < 10)
-		return null;
-	let b1 = data.indexOf("/");
-	let b2 = data.lastIndexOf("/");
-	let dia, mes, ano;
-	if (b1 <= 0 || b2 <= b1) {
-		let b1 = data.indexOf("-");
-		let b2 = data.lastIndexOf("-");
-		if (b1 <= 0 || b2 <= b1)
-			return null;
-		ano = parseInt(data.substring(0, b1));
-		mes = parseInt(data.substring(b1 + 1, b2));
-		dia = parseInt(data.substring(b2 + 1));
-	} else {
-		dia = parseInt(data.substring(0, b1));
-		mes = parseInt(data.substring(b1 + 1, b2));
-		ano = parseInt(data.substring(b2 + 1));
-	}
-	if (isNaN(dia) || isNaN(mes) || isNaN(ano) ||
-		dia < 1 || mes < 1 || ano < 1 ||
-		dia > 31 || mes > 12 || ano > 9999)
-		return null;
-	switch (mes) {
-		case 2:
-			if (!(ano % 4) && ((ano % 100) || !(ano % 400))) {
-				if (dia > 29)
-					return null;
-			} else {
-				if (dia > 28)
-					return null;
-			}
-			break;
-		case 4:
-		case 6:
-		case 9:
-		case 11:
-			if (dia > 30)
-				return null;
-			break;
-	}
-	return (formatoBr ?
-		(((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano) :
-		(ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia)));
-};
+window.DataUtil = {
+	converterISOParaNumero: function (dataISO) {
+		return (dataISO && dataISO.length >= 10) ? (((10000 * parseInt(dataISO.substring(0, 4))) +
+				(100 * parseInt(dataISO.substring(5, 7))) +
+				parseInt(dataISO.substring(8, 10))) | 0) : 0;
+	},
 
+	converterNumeroParaISO: function (dataISONumerica) {
+		return DataUtil.formatar((dataISONumerica / 10000) | 0, ((dataISONumerica / 100) | 0) % 100, dataISONumerica % 100);
+	},
+
+	formatarBr: function (ano, mes, dia) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano;
+	},
+
+	formatarBrComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ((dia < 10) ? ("0" + dia) : dia) + "/" + ((mes < 10) ? ("0" + mes) : mes) + "/" + ano + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	formatar: function (ano, mes, dia) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia);
+	},
+
+	formatarComHorario: function (ano, mes, dia, hora, minuto, segundo) {
+		return ano + "-" + ((mes < 10) ? ("0" + mes) : mes) + "-" + ((dia < 10) ? ("0" + dia) : dia) + " " + ((hora < 10) ? ("0" + hora) : hora) + ":" + ((minuto < 10) ? ("0" + minuto) : minuto) + ":" + ((segundo < 10) ? ("0" + segundo) : segundo);
+	},
+
+	converterDataISO: function (dataComOuSemHorario, formatoBr) {
+		if (!dataComOuSemHorario || !(dataComOuSemHorario = dataComOuSemHorario.trim()))
+			return null;
+		let b1 = dataComOuSemHorario.indexOf("/");
+		let b2 = dataComOuSemHorario.lastIndexOf("/");
+		let dia, mes, ano;
+		if (b1 <= 0 || b2 <= b1) {
+			let b1 = dataComOuSemHorario.indexOf("-");
+			let b2 = dataComOuSemHorario.lastIndexOf("-");
+			if (b1 <= 0 || b2 <= b1)
+				return null;
+			ano = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			dia = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		} else {
+			dia = parseInt(dataComOuSemHorario.substring(0, b1));
+			mes = parseInt(dataComOuSemHorario.substring(b1 + 1, b2));
+			ano = parseInt(dataComOuSemHorario.substring(b2 + 1));
+		}
+		if (isNaN(dia) || isNaN(mes) || isNaN(ano) ||
+			dia < 1 || mes < 1 || ano < 1 ||
+			dia > 31 || mes > 12 || ano > 9999)
+			return null;
+		switch (mes) {
+			case 2:
+				if (!(ano % 4) && ((ano % 100) || !(ano % 400))) {
+					if (dia > 29)
+						return null;
+				} else {
+					if (dia > 28)
+						return null;
+				}
+				break;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				if (dia > 30)
+					return null;
+				break;
+		}
+		let sepHorario = dataComOuSemHorario.indexOf(" ");
+		if (sepHorario < 0)
+			sepHorario = dataComOuSemHorario.indexOf("T");
+		if (sepHorario >= 0) {
+			const horario = dataComOuSemHorario.substring(sepHorario + 1);
+			const sepMinuto = horario.indexOf(":");
+			if (sepMinuto >= 0) {
+				const hora = parseInt(horario);
+				const minuto = parseInt(horario.substring(sepMinuto + 1));
+				if (hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59) {
+					const sepSegundo = horario.indexOf(":", sepMinuto + 1);
+					if (sepSegundo >= 0) {
+						const segundo = parseInt(horario.substring(sepSegundo + 1));
+						if (segundo >= 0 && segundo <= 59)
+							return (formatoBr ?
+								DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, segundo) :
+								DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, segundo));
+					} else {
+						return (formatoBr ?
+							DataUtil.formatarBrComHorario(ano, mes, dia, hora, minuto, 0) :
+							DataUtil.formatarComHorario(ano, mes, dia, hora, minuto, 0));
+					}
+				}
+			}
+			return null;
+		}
+		return (formatoBr ?
+			DataUtil.formatarBr(ano, mes, dia) :
+			DataUtil.formatar(ano, mes, dia));
+	},
+
+	removerHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 10) ? "" : dataISOOuBrComHorario.substring(0, 10));
+	},
+
+	obterHorario: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11));
+	},
+
+	obterHorarioSemSegundos: function (dataISOOuBrComHorario) {
+		return ((!dataISOOuBrComHorario || dataISOOuBrComHorario.length < 16) ? "" : dataISOOuBrComHorario.substring(11, 16));
+	},
+
+	dateUTC: function (deltaSegundos) {
+		return (deltaSegundos ? new Date((new Date()).getTime() + (deltaSegundos * 1000)) : new Date());
+	},
+
+	horarioDeBrasiliaComoDateUTC: function (deltaSegundos) {
+		let time = (new Date()).getTime();
+		if (deltaSegundos)
+			time += (deltaSegundos * 1000);
+		return new Date(time - (180 * 60000));
+	},
+
+	horarioDeBrasiliaBr: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaBrInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaBrFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
+	},
+
+	horarioDeBrasiliaISO: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioDeBrasiliaISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioDeBrasiliaISOInicioDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 0, 0, 0);
+	},
+
+	horarioDeBrasiliaISOFimDoDia: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), 23, 59, 59);
+	},
+
+	horarioUTCISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate());
+	},
+
+	horarioUTCISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+	},
+
+	horarioLocalISO: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatar(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalISOComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	},
+
+	horarioLocalBr: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBr(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate());
+	},
+
+	horarioLocalBrComHorario: function (deltaSegundos) {
+		const hoje = DataUtil.dateUTC(deltaSegundos);
+
+		return DataUtil.formatarBrComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
+	}
+};
 window.prepareDatePicker = function (id, options) {
 	// http://bootstrap-datepicker.readthedocs.org/en/latest/options.html#format
 	// https://uxsolutions.github.io/bootstrap-datepicker
@@ -2045,6 +2295,172 @@ window.setDatePickerValue = function (id, value) {
 	}
 };
 
+window.prepareMultiselect = function (id, options) {
+	const i$ = $(id), create = function (select) {
+		let opts = select.getElementsByTagName("option"),
+			items = new Array(opts.length);
+
+		const btn = document.createElement("button");
+
+		btn.selection = {};
+		btn.selectionCount = 0;
+		btn.selectionItems = items;
+		btn.setAttribute("id", select.getAttribute("id"));
+		btn.setAttribute("type", "button");
+		btn.className = (options && options.className) || "btn btn-primary btn-block";
+		btn.textContent = "Seleção: Nada";
+
+		if (select.parentNode)
+			select.parentNode.replaceChild(btn, select);
+
+		for (let i = opts.length - 1; i >= 0; i--)
+			items[i] = {
+				id: opts[i].getAttribute("value"),
+				text: opts[i].textContent
+			};
+
+		
+		opts = null;
+		items = null;
+
+		btn.onclick = async function () {
+			if (isSwalOpen())
+				return;
+
+			const selection = btn.selection,
+				items = btn.selectionItems;
+
+			let tempSelection = {}, tempSelectionCount = btn.selectionCount,
+				html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div>';
+
+			for (let i = 0; i < items.length; i++)
+				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + encode(items[i].text) + '</button>';
+
+			for (let i in selection)
+				tempSelection[i] = true;
+
+			Swal.okcancelNoIcon({
+				html: html,
+				title: options && options.title,
+				didOpen: function () {
+					let lastSearch = "";
+
+					const handleChange = function () {
+						const s = normalizeAccent(this.value);
+
+						if (lastSearch === s)
+							return;
+
+						lastSearch = s;
+
+						$("#swal2-html-container .btn.mb-0").each(function () {
+							if (!s || this.getAttribute("data-ntext").indexOf(s) >= 0)
+								this.classList.remove("hidden");
+							else
+								this.classList.add("hidden");
+						});
+					};
+
+					$("#swal2-html-container").on("change", "input", handleChange);
+					$("#swal2-html-container").on("keydown", "input", handleChange);
+					$("#swal2-html-container").on("keyup", "input", handleChange);
+
+					$("#swal2-html-container").on("click", ".btn", function () {
+						const id = this.getAttribute("data-id");
+						if (!id) {
+							if (tempSelectionCount === items.length) {
+								tempSelectionCount = 0;
+								tempSelection = {};
+								$("#swal2-html-container .btn-primary").addClass("btn-light").removeClass("btn-primary");
+							} else {
+								tempSelectionCount = items.length;
+								$("#swal2-html-container .btn-light").addClass("btn-primary").removeClass("btn-light");
+								for (let i = 0; i < items.length; i++)
+									tempSelection[items[i].id] = true;
+							}
+						} else if (tempSelection[id]) {
+							delete tempSelection[id];
+							tempSelectionCount--;
+							$(this).addClass("btn-light").removeClass("btn-primary");
+						} else {
+							tempSelection[id] = true;
+							tempSelectionCount++;
+							$(this).addClass("btn-primary").removeClass("btn-light");
+						}
+					});
+				},
+				preConfirm: function () {
+					btn.selection = tempSelection;
+					btn.selectionCount = tempSelectionCount;
+					btn.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+					return true;
+				}
+			});
+		};
+	};
+
+	for (let i = 0; i < i$.length; i++) {
+		if (i$[i])
+			create(i$[i]);
+	}
+
+	return i$;
+};
+window.getMultiselectItems = function (id) {
+	let i$ = $(id);
+
+	return (((i$ = i$[0]) && i$.selection && i$.selectionItems) || []);
+};
+window.setMultiselectItems = function (id, items) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		i$.selectionItems = items || [];
+
+		const values = [];
+		for (let i in i$.selection)
+			values.push(i);
+
+		setMultiselectSelection(id, values);
+	}
+};
+window.getMultiselectSelection = function (id) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const s = [];
+		for (let i in i$.selection)
+			s.push(i);
+		return s;
+	}
+
+	return [];
+};
+window.setMultiselectSelection = function (id, values) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const tempSelection = {}, items = i$.selectionItems;
+		let tempSelectionCount = 0;
+
+		if (values && values.length) {
+			for (let i = items.length - 1; i >= 0; i--) {
+				for (let j = values.length - 1; j >= 0; j--) {
+					if (items[i].id == values[j]) {
+						tempSelection[items[i].id] = true;
+						tempSelectionCount++;
+						break;
+					}
+				}
+			}
+		}
+
+		i$.selection = tempSelection;
+		i$.selectionCount = tempSelectionCount;
+		i$.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+	}
+};
+
 window.isSwalOpen = function () {
 	return !!Swal.getContainer();
 };
@@ -2076,6 +2492,34 @@ Swal.error = function (message, title) {
 
 		if (!options.customClass.confirmButton)
 			options.customClass.confirmButton = "btn btn-danger";
+	}
+
+	return Swal.fire(options);
+};
+
+Swal.warning = function (message, title) {
+	var options = message;
+
+	if (!options)
+		options = {};
+
+	if (typeof message === "string")
+		options = { text: message };
+
+	if (!options.icon)
+		options.icon = "warning";
+
+	if (!options.title)
+		options.title = title || "Aviso";
+
+	if (!options.buttonsStyling) {
+		options.buttonsStyling = false;
+
+		if (!options.customClass)
+			options.customClass = {};
+
+		if (!options.customClass.confirmButton)
+			options.customClass.confirmButton = "btn btn-primary";
 	}
 
 	return Swal.fire(options);
@@ -2218,34 +2662,68 @@ Swal.okcancelNoIcon = function (message, title) {
 	return Swal.fire(options);
 };
 
-Swal.wait = function (message) {
-	var options = message;
+(function () {
+	var waitCalled = false, shouldShowWait = false, fire = Swal.fire;
 
-	if (!options)
-		options = {};
+	Swal.fire = function () {
+		if (waitCalled) {
+			waitCalled = false;
+			shouldShowWait = true;
+		} else {
+			shouldShowWait = false;
+		}
 
-	if (typeof message === "string")
-		options = { text: message };
-
-	if (!options.html && !options.text)
-		options.text = "Por favor, aguarde...";
-
-	if (!options.allowOutsideClick)
-		options.allowOutsideClick = false;
-
-	if (!options.allowEscapeKey)
-		options.allowEscapeKey = false;
-
-	if (!options.allowEnterKey)
-		options.allowEnterKey = false;
-
-	var didOpen = options.didOpen;
-
-	options.didOpen = function () {
-		Swal.showLoading();
-		if (didOpen)
-			didOpen();
+		return fire.apply(Swal, arguments);
 	};
 
-	return Swal.fire(options);
-};
+	var waitInternal = function (message, dark) {
+		var options = message;
+
+		if (!options)
+			options = {};
+
+		if (typeof message === "string")
+			options = { text: message };
+
+		if (!options.html && !options.text)
+			options.text = "Por favor, aguarde...";
+
+		if (!options.allowOutsideClick)
+			options.allowOutsideClick = false;
+
+		if (!options.allowEscapeKey)
+			options.allowEscapeKey = false;
+
+		if (!options.allowEnterKey)
+			options.allowEnterKey = false;
+
+		if (!dark) {
+			if (!options.showClass)
+				options.showClass = { backdrop: "" };
+			else
+				options.showClass.backdrop = "";
+		}
+
+		var didOpen = options.didOpen;
+
+		options.didOpen = function () {
+			if (shouldShowWait) {
+				Swal.showLoading();
+				if (didOpen)
+					didOpen();
+			}
+		};
+
+		waitCalled = true;
+
+		return Swal.fire(options);
+	};
+
+	Swal.wait = function (message) {
+		return waitInternal(message, false);
+	};
+
+	Swal.waitDark = function (message) {
+		return waitInternal(message, true);
+	};
+})();

@@ -1,2 +1,2 @@
 # labs-pgt
-Sistema de controle dos PGT's
+Gerenciamento de PGT
