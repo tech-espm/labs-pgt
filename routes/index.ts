@@ -10,7 +10,7 @@ class IndexRoute {
 		else
 			res.render("index/index", {
 				layout: "layout-sem-form",
-				titulo: "Dashboard",
+				titulo: "Olá, "+Usuario.name,
 				usuario: u
 			});
 	}
