@@ -90,45 +90,135 @@
 	<!-- Content Column -->
 	<div class="col-lg-6 mb-4">
 
-		<!-- Project Card Example -->
-		<div class="card shadow mb-4">
-			<div class="card-header">
-				Projects
-			</div>
-			<div class="card-body">
-				<h4 class="small font-weight-bold">Server Migration <span
-						class="float-right">20%</span></h4>
-				<div class="progress mb-4">
-					<div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
-						aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<h4 class="small font-weight-bold">Sales Tracking <span
-						class="float-right">40%</span></h4>
-				<div class="progress mb-4">
-					<div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-						aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<h4 class="small font-weight-bold">Customer Database <span
-						class="float-right">60%</span></h4>
-				<div class="progress mb-4">
-					<div class="progress-bar" role="progressbar" style="width: 60%"
-						aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<h4 class="small font-weight-bold">Payout Details <span
-						class="float-right">80%</span></h4>
-				<div class="progress mb-4">
-					<div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-						aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-				<h4 class="small font-weight-bold">Account Setup <span
-						class="float-right">Complete!</span></h4>
-				<div class="progress">
-					<div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-						aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-				</div>
-			</div>
-		</div>
+		<div class ="Slides">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<style>
+			* {box-sizing: border-box;}
+			body {font-family: Verdana, sans-serif;}
+			.mySlides {display: none;}
+			img {vertical-align: middle;}
 		
+			/* Slideshow container */
+			.slideshow-container {
+			  max-width: 1000px;
+			  position: relative;
+			  margin: auto;
+			}
+		
+			/* Caption text */
+			.text {
+			  color: #f2f2f2;
+			  font-size: 15px;
+			  padding: 8px 12px;
+			  position: absolute;
+			  bottom: 8px;
+			  width: 100%;
+			  text-align: center;
+			}
+		
+			/* Number text (1/3 etc) */
+			.numbertext {
+			  color: #f2f2f2;
+			  font-size: 12px;
+			  padding: 8px 12px;
+			  position: absolute;
+			  top: 0;
+			}
+		
+			/* The dots/bullets/indicators */
+			.dot {
+			  height: 15px;
+			  width: 15px;
+			  margin: 0 2px;
+			  background-color: #bbb;
+			  border-radius: 50%;
+			  display: inline-block;
+			  transition: background-color 1.0s ease;
+			}
+		
+			.active {
+			  background-color: #717171;
+			}
+		
+			/* Fading animation */
+			.fade {
+			  animation-name: fade;
+			  animation-duration: 2.0s;
+			}
+		
+			@keyframes fade {
+			  from {opacity: .4} 
+			  to {opacity: 1}
+			}
+		
+			/* On smaller screens, decrease text size */
+			@media only screen and (max-width: 300px) {
+			  .text {font-size: 11px}
+			}
+			</style>
+			</head>
+			<body>
+		
+			<h2>Novidades TECH</h2>
+			<p>Aqui você vê as principais noticias:</p>
+		
+			<div class="slideshow-container">
+		
+			<div class="mySlides fade">
+			  <div class="numbertext">1 / 3</div>
+			  <a href="https://olhardigital.com.br/2022/09/07/reviews/apple-lanca-iphone-14-pro-e-14-pro-max-com-dynamic-island-a16-bionic-e-novas-cameras/" target="_blank">
+			  	<img src="https://img.olhardigital.com.br/wp-content/uploads/2022/09/iphone_14_pro_2-1024x576.jpg" style="width:100%">
+			  </a>
+			  <div class="text">O novo Iphone 14</div>
+			</div>
+		
+			<div class="mySlides fade">
+			  <div class="numbertext">2 / 3</div>
+			  <a href="https://www.businesswire.com/news/home/20220831005237/en/Palantir-Announces-Partnership-with-Beckett-Collectibles" target="_blank">
+			  	<img src="https://unboxingstartups.com/wp-content/uploads/2021/11/Palantir-Technologies-is-a-Public-American-Software-Company-That-Specializes-in-Big-Data-Analytics.jpg" style="width:100%">
+			  </a>
+			  <div class="text">Grande Startup fechando negocios</div>
+			</div>
+		
+			<div class="mySlides fade">
+			  <div class="numbertext">3 / 3</div>
+			  <a href="https://istoe.com.br/tiktok-e-black-rocks-startups-confirmam-participacao-no-befly-tech-day/" target="_blank">
+				<img src="https://cdn.panrotas.com.br/portal-panrotas-statics/media-files-cache/316268/2221eea8254b78dde6c5bba87640b8b8whatsappimage20211028at17.25.32/203,91,890,531/1206,720,0.56/0/default.jpeg" style="width:100%">
+			  </a>
+			  <div class="text">O TECH day</div>
+			</div>
+		
+			</div>
+			<br>
+		
+			<div style="text-align:center">
+			  <span class="dot"></span> 
+			  <span class="dot"></span> 
+			  <span class="dot"></span> 
+			</div>
+		
+			<script>
+			let slideIndex = 0;
+			showSlides();
+		
+			function showSlides() {
+			  let i;
+			  let slides = document.getElementsByClassName("mySlides");
+			  let dots = document.getElementsByClassName("dot");
+			  for (i = 0; i < slides.length; i++) {
+				slides[i].style.display = "none";  
+			  }
+			  slideIndex++;
+			  if (slideIndex > slides.length) {slideIndex = 1}    
+			  for (i = 0; i < dots.length; i++) {
+				dots[i].className = dots[i].className.replace(" active", "");
+			  }
+			  slides[slideIndex-1].style.display = "block";  
+			  dots[slideIndex-1].className += " active";
+			  setTimeout(showSlides, 2000); // Change image every 2 seconds
+			}
+			</script>
+		</div>
 		<!-- Color System -->
 		<div class="row">
 			<div class="col-lg-6 mb-4">
