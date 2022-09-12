@@ -54,12 +54,12 @@ class ExemploRoute {
 		res.render("exemplo/esqueci", { layout: "layout-externo", titulo: "Esqueci minha senha" });
 	}
 
-	public static async graficos(req: app.Request, res: app.Response) {
+	public static async regulamento(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("exemplo/graficos", { titulo: "Gráficos", usuario: u });
+			res.render("exemplo/regulamento", { titulo: "Regulamento", usuario: u });
 	}
 
 	public static async outros(req: app.Request, res: app.Response) {
