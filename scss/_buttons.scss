@@ -50,3 +50,15 @@
     }
   }
 }
+
+input[type="file"]::file-selector-button {
+  border: 2px solid #a80532;
+  padding: 0.2em 0.4em;
+  border-radius: 0.2em;
+  background-color: #a40c3c;
+  color: white;
+  font-weight: bold;
+
+}
+
+

@@ -18,12 +18,12 @@ class ExemploRoute {
 			res.render("exemplo/bordas", { titulo: "Bordas", usuario: u });
 	}
 
-	public static async botoes(req: app.Request, res: app.Response) {
+	public static async upload(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u)
 			res.redirect(app.root + "/login");
 		else
-			res.render("exemplo/botoes", { titulo: "Botões", usuario: u });
+			res.render("exemplo/upload", { titulo: "Upload", usuario: u });
 	}
 
 	public static async cards(req: app.Request, res: app.Response) {
