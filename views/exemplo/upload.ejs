@@ -1,15 +1,15 @@
 <div class="row">
 
-	<div class="col-lg-6">
-
-		<!-- Circle Buttons -->
+	<div class="col-lg-12">
+		
+		<!-- Carregamento de arquivos -->
 		<div class="card shadow mb-4">
 			<div class="card-header">
 				Carregamento arquivos
 			</div>
-			<div class="card-body">
-				<p>Carregue um arquivo ou escolha um que você carregou.</p>
-				<!-- Circle Buttons (Default) -->
+			<div class="card-body" style="padding-bottom: 3.6em;">
+				<p style="padding-bottom: 1.5em;">Carregue um arquivo ou escolha um que você carregou.</p>
+				
 
 				<form action="/action_page.php">
 					<input type="file" id="myFile" name="filename">
@@ -31,8 +31,11 @@
 						  "Helvetica Neue", Helvetica, Arial, sans-serif; 
 						}
 				</style>
+				<div style="padding-top: 1.2em;">
+					<input type="checkbox" id="checkboxRegulamento" style="width: 21px; height: 21px">
+					<label for="checkboxRegulamento"> Você concorda com o <a href="/exemplo/regulamento">Regulamento</a> do PGT para o envio desse arquivo? </label>
 
-
+				</div>
 			</div>
 		</div>
 
@@ -58,83 +61,6 @@
 
 	</div>
 
-	<div class="col-lg-6">
 
-		<div class="card shadow mb-4">
-			<div class="card-header">
-				Split Buttons with Icon
-			</div>
-			<div class="card-body">
-				<p>Works with any button colors, just use the <code>.btn-icon-split</code> class and
-					the markup in the examples below. The examples below also use the
-					<code>.text-white-50</code> helper class on the icons for additional styling,
-					but it is not required.</p>
-				<a href="#" class="btn btn-primary btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-flag"></i>
-					</span>
-					<span class="text">Split Button Primary</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-success btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-check"></i>
-					</span>
-					<span class="text">Split Button Success</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-info btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-info-circle"></i>
-					</span>
-					<span class="text">Split Button Info</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-warning btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-exclamation-triangle"></i>
-					</span>
-					<span class="text">Split Button Warning</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-danger btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-trash"></i>
-					</span>
-					<span class="text">Split Button Danger</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-secondary btn-icon-split">
-					<span class="icon text-white-50">
-						<i class="fas fa-arrow-right"></i>
-					</span>
-					<span class="text">Split Button Secondary</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-light btn-icon-split">
-					<span class="icon text-gray-600">
-						<i class="fas fa-arrow-right"></i>
-					</span>
-					<span class="text">Split Button Light</span>
-				</a>
-				<div class="mb-4"></div>
-				<p>Also works with small and large button classes!</p>
-				<a href="#" class="btn btn-primary btn-icon-split btn-sm">
-					<span class="icon text-white-50">
-						<i class="fas fa-flag"></i>
-					</span>
-					<span class="text">Split Button Small</span>
-				</a>
-				<div class="my-2"></div>
-				<a href="#" class="btn btn-primary btn-icon-split btn-lg">
-					<span class="icon text-white-50">
-						<i class="fas fa-flag"></i>
-					</span>
-					<span class="text">Split Button Large</span>
-				</a>
-			</div>
-		</div>
-
-	</div>
 
 </div>
