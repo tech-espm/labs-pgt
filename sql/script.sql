@@ -69,3 +69,24 @@ CREATE TABLE pgt (
   CONSTRAINT pgt_tipo_FK FOREIGN KEY (idtipo) REFERENCES tipo (id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT pgt_usuario_FK FOREIGN KEY (idusuario) REFERENCES usuario (id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
+
+CREATE TABLE aluno (
+  id int NOT NULL AUTO_INCREMENT,
+  ra int NOT NULL,
+  email varchar(100) NOT NULL,
+  nome varchar(100) NOT NULL,
+  telefone varchar(32) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY aluno_ra_UN (ra)
+);
+
+CREATE TABLE pgt_aluno (
+  id int NOT NULL AUTO_INCREMENT,
+  idpgt int NOT NULL,
+  idaluno int NOT NULL,
+  PRIMARY KEY (id),
+  KEY pgt_aluno_idpgt_FK_IX (idpgt),
+  KEY pgt_aluno_idaluno_FK_IX (idaluno),
+  CONSTRAINT pgt_aluno_idpgt_FK FOREIGN KEY (idpgt) REFERENCES pgt (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT pgt_aluno_idaluno_FK FOREIGN KEY (idaluno) REFERENCES aluno (id) ON DELETE CASCADE ON UPDATE CASCADE
+);

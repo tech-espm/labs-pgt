@@ -27,13 +27,25 @@
 			</div>
 		</div>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAlunos" aria-expanded="true" aria-controls="collapseAlunos">
+			<i class="fas fa-fw fa-graduation-cap"></i>
+			<span>Alunos</span>
+		</a>
+		<div id="collapseAlunos" class="collapse" data-parent="#accordionSidebar">
+			<div class="bg-white py-2 collapse-inner rounded">
+				<a class="collapse-item" href="<%- root %>/aluno/criar">Criar</a>
+				<a class="collapse-item" href="<%- root %>/aluno/listar">Gerenciar</a>
+			</div>
+		</div>
+	</li>
 	<% } %>
 
 	
 	<!-- PGT_1 SIDEBAR -->
 	<li class="nav-item">
 		<a class="nav-link collapsed" href="<%- root %>/" data-toggle="collapse" data-target="#collapsePGT_1" aria-expanded="true" aria-controls="collapsePGT_1">
-			<i class="fas fa-fw fa-users"></i>
+			<i class="fas fa-fw fa-scroll"></i>
 			<span>PGT 1</span>
 		</a>
 
@@ -49,7 +61,7 @@
 	<!-- PGT_2 SIDEBAR -->
 	<li class="nav-item">
 		<a class="nav-link collapsed" href="<%- root %>/" data-toggle="collapse" data-target="#collapsePGT_2" aria-expanded="true" aria-controls="collapsePGT_2">
-			<i class="fas fa-fw fa-users"></i>
+			<i class="fas fa-fw fa-scroll"></i>
 			<span>PGT 2</span>
 		</a>
 
