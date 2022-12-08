@@ -3,6 +3,12 @@ import appsettings = require("../appsettings");
 import Fase = require("../enums/fase");
 import Validacao = require("../utils/validacao");
 
+interface PGTAluno {
+	id: number;
+	idpgt: number;
+	idaluno: number;
+}
+
 interface PGT {
 	id: number;
 	nome: string;
@@ -11,10 +17,31 @@ interface PGT {
 	idusuario: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
+
+	alunos?: any[];
+	idsaluno?: number[];
 }
 
 class PGT {
-	private static validar1(pgt: PGT, criacao: boolean): string {
+	private static readonly subqueryAlunos = "(select group_concat(a.nome order by a.nome asc separator ', ') from pgt_aluno pa inner join aluno a on a.id = pa.idaluno where pa.idpgt = p.id) alunos";
+
+	private static validarAlunos(pgt: PGT): string | null {
+		
+		if (!pgt.idsaluno)
+			pgt.idsaluno = [];
+
+		if (!Array.isArray(pgt.idsaluno))
+			pgt.idsaluno = [pgt.idsaluno as any];
+
+		for (let i = pgt.idsaluno.length - 1; i >= 0; i--) {
+			if (isNaN(pgt.idsaluno[i] = parseInt(pgt.idsaluno[i] as any)))
+				return "Id de aluno inválido";
+		}
+
+		return null;
+	}
+
+	private static validar1(pgt: PGT, criacao: boolean): string | null {
 		if (!pgt)
 			return "PGT inválido";
 
@@ -39,10 +66,10 @@ class PGT {
 
 		// @@@ Validar o restante dos campos para a fase 1 do PGT
 
-		return null;
+		return PGT.validarAlunos(pgt);
 	}
 
-	private static validar2(pgt: PGT, criacao: boolean): string {
+	private static validar2(pgt: PGT, criacao: boolean): string | null {
 		if (!pgt)
 			return "PGT inválido";
 
@@ -67,7 +94,7 @@ class PGT {
 
 		// @@@ Validar o restante dos campos para a fase 2 do PGT
 
-		return null;
+		return PGT.validarAlunos(pgt);
 	}
 
 	public static async listar1(idusuario?: number): Promise<PGT[]> {
@@ -76,9 +103,9 @@ class PGT {
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase 1
 			if (idusuario)
-				lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase = ? and p.idusuario = ? and p.exclusao is null", [Fase.PGT1, idusuario]) as PGT[];
+				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase = ? and p.idusuario = ? and p.exclusao is null`, [Fase.PGT1, idusuario]) as PGT[];
 			else
-				lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase = ? and p.exclusao is null", [Fase.PGT1]) as PGT[];
+				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase = ? and p.exclusao is null`, [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
@@ -90,34 +117,37 @@ class PGT {
 		await app.sql.connect(async (sql) => {
 			// @@@ Listar apenas PGT's da fase Fase.PGT2 ou Fase.Concluido (concluídos também entram aqui)
 			if (idusuario)
-				lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.idusuario = ? and p.exclusao is null", [Fase.PGT1, idusuario]) as PGT[];
+				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.idusuario = ? and p.exclusao is null`, [Fase.PGT1, idusuario]) as PGT[];
 			else
-				lista = await sql.query("select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.exclusao is null", [Fase.PGT1]) as PGT[];
+				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.exclusao is null`, [Fase.PGT1]) as PGT[];
 		});
 
 		return (lista || []);
 	}
 
+	private static async obterAlunos(sql: app.Sql, pgt: PGT): Promise<PGT> {
+		if (pgt)
+			pgt.alunos = (await sql.query("select a.id, concat(a.ra, ' - ', a.nome) nome from pgt_aluno pa inner join aluno a on a.id = pa.idaluno where pa.idpgt = ? order by a.nome asc", [pgt.id])) || [];
+
+		return pgt;
+	}
+
 	public static async obter1(id: number): Promise<PGT> {
-		let lista: PGT[] = null;
-
-		await app.sql.connect(async (sql) => {
+		return await app.sql.connect(async (sql) => {
 			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT1
-			lista = await sql.query("select id, nome, idtipo, idusuario from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
-		});
+			const lista: PGT[] = await sql.query("select id, nome, idfase, idtipo, idusuario from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
 
-		return ((lista && lista[0]) || null);
+			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
+		});
 	}
 
 	public static async obter2(id: number): Promise<PGT> {
-		let lista: PGT[] = null;
-
-		await app.sql.connect(async (sql) => {
+		return await app.sql.connect(async (sql) => {
 			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT2 ou Fase.Concluido
-			lista = await sql.query("select id, nome, idtipo, idusuario from pgt where id = ? and idfase > ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
-		});
+			const lista: PGT[] = await sql.query("select id, nome, idfase, idtipo, idusuario from pgt where id = ? and idfase > ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
 
-		return ((lista && lista[0]) || null);
+			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
+		});
 	}
 
 	public static async criar(pgt: PGT): Promise<string> {
@@ -125,12 +155,109 @@ class PGT {
 		if ((res = PGT.validar1(pgt, true)))
 			return res;
 
-		await app.sql.connect(async (sql) => {
+		return await app.sql.connect(async (sql) => {
+			await sql.beginTransaction();
+
 			// @@@ Ao criar, o PGT sempre é criado na fase Fase.PGT1
 			await sql.query("insert into pgt (nome, idfase, idtipo, idusuario, criacao) values (?, ?, ?, ?, now())", [pgt.nome, Fase.PGT1, pgt.idtipo, pgt.idusuario]);
-		});
 
-		return res;
+			try {
+				pgt.id = await sql.scalar("select last_insert_id()") as number;
+
+				if (pgt.idsaluno) {
+					for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
+						await sql.query("insert into pgt_aluno (idpgt, idaluno) values (?, ?)", [pgt.id, pgt.idsaluno[i]]);
+				}
+
+				await sql.commit();
+
+				return null;
+			} catch (e) {
+				if (e.code) {
+					switch (e.code) {
+						case "ER_DUP_ENTRY":
+							return "Alunos repetidos no PGT";
+						case "ER_NO_REFERENCED_ROW":
+						case "ER_NO_REFERENCED_ROW_2":
+							return "Aluno não encontrado";
+						default:
+							throw e;
+					}
+				} else {
+					throw e;
+				}
+			}
+		});
+	}
+
+	private static async editarAlunos(sql: app.Sql, pgt: PGT): Promise<string> {
+		try {
+			const antigos: PGTAluno[] = (await sql.query("select id, idpgt, idaluno from pgt_aluno where idpgt = ?", [pgt.id])) || [];
+			const atualizar: PGTAluno[] = [];
+			const novos: PGTAluno[] = [];
+
+			if (pgt.idsaluno) {
+				for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
+					novos.push({
+						id: 0,
+						idpgt: pgt.id,
+						idaluno: pgt.idsaluno[i]
+					});
+			}
+
+			for (let i = antigos.length - 1; i >= 0; i--) {
+				const antigo = antigos[i];
+
+				for (let j = novos.length - 1; j >= 0; j--) {
+					const novo = novos[j];
+					if (antigo.idaluno === novo.idaluno) {
+						antigos.splice(i, 1);
+						novos.splice(j, 1);
+						break;
+					}
+				}
+			}
+
+			// Tenta reaproveitar os id's antigos se precisar adicionar algo novo
+			for (let i = novos.length - 1; i >= 0; i--) {
+				if (!antigos.length)
+					break;
+
+				const antigo = antigos.pop();
+				antigo.idaluno = novos[i].idaluno;
+
+				atualizar.push(antigo);
+
+				novos.splice(i, 1);
+			}
+
+			for (let i = antigos.length - 1; i >= 0; i--)
+				await sql.query("delete from pgt_aluno where id = ?", [antigos[i].id]);
+
+			for (let i = atualizar.length - 1; i >= 0; i--)
+				await sql.query("update pgt_aluno set idaluno = ? where id = ?", [atualizar[i].idaluno, atualizar[i].id]);
+
+			for (let i = novos.length - 1; i >= 0; i--)
+				await sql.query("insert into pgt_aluno (idpgt, idaluno) values (?, ?)", [novos[i].idpgt, novos[i].idaluno]);
+
+			await sql.commit();
+
+			return null;
+		} catch (e) {
+			if (e.code) {
+				switch (e.code) {
+					case "ER_DUP_ENTRY":
+						return "Alunos repetidos no PGT";
+					case "ER_NO_REFERENCED_ROW":
+					case "ER_NO_REFERENCED_ROW_2":
+						return "Aluno não encontrado";
+					default:
+						throw e;
+				}
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	public static async editar1(pgt: PGT): Promise<string> {
@@ -139,11 +266,16 @@ class PGT {
 			return res;
 
 		return await app.sql.connect(async (sql) => {
+			await sql.beginTransaction();
+
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
 			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.idusuario, pgt.id, Fase.PGT1]); 
 
-			return (sql.affectedRows ? null : "PGT não encontrado");
+			if (!sql.affectedRows)
+				return "PGT não encontrado";
+
+			return await PGT.editarAlunos(sql, pgt);
 		});
 	}
 
@@ -153,17 +285,22 @@ class PGT {
 			return res;
 
 		return await app.sql.connect(async (sql) => {
+			await sql.beginTransaction();
+
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT2 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT2, o usuário alteraria a fase do PGT para Fase.Concluido!
 			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ?, idusuario = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.idusuario, pgt.id, Fase.PGT2]);
 
-			return (sql.affectedRows ? null : "PGT não encontrado");
+			if (!sql.affectedRows)
+				return "PGT não encontrado";
+
+			return await PGT.editarAlunos(sql, pgt);
 		});
 	}
 
 	public static async excluir(id: number): Promise<string> {
 		return app.sql.connect(async (sql) => {
-			await sql.query("update pgt set exclusao = now() where id = ?", [id]);
+			await sql.query("update pgt set exclusao = now() where id = ? and exclusao is null", [id]);
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});

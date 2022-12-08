@@ -85,7 +85,7 @@ CREATE TABLE pgt_aluno (
   idpgt int NOT NULL,
   idaluno int NOT NULL,
   PRIMARY KEY (id),
-  KEY pgt_aluno_idpgt_FK_IX (idpgt),
+  UNIQUE KEY pgt_aluno_idpgt_FK_IX (idpgt, idaluno),
   KEY pgt_aluno_idaluno_FK_IX (idaluno),
   CONSTRAINT pgt_aluno_idpgt_FK FOREIGN KEY (idpgt) REFERENCES pgt (id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT pgt_aluno_idaluno_FK FOREIGN KEY (idaluno) REFERENCES aluno (id) ON DELETE CASCADE ON UPDATE CASCADE

@@ -1,0 +1,80 @@
+
+<hr />
+
+<h2 class="my-4">Alunos</h2>
+
+<div class="row">
+	<div class="col-sm-8 mb-3">
+		<div class="cb-search">
+			<select id="idaluno" name="idaluno" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < alunos.length; i++) { %>
+				<option value="<%= alunos[i].id %>"><%= alunos[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+
+	<div class="col-sm-4 mb-3">
+		<button type="button" onclick="adicionarAluno()" class="btn btn-primary btn-block"><i class="fa fa-plus"></i> Adicionar</button>
+	</div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-flush table-striped table-hover no-footer mb-0">
+		<thead>
+			<tr>
+				<th class="col-min"></th>
+				<th>Nome</th>
+			</tr>
+		</thead>
+		<tbody id="tabelabody">
+			<% if (item && item.alunos) { for (let i = 0; i < item.alunos.length; i++) { const aluno = item.alunos[i]; %>
+			<tr>
+				<td class="col-min">
+					<button title="Excluir" type="button" onclick="removerAluno(this)" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>
+					<input type="hidden" name="idsaluno" value="<%= aluno.id %>" />
+				</td>
+				<td>
+					<%= aluno.nome %>
+				</td>
+			</tr>
+			<% } } %>
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+	//<![CDATA[
+	"use strict";
+
+	prepareCbSearch(document.getElementById("idaluno"));
+
+	function adicionarAluno() {
+		if (JsonWebApi.active)
+			return;
+
+		const id = parseInt($("#idaluno").val());
+
+		if (!id)
+			return;
+
+		$("#tabelabody").append(`<tr>
+			<td>
+				<button title="Excluir" type="button" onclick="removerAluno(this)" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>
+				<input type="hidden" name="idsaluno" value="${id}" />
+			</td>
+			<td>
+				${$("#idaluno option:selected").html()}
+			</td>
+		</tr>`);
+	}
+
+	function removerAluno(btn) {
+		if (JsonWebApi.active)
+			return;
+
+		$(btn.parentNode.parentNode).remove();
+	}
+	//]]>
+</script>

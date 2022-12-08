@@ -1,4 +1,5 @@
 ﻿import app = require("teem");
+import Aluno = require("../models/aluno");
 import tipos = require("../models/tipo"); 
 import fases = require("../models/fase");
 import PGT = require("../models/pgt");
@@ -16,7 +17,8 @@ class PGTRoute {
 				item: null,
 				tipos: tipos.lista, 
 				fases: fases.lista,
-				usuarios: await Usuario.listarCombo()
+				usuarios: await Usuario.listarCombo(),
+				alunos: await Aluno.listarCombo()
 			});
 	} 
 
@@ -31,7 +33,8 @@ class PGTRoute {
 				item: null,
 				tipos: tipos.lista, 
 				fases: fases.lista,
-				usuarios: await Usuario.listarCombo()
+				usuarios: await Usuario.listarCombo(),
+				alunos: await Aluno.listarCombo()
 			});
 	}
 
@@ -51,7 +54,8 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista,
 					fases: fases.lista,
-					usuarios: await Usuario.listarCombo()
+					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo()
 				});
 		}
 	} 
@@ -72,7 +76,8 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista,
 					fases: fases.lista,
-					usuarios: await Usuario.listarCombo()
+					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo()
 				});
 		}
 	}
@@ -93,7 +98,8 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista, 
 					fases: fases.lista,
-					usuarios: await Usuario.listarCombo()
+					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo()
 				});
 		}
 	} 
@@ -114,7 +120,8 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista, 
 					fases: fases.lista,
-					usuarios: await Usuario.listarCombo()
+					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo()
 				});
 		}
 	}

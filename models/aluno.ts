@@ -37,13 +37,15 @@ class Aluno {
 	}
 
 	public static async listar(): Promise<Aluno[]> {
-		let lista: Aluno[] = null;
-
-		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, ra, email, nome, telefone from aluno") as Aluno[];
+		return await app.sql.connect(async (sql) => {
+			return await sql.query("select id, ra, email, nome, telefone from aluno") || [];
 		});
+	}
 
-		return (lista || []);
+	public static async listarCombo(): Promise<Aluno[]> {
+		return await app.sql.connect(async (sql) => {
+			return await sql.query("select a.id, concat(a.ra, ' - ', a.nome) nome from aluno a order by a.nome asc") || [];
+		});
 	}
 
 	public static async obter(id: number): Promise<Aluno> {

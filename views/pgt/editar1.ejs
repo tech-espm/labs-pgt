@@ -5,38 +5,45 @@
 	<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
 </div>
 
-<div class="form-group">
-	<label for="idtipo">Tipo</label>
-	<select id="idtipo" name="idtipo" class="form-control" size="1">
-		<option value="">Selecione...</option>
-		<% for (let i = 0; i < tipos.length; i++) { %>
-		<option value="<%= tipos[i].id %>" <%-((item && item.idtipo === tipos[i].id) ? 'selected="selected"' : '') %>><%= tipos[i].nome %></option>
-		<% } %>
-	</select>
-</div> 
+<div class="row">
+	<div class="col-sm-6 col-md-3">
+		<div class="form-group">
+			<label for="idtipo">Tipo</label>
+			<select id="idtipo" name="idtipo" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < tipos.length; i++) { %>
+				<option value="<%= tipos[i].id %>" <%-((item && item.idtipo === tipos[i].id) ? 'selected="selected"' : '') %>><%= tipos[i].nome %></option>
+				<% } %>
+			</select>
+		</div> 
+	</div> 
 
+	<div class="col-sm-6 col-md-3">
+		<div class="form-group">
+			<label for="idfase">Fase</label>
+			<select id="idfase" name="idfase" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < fases.length; i++) { %>
+				<option value="<%= fases[i].id %>" <%-((item && item.idfase === fases[i].id) ? 'selected="selected"' : '') %>><%= fases[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
 
-<div class="form-group">
-	<label for="idfase">Fase</label>
-	<select id="idfase" name="idfase" class="form-control" size="1">
-		<option value="">Selecione...</option>
-		<% for (let i = 0; i < fases.length; i++) { %>
-		<option value="<%= fases[i].id %>" <%-((item && item.idfase === fases[i].id) ? 'selected="selected"' : '') %>><%= fases[i].nome %></option>
-		<% } %>
-	</select>
+	<div class="col-md-6">
+		<div class="form-group">
+			<label for="idusuario">Professor</label>
+			<select id="idusuario" name="idusuario" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < usuarios.length; i++) { %>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.idusuario === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
 </div>
 
-<div class="form-group mb-5">
-	<label for="idusuario">Professor</label>
-	<select id="idusuario" name="idusuario" class="form-control" size="1">
-		<option value="">Selecione...</option>
-		<% for (let i = 0; i < usuarios.length; i++) { %>
-		<option value="<%= usuarios[i].id %>" <%-((item && item.idusuario === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
-		<% } %>
-	</select>
-</div>
-
-
+<%- include("editarAlunos") %>
 
 <%- contentFor("scripts") %>
 <script type="text/javascript">
@@ -78,6 +85,7 @@
 			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
+					$("#tabelabody").empty();
 					Swal.success("PGT 1 criado com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
