@@ -893,6 +893,9 @@ window.intToColor = function (i) {
 	return "#" + s.substr(s.length - 6);
 };
 window.relativeLuminance = function (rgb) {
+	if ((typeof rgb) === "string")
+		rgb = parseInt(rgb.replace("#", ""), 16);
+	rgb |= 0;
 	if (rgb < 0)
 		return 1;
 	//http://www.w3.org/TR/2007/WD-WCAG20-TECHS-20070517/Overview.html#G18
@@ -906,7 +909,7 @@ window.relativeLuminance = function (rgb) {
 	return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
 };
 window.textColorForBackground = function (i) {
-	return (relativeLuminance(i) < 0.4 ? "#fff" : "#000");
+	return (relativeLuminance(i) < 0.4) ? "#ffffff" : "#000000";
 };
 window.fixUrlOnBlur = function (input) {
 	var i = _(input);
@@ -1956,8 +1959,8 @@ window.BlobDownloader = {
 
 		select.addEventListener("change", function () {
 			var i, nextValue = emptyValue, opt, opts = optsCallback(select.options.selectedIndex, select.value);
-			while (nextSelect.childNodes.length > 1)
-				nextSelect.removeChild(nextSelect.childNodes[1]);
+			while (nextSelect.children.length > 1)
+				nextSelect.removeChild(nextSelect.children[1]);
 			if (opts && opts.length) {
 				for (i = 0; i < opts.length; i++) {
 					opt = document.createElement("option");
@@ -2308,7 +2311,8 @@ window.prepareMultiselect = function (id, options) {
 		btn.setAttribute("id", select.getAttribute("id"));
 		btn.setAttribute("type", "button");
 		btn.className = (options && options.className) || "btn btn-primary btn-block";
-		btn.textContent = "Seleção: Nada";
+		btn.setAttribute("data-label", (options && options.label) || "Seleção");
+		btn.textContent = btn.getAttribute("data-label") + ": Nada";
 
 		if (select.parentNode)
 			select.parentNode.replaceChild(btn, select);
@@ -2316,10 +2320,11 @@ window.prepareMultiselect = function (id, options) {
 		for (let i = opts.length - 1; i >= 0; i--)
 			items[i] = {
 				id: opts[i].getAttribute("value"),
-				text: opts[i].textContent
+				text: opts[i].textContent,
+				backgroundColor: opts[i].style.backgroundColor,
+				color: opts[i].style.color
 			};
 
-		
 		opts = null;
 		items = null;
 
@@ -2334,7 +2339,7 @@ window.prepareMultiselect = function (id, options) {
 				html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div>';
 
 			for (let i = 0; i < items.length; i++)
-				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + encode(items[i].text) + '</button>';
+				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + ((items[i].color || items[i].backgroundColor) ? ('<span class="badge" style="font-size: 1em;' + (items[i].color ? ("color:" + items[i].color + ";") : "") + (items[i].backgroundColor ? ("background-color:" + items[i].backgroundColor + ";") : "") + '">' + encode(items[i].text) + '</span> ') : encode(items[i].text)) + '</button>';
 
 			for (let i in selection)
 				tempSelection[i] = true;
@@ -2392,7 +2397,7 @@ window.prepareMultiselect = function (id, options) {
 				preConfirm: function () {
 					btn.selection = tempSelection;
 					btn.selectionCount = tempSelectionCount;
-					btn.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+					btn.textContent = btn.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
 					return true;
 				}
 			});
@@ -2457,7 +2462,7 @@ window.setMultiselectSelection = function (id, values) {
 
 		i$.selection = tempSelection;
 		i$.selectionCount = tempSelectionCount;
-		i$.textContent = "Seleção: " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+		i$.textContent = i$.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
 	}
 };
 
