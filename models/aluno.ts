@@ -38,7 +38,7 @@ class Aluno {
 
 	public static async listar(): Promise<Aluno[]> {
 		return await app.sql.connect(async (sql) => {
-			return await sql.query("select id, ra, email, nome, telefone from aluno") || [];
+			return await sql.query("select id, email, nome, telefone from conta") || [];
 		});
 	}
 
@@ -65,11 +65,11 @@ class Aluno {
 
 		await app.sql.connect(async (sql) => {
 			try {
-				await sql.query("insert into aluno (ra, email, nome, telefone) values (?, ?, ?, ?)", [aluno.ra, aluno.email, aluno.nome, aluno.telefone]);
+				await sql.query("insert into conta (email, nome, perfil_id, telefone) values (?, ?, ?, ?)", [aluno.email, aluno.nome, 3, aluno.telefone]);
 				return null;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
-					return `O RA ${aluno.ra} já existe`;
+					return `O ${aluno.email} já existe`;
 				throw e;
 			}
 		});

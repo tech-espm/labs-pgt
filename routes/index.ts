@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import appsettings = require("../appsettings");
-import Usuario = require("../models/usuario");
+import Usuario = require("../models/Conta");
 
 class IndexRoute {
 	public static async index(req: app.Request, res: app.Response) {
@@ -10,7 +10,7 @@ class IndexRoute {
 		else
 			res.render("index/index", {
 				layout: "layout-sem-form",
-				titulo: "Olá, "+Usuario.name,
+				titulo: "Olá, "+ Usuario.name,
 				usuario: u
 			});
 	}

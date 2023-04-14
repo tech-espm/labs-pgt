@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import Perfil = require("../../enums/perfil");
-import Usuario = require("../../models/usuario");
+import Usuario = require("../../models/Conta");
 
 class UsuarioApiRoute {
 	@app.http.post()

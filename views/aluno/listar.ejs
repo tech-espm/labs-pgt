@@ -12,7 +12,6 @@
 			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return '<a target="_blank" title="Editar" href="<%- root %>/aluno/editar?id=' + row.id + '" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a> <button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>'; } },
 			{ title: "E-mail", render: encode, data: "email" },
 			{ title: "Nome", render: encode, data: "nome" },
-			{ title: "RA", type: "number", data: "ra" },
 			{ title: "Telefone", render: encode, data: "telefone" }
 		],
 		data: <%- JSON.stringify(lista) %>,

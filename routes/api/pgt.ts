@@ -1,7 +1,7 @@
 ﻿import app = require("teem");
 import Perfil = require("../../enums/perfil");
 import PGT = require("../../models/pgt"); 
-import Usuario = require("../../models/usuario");
+import Usuario = require("../../models/Conta");
 
 class PGTApiRoute {
 
