@@ -34,7 +34,7 @@ class Usuario {
 			let usuario: Usuario = null;
 
 			await app.sql.connect(async (sql) => {
-				let rows = await sql.query("select id, email, nome, idperfil, token from usuario where id = ?", [id]);
+				let rows = await sql.query("select id, email, nome, perfil_id, token from conta where id = ?", [id]);
 				let row: any;
 
 				if (!rows || !rows.length || !(row = rows[0]))
@@ -81,7 +81,7 @@ class Usuario {
 			if (json.erro)
 				return [json.erro, null];
 
-			const usuarios: Usuario[] = await sql.query("select id, email, nome, idperfil from usuario where email = ? and exclusao is null", [json.dados.email]);
+			const usuarios: Usuario[] = await sql.query("select id, email, nome, perfil_id from conta where email = ? and exclusao is null", [json.dados.email]);
 			let usuario: Usuario;
 
 			if (!usuarios || !usuarios.length || !(usuario = usuarios[0]))
@@ -89,7 +89,7 @@ class Usuario {
 
 			let [token, cookieStr] = Usuario.gerarTokenCookie(usuario.id);
 
-			await sql.query("update usuario set token = ? where id = ?", [token, usuario.id]);
+			await sql.query("update conta set token = ? where id = ?", [token, usuario.id]);
 
 			usuario.admin = (usuario.idperfil === Perfil.Administrador);
 
@@ -101,7 +101,7 @@ class Usuario {
 
 	public static async efetuarLogout(usuario: Usuario, res: app.Response): Promise<void> {
 		await app.sql.connect(async (sql) => {
-			await sql.query("update usuario set token = null where id = ?", [usuario.id]);
+			await sql.query("update conta set token = null where id = ?", [usuario.id]);
 
 			res.cookie(appsettings.cookie, "", { expires: new Date(0), httpOnly: true, path: "/", secure: appsettings.cookieSecure });
 		});
@@ -113,7 +113,7 @@ class Usuario {
 			return "Nome inválido";
 
 		await app.sql.connect(async (sql) => {
-			await sql.query("update usuario set nome = ? where id = ?", [nome, usuario.id]);
+			await sql.query("update conta set nome = ? where id = ?", [nome, usuario.id]);
 		});
 
 		return null;
@@ -150,7 +150,7 @@ class Usuario {
 		let lista: Usuario[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select u.id, u.email, u.nome, p.nome perfil, date_format(u.criacao, '%d/%m/%Y') criacao from usuario u inner join perfil p on p.id = u.idperfil where u.exclusao is null order by u.email asc") as Usuario[];
+			lista = await sql.query("select u.id, u.email, u.nome, p.nome perfil, date_format(u.criacao, '%d/%m/%Y') criacao from conta u inner join perfil p on p.id = u.perfil_id where u.exclusao is null order by u.email asc") as Usuario[];
 		});
 
 		return (lista || []);
@@ -160,7 +160,7 @@ class Usuario {
 		let lista: Usuario[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, nome from usuario where exclusao is null order by nome asc") as Usuario[];
+			lista = await sql.query("select id, nome from conta where exclusao is null order by nome asc") as Usuario[];
 		});
 
 		return (lista || []);
@@ -170,7 +170,7 @@ class Usuario {
 		let lista: Usuario[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, email, nome, idperfil, date_format(criacao, '%d/%m/%Y') criacao from usuario where id = ?", [id]) as Usuario[];
+			lista = await sql.query("select id, email, nome, perfil_id, date_format(criacao, '%d/%m/%Y') criacao from conta where id = ?", [id]) as Usuario[];
 		});
 
 		return ((lista && lista[0]) || null);
@@ -183,7 +183,7 @@ class Usuario {
 
 		await app.sql.connect(async (sql) => {
 			try {
-				await sql.query("insert into usuario (email, nome, idperfil, criacao) values (?, ?, ?, now())", [usuario.email, usuario.nome, usuario.idperfil]);
+				await sql.query("insert into conta (email, nome, perfil_id, criacao) values (?, ?, ?, now())", [usuario.email, usuario.nome, usuario.idperfil]);
 			} catch (e) {
 				if (e.code) {
 					switch (e.code) {
@@ -215,7 +215,7 @@ class Usuario {
 			return "Não é possível editar o usuário administrador principal";
 
 		return await app.sql.connect(async (sql) => {
-			await sql.query("update usuario set nome = ?, idperfil = ? where id = ?", [usuario.nome, usuario.idperfil, usuario.id]);
+			await sql.query("update conta set nome = ?, idperfil = ? where id = ?", [usuario.nome, usuario.idperfil, usuario.id]);
 
 			return (sql.affectedRows ? null : "Usuário não encontrado");
 		});
@@ -228,7 +228,7 @@ class Usuario {
 		return app.sql.connect(async (sql) => {
 			// Utilizar substr(email, instr(email, ':') + 1) para remover o prefixo, caso precise desfazer a exclusão (caso
 			// não exista o prefixo, instr() vai retornar 0, que, com o + 1, faz o substr() retornar a própria string inteira)
-			await sql.query("update usuario set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ?", [id]);
+			await sql.query("update conta set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ?", [id]);
 
 			return (sql.affectedRows ? null : "Usuário não encontrado");
 		});
