@@ -1,8 +1,10 @@
 // Manter sincronizado com models/fase.ts e sql/setup.sql
 enum Fase {
-	PGT1 = 1,
-	PGT2 = 2,
-	Concluido = 3
+	Qualificador = 1,
+	Defesa1 = 2,
+	Defesa2 = 3,
+	Orientador = 4,
+    Aluno = 5
 };
 
 export = Fase;

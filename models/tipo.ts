@@ -4,9 +4,9 @@ import Tipo = require("../enums/tipo");
 
 // Manter sincronizado com enums/tipo.ts e sql/script.sql
 const tipos = new ListaNomeada([
-	new ItemNomeado(Tipo.PE, "Projeto Empreendor"),
-	new ItemNomeado(Tipo.PA, "Projeto Acadêmico"),
-	new ItemNomeado(Tipo.EC, "Estudo de Caso")
+	new ItemNomeado(Tipo.Empreeendimento, "Projeto Empreendor"),
+	new ItemNomeado(Tipo.Pesquisa, "Projeto Acadêmico"),
+	new ItemNomeado(Tipo.Caso, "Estudo de Caso")
 ]);
 
 export = tipos;
