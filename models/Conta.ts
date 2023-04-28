@@ -158,7 +158,7 @@ class Conta {
 		let lista: Conta[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, nome from conta where exclusao is null order by nome asc") as Conta[];
+			lista = await sql.query("select id, nome from conta where exclusao is null and perfil_id != 3 order by nome asc") as Conta[];
 		});
 
 		return (lista || []);

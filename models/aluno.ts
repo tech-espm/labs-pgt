@@ -44,7 +44,7 @@ class Aluno {
 
 	public static async listarCombo(): Promise<Aluno[]> {
 		return await app.sql.connect(async (sql) => {
-			return await sql.query("select c.id, concat(c.ra, ' - ', c.nome) nome from conta where c.perfil_id = 3 order by c.nome asc") || [];
+			return await sql.query("select c.id, concat(c.registro, ' - ', c.nome) nome from conta c where c.perfil_id = 3 order by c.nome asc") || [];
 		});
 	}
 
