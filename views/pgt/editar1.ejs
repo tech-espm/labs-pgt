@@ -32,11 +32,11 @@
 
 	<div class="col-md-6">
 		<div class="form-group">
-			<label for="idusuario">Professor</label>
-			<select id="idusuario" name="idusuario" class="form-control" size="1">
+			<label for="idOrientador">Professor</label>
+			<select id="idOrientador" name="idOrientador" class="form-control" size="1">
 				<option value="">Selecione...</option>
 				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.idusuario === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.idOrientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 				<% } %>
 			</select>
 		</div>
@@ -61,7 +61,7 @@
 			idfase: {
 				required: true
 			}, 
-			idusuario: {
+			idOrientador: {
 				required: true
 			}
 		}, 

@@ -1,5 +1,5 @@
 // Manter sincronizado com models/fase.ts e sql/setup.sql
-enum Fase {
+enum Funcao {
 	Qualificador = 1,
 	Defesa1 = 2,
 	Defesa2 = 3,
@@ -7,4 +7,4 @@ enum Fase {
     Aluno = 5
 };
 
-export = Fase;
+export = Funcao;
