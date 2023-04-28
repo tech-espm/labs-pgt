@@ -124,13 +124,15 @@ class PGT {
 					p.tipo_id,
 					t.nome as tipo,
 					date_format(p.criacao, '%d/%m/%Y') criacao,
-					(?) as idOrientador,
+					c.nome as orientador,
 					${PGT.subqueryAlunos}
 				from pgt p
 				inner join tipo_pgt t on t.id = p.tipo_id
 				inner join fase f on f.id = p.fase_id
-				where p.fase_id = ?`, 
-				[idOrientador, Fase.PGT1]) as PGT[];
+				inner join conta_pgt cp on cp.pgt_id = pgt.id
+				inner join conta c on cp.conta_id = c.id
+				where p.fase_id = ? and c.id = ?`, 
+				[Fase.PGT1, idOrientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select
@@ -141,12 +143,13 @@ class PGT {
 				p.tipo_id,
 				t.nome as tipo,
 				date_format(p.criacao, '%d/%m/%Y') criacao,
-				cp.conta_id as idOrientador,
+				c.nome as orientador,
 				${PGT.subqueryAlunos}
 			from pgt p
 			inner join tipo_pgt t on t.id = p.tipo_id
 			inner join fase f on f.id = p.fase_id
 			inner join conta_pgt cp on cp.pgt_id = p.id
+			inner join conta c on c.id = cp.conta_id
 			where p.fase_id = ? and cp.funcao_id = ?`, 
 			[Fase.PGT1, Funcao.Orientador]) as PGT[];
 		});
