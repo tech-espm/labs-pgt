@@ -19,6 +19,7 @@ interface PGT {
 	criacao: string;
 	alunos?: any[];
 	idOrientador?: any;
+	nomeOrientador?: string;
 	idQualificador?: any;
 	idDefesa1?: any;
 	idDefesa2?: any;
@@ -124,7 +125,8 @@ class PGT {
 					p.tipo_id,
 					t.nome as tipo,
 					date_format(p.criacao, '%d/%m/%Y') criacao,
-					c.nome as orientador,
+					c.nome as nomeOrientador,
+					c.id as idOrientador,
 					${PGT.subqueryAlunos}
 				from pgt p
 				inner join tipo_pgt t on t.id = p.tipo_id
@@ -143,7 +145,8 @@ class PGT {
 				p.tipo_id,
 				t.nome as tipo,
 				date_format(p.criacao, '%d/%m/%Y') criacao,
-				c.nome as orientador,
+				c.nome as nomeOrientador,
+				c.id as idOrientador,
 				${PGT.subqueryAlunos}
 			from pgt p
 			inner join tipo_pgt t on t.id = p.tipo_id
