@@ -11,7 +11,7 @@
 		deferRender: true,
 		columns: [
 			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return '<a target="_blank" title="Editar" href="<%- root %>/pgt/editar?id=' + row.id + '" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a> <button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>'; } },
-			{ title: "Nome", render: encode, data: "nome" },
+			{ title: "Nome", render: encode, data: "nome", render: function (v, type, row) { return `<a target="_blank" href="<%- root %>/pgt/detalhar?id=${row.id}" class="btn btn-sm btn-outline-primary">${row.nome}</a>`} },
 			{ title: "Tipo", render: encode, data: "tipo" }, 
 			{ title: "Fase", render: encode, data: "fase" }, 
 			{ title: "Orientador", render: encode, data: "nomeOrientador" },
