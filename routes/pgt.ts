@@ -111,6 +111,8 @@ class PGTRoute {
 					titulo: "PGT - " + item.nome,
 					usuario: u,
 					item: item,
+					tipos: tipos.lista,
+					fases: fases.lista,
 					usuarios: await Usuario.listarCombo(),
 					alunos: await Aluno.listarCombo()
 				});

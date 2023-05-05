@@ -1,1 +1,65 @@
-<%= item.nome %>
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-3">
+                        <h3>Fase do PGT</h3>
+                        <% for (let i = 0; i < fases.length; i++) { %>
+                            <%-((item.idfase === fases[i].id) ? '<h4>' + fases[i].nome + '</h4>' : '') %>
+                        <% } %>
+                    </div>
+                    <div class="col-3">
+                        <h3>Semestre do PGT</h3>
+                        <%- Number.parseInt(item.criacao.split("/")[1]) > 6? "2º semestre": "1º semestre" %>
+                    </div>
+                    <div class="col-3">
+                        <h3>Tipo do PGT</h3>
+                        <% for (let i = 0; i < tipos.length; i++) { %>
+                            <%-((item.idtipo === tipos[i].id) ? '<h4>' + tipos[i].nome + '</h4>' : '') %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="row">
+                    Tabela de atas
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <h3>Alunos</h3>
+                </div>
+                <div class="row">
+                    <h3>Bancas e notas</h3>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-6">
+                                Qualificação
+                            </div>
+                            <div class="col-6">
+                                Defesa
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                Editar qualificação
+                            </div>
+                            <div class="col-6">
+                                Editar defesa
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                Nota final qualificação
+                            </div>
+                            <div class="col-6">
+                                Nota final defesa
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

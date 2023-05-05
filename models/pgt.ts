@@ -1,7 +1,4 @@
 ﻿import app = require("teem");
-import appsettings = require("../appsettings");
-import Fase = require("../enums/fase");
-import Validacao = require("../utils/validacao");
 import Funcao = require("../enums/funcao");
 
 interface PGTAluno {
@@ -93,7 +90,7 @@ class PGT {
 					f.nome as fase,
 					p.tipo_id,
 					t.nome as tipo,
-					date_format(p.criacao, '%d/%m/%Y') criacao,
+					date_format(p.criacao, '%d/%m/%Y') as criacao,
 					c.nome as nomeOrientador,
 					c.id as idOrientador,
 					${PGT.subqueryAlunos}
@@ -145,10 +142,16 @@ class PGT {
 	public static async obter(id: number): Promise<PGT> {
 		return await app.sql.connect(async (sql) => {
 			const lista: PGT[] = await sql.query(`
-			select id, nome, fase_id as idfase, tipo_id as idtipo, cp.conta_id as idorientador 
-			from pgt 
-			inner join conta_pgt cp on cp.pgt_id = id
-			where id = ? and cp.funcao_id = ?
+			select 
+				p.id, 
+				p.nome, 
+				p.fase_id as idfase, 
+				p.tipo_id as idtipo, 
+				cp.conta_id as idorientador,
+				date_format(p.criacao, '%d/%m/%Y') as criacao
+			from pgt p
+			inner join conta_pgt cp on cp.pgt_id = p.id
+			where p.id = ? and cp.funcao_id = ?
 			`, [id, Funcao.Orientador]) as PGT[];
 
 			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
