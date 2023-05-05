@@ -77,8 +77,6 @@ class PGT {
 		if (isNaN(pgt.idOrientador = parseInt(pgt.idOrientador as any)))
 			return "Orientador inválido";
 
-		// @@@ Validar o restante dos campos para a fase 1 do PGT
-
 		return PGT.validarAlunos(pgt);
 	}
 
@@ -86,7 +84,6 @@ class PGT {
 		let lista: PGT[] = null;
 
 		await app.sql.connect(async (sql) => {
-			// @@@ Listar apenas PGT's da fase 1
 			if (idOrientador)
 				lista = await sql.query(`
 				select
@@ -105,8 +102,8 @@ class PGT {
 				inner join fase f on f.id = p.fase_id
 				inner join conta_pgt cp on cp.pgt_id = pgt.id
 				inner join conta c on cp.conta_id = c.id
-				where p.fase_id = ? and c.id = ?`, 
-				[Fase.PGT1, idOrientador]) as PGT[];
+				where c.id = ?`, 
+				[idOrientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select
@@ -125,8 +122,8 @@ class PGT {
 			inner join fase f on f.id = p.fase_id
 			inner join conta_pgt cp on cp.pgt_id = p.id
 			inner join conta c on c.id = cp.conta_id
-			where p.fase_id = ? and cp.funcao_id = ?`, 
-			[Fase.PGT1, Funcao.Orientador]) as PGT[];
+			where cp.funcao_id = ?`, 
+			[Funcao.Orientador]) as PGT[];
 		});
 
 		return (lista || []);
@@ -134,15 +131,25 @@ class PGT {
 
 	private static async obterAlunos(sql: app.Sql, pgt: PGT): Promise<PGT> {
 		if (pgt)
-			pgt.alunos = (await sql.query("select a.id, concat(a.ra, ' - ', a.nome) nome from conta_pgt pa inner join aluno a on a.id = pa.idaluno where pa.idpgt = ? order by a.nome asc", [pgt.id])) || [];
+			pgt.alunos = (await sql.query(`
+			select c.id, concat(c.registro, ' - ', c.nome) nome 
+			from conta_pgt cp
+			inner join conta c on c.id = cp.conta_id
+			where cp.pgt_id = ? and cp.funcao_id = ?
+			order by c.nome asc
+			`, [pgt.id, Funcao.Aluno])) || [];
 
 		return pgt;
 	}
 
 	public static async obter(id: number): Promise<PGT> {
 		return await app.sql.connect(async (sql) => {
-			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT1
-			const lista: PGT[] = await sql.query("select id, nome, idfase, idtipo, idusuario from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
+			const lista: PGT[] = await sql.query(`
+			select id, nome, fase_id as idfase, tipo_id as idtipo, cp.conta_id as idorientador 
+			from pgt 
+			inner join conta_pgt cp on cp.pgt_id = id
+			where id = ? and cp.funcao_id = ?
+			`, [id, Funcao.Orientador]) as PGT[];
 
 			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
 		});
@@ -156,7 +163,6 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
-			// @@@ Ao criar, o PGT sempre é criado na fase Fase.PGT1
 			try {
 
 				await sql.query("insert into pgt (nome, fase_id, tipo_id, criacao) values (?, ?, ?, now())", 
@@ -195,7 +201,7 @@ class PGT {
 
 	private static async editarAlunos(sql: app.Sql, pgt: PGT): Promise<string> {
 		try {
-			const antigos: PGTAluno[] = (await sql.query("select conta_id, pgt_id from conta_pgt where pgt_id = ? and funcao_id = ?", [pgt.id, Funcao.Aluno])) || [];
+			const antigos: PGTAluno[] = (await sql.query("select conta_pgt_id, conta_id, pgt_id from conta_pgt where pgt_id = ? and funcao_id = ?", [pgt.id, Funcao.Aluno])) || [];
 			const atualizar: PGTAluno[] = [];
 			const novos: PGTAluno[] = [];
 
@@ -235,13 +241,13 @@ class PGT {
 			}
 
 			for (let i = antigos.length - 1; i >= 0; i--)
-				await sql.query("delete from conta_pgt where id = ?", [antigos[i].id]);
+				await sql.query("delete from conta_pgt where conta_pgt_id = ?", [antigos[i].id]);
 
 			for (let i = atualizar.length - 1; i >= 0; i--)
-				await sql.query("update conta_pgt set idaluno = ? where id = ?", [atualizar[i].idaluno, atualizar[i].id]);
+				await sql.query("update conta_pgt set conta_id = ? where conta_pgt_id = ?", [atualizar[i].idaluno, atualizar[i].id]);
 
 			for (let i = novos.length - 1; i >= 0; i--)
-				await sql.query("insert into conta_pgt (idpgt, idaluno) values (?, ?)", [novos[i].idpgt, novos[i].idaluno]);
+				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", [novos[i].idpgt, novos[i].idaluno, Funcao.Aluno]);
 
 			await sql.commit();
 
@@ -271,9 +277,8 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
-			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
-			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
-			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.id, Fase.PGT1]); 
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ? where id = ?", 
+				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.id]); 
 
 			if (!sql.affectedRows)
 				return "PGT não encontrado";

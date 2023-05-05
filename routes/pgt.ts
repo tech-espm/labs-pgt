@@ -70,7 +70,7 @@ class PGTRoute {
 			if (isNaN(id) || !(item = await PGT.obter(id)))
 				res.render("index/nao-encontrado", { usuario: u });
 			else
-				res.render("pgt/editar1prototipo", {
+				res.render("pgt/editarPrototipo", {
 					titulo: "Editar PGT",
 					usuario: u,
 					item: item,

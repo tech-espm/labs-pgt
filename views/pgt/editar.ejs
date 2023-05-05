@@ -86,7 +86,9 @@
 				if (response.success) {
 					resetForm("#form");
 					$("#tabelabody").empty();
-					Swal.success("PGT 1 criado com sucesso! " + emoji.happy);
+					Swal.success("PGT 1 criado com sucesso! " + emoji.happy).then(() => {
+						window.location.href = "../listar"
+					});
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}
