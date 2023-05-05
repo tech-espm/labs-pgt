@@ -54,7 +54,7 @@ class PGT {
 		return null;
 	}
 
-	private static validar1(pgt: PGT, criacao: boolean): string | null {
+	private static validar(pgt: PGT, criacao: boolean): string | null {
 		if (!pgt)
 			return "PGT inválido";
 
@@ -82,35 +82,7 @@ class PGT {
 		return PGT.validarAlunos(pgt);
 	}
 
-	private static validar2(pgt: PGT, criacao: boolean): string | null {
-		if (!pgt)
-			return "PGT inválido";
-
-		pgt.id = parseInt(pgt.id as any);
-
-		if (!criacao) {
-			if (isNaN(pgt.id))
-				return "Id inválido";
-		}
-
-		if (!pgt.nome || !(pgt.nome = pgt.nome.normalize().trim()) || pgt.nome.length > 100)
-			return "Nome inválido"; 
-
-		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
-			return "Tipo inválido";
-
-		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
-			return "Fase inválida";
-
-		if (isNaN(pgt.idOrientador = parseInt(pgt.idOrientador as any)))
-			return "Orientador inválido";
-
-		// @@@ Validar o restante dos campos para a fase 2 do PGT
-
-		return PGT.validarAlunos(pgt);
-	}
-
-	public static async listar1(idOrientador?: number): Promise<PGT[]> {
+	public static async listar(idOrientador?: number): Promise<PGT[]> {
 		let lista: PGT[] = null;
 
 		await app.sql.connect(async (sql) => {
@@ -160,20 +132,6 @@ class PGT {
 		return (lista || []);
 	}
 
-	public static async listar2(idusuario?: number): Promise<PGT[]> {
-		let lista: PGT[] = null;
-
-		await app.sql.connect(async (sql) => {
-			// @@@ Listar apenas PGT's da fase Fase.PGT2 ou Fase.Concluido (concluídos também entram aqui)
-			if (idusuario)
-				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.idusuario = ? and p.exclusao is null`, [Fase.PGT1, idusuario]) as PGT[];
-			else
-				lista = await sql.query(`select p.id, p.nome, p.idtipo, t.nome tipo, u.nome usuario, date_format(p.criacao, '%d/%m/%Y') criacao, ${PGT.subqueryAlunos} from pgt p inner join tipo t on t.id = p.idtipo inner join usuario u on u.id = p.idusuario where p.idfase > ? and p.exclusao is null`, [Fase.PGT1]) as PGT[];
-		});
-
-		return (lista || []);
-	}
-
 	private static async obterAlunos(sql: app.Sql, pgt: PGT): Promise<PGT> {
 		if (pgt)
 			pgt.alunos = (await sql.query("select a.id, concat(a.ra, ' - ', a.nome) nome from conta_pgt pa inner join aluno a on a.id = pa.idaluno where pa.idpgt = ? order by a.nome asc", [pgt.id])) || [];
@@ -181,7 +139,7 @@ class PGT {
 		return pgt;
 	}
 
-	public static async obter1(id: number): Promise<PGT> {
+	public static async obter(id: number): Promise<PGT> {
 		return await app.sql.connect(async (sql) => {
 			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT1
 			const lista: PGT[] = await sql.query("select id, nome, idfase, idtipo, idusuario from pgt where id = ? and idfase = ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
@@ -190,18 +148,9 @@ class PGT {
 		});
 	}
 
-	public static async obter2(id: number): Promise<PGT> {
-		return await app.sql.connect(async (sql) => {
-			// @@@ Obter o PGT apenas se ele estiver na fase Fase.PGT2 ou Fase.Concluido
-			const lista: PGT[] = await sql.query("select id, nome, idfase, idtipo, idusuario from pgt where id = ? and idfase > ? and exclusao is null", [id, Fase.PGT1]) as PGT[];
-
-			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
-		});
-	}
-
 	public static async criar(pgt: PGT): Promise<string> {
 		let res: string;
-		if ((res = PGT.validar1(pgt, true)))
+		if ((res = PGT.validar(pgt, true)))
 			return res;
 
 		return await app.sql.connect(async (sql) => {
@@ -211,7 +160,7 @@ class PGT {
 			try {
 
 				await sql.query("insert into pgt (nome, fase_id, tipo_id, criacao) values (?, ?, ?, now())", 
-				[pgt.nome, Fase.PGT1, pgt.idtipo]);
+				[pgt.nome, pgt.idfase, pgt.idtipo]);
 
 				pgt.id = await sql.scalar("select last_insert_id()") as number;
 
@@ -314,9 +263,9 @@ class PGT {
 		}
 	}
 
-	public static async editar1(pgt: PGT): Promise<string> {
+	public static async editar(pgt: PGT): Promise<string> {
 		let res: string;
-		if ((res = PGT.validar1(pgt, false)))
+		if ((res = PGT.validar(pgt, false)))
 			return res;
 
 		return await app.sql.connect(async (sql) => {
@@ -325,25 +274,6 @@ class PGT {
 			// @@@ Validar se esse PGT ainda está na fase Fase.PGT1 antes de atualizar!
 			// Em algum momento da edição da fase Fase.PGT1, o usuário alteraria a fase do PGT para Fase.PGT2!
 			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.id, Fase.PGT1]); 
-
-			if (!sql.affectedRows)
-				return "PGT não encontrado";
-
-			return await PGT.editarAlunos(sql, pgt);
-		});
-	}
-
-	public static async editar2(pgt: PGT): Promise<string> {
-		let res: string;
-		if ((res = PGT.validar2(pgt, false)))
-			return res;
-
-		return await app.sql.connect(async (sql) => {
-			await sql.beginTransaction();
-
-			// @@@ Validar se esse PGT ainda está na fase Fase.PGT2 antes de atualizar!
-			// Em algum momento da edição da fase Fase.PGT2, o usuário alteraria a fase do PGT para Fase.Concluido!
-			await sql.query("update pgt set nome = ?, idtipo = ?, idfase = ? where id = ? and idfase = ?", [pgt.nome, pgt.idtipo, pgt.idfase, pgt.id, Fase.PGT2]);
 
 			if (!sql.affectedRows)
 				return "PGT não encontrado";

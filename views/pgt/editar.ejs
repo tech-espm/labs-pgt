@@ -73,7 +73,7 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/editar1", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
 				if (response.success)
 					Swal.success("PGT 1 alterado com sucesso! " + emoji.happy);
 				else
