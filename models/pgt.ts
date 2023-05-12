@@ -104,7 +104,7 @@ class PGT {
 				inner join fase f on f.id = p.fase_id
 				inner join conta_pgt cp on cp.pgt_id = pgt.id
 				inner join conta c on cp.conta_id = c.id
-				where c.id = ?`, 
+				where c.id = ? and p.exclusao is null`, 
 				[idOrientador]) as PGT[];
 			else
 				lista = await sql.query(`
@@ -127,7 +127,7 @@ class PGT {
 			inner join conta_pgt cp on cp.pgt_id = p.id
 			inner join conta c on c.id = cp.conta_id
 			inner join semestre_pgt s on s.id = p.semestre_id
-			where cp.funcao_id = ?`, 
+			where cp.funcao_id = ? and p.exclusao is null`, 
 			[Funcao.Orientador]) as PGT[];
 		});
 
