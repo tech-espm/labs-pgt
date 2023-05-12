@@ -10,15 +10,17 @@
 		order: [[1, "asc"]],
 		deferRender: true,
 		columns: [
-			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return '<a target="_blank" title="Editar" href="<%- root %>/pgt/editar1?id=' + row.id + '" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a> <button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>'; } },
-			{ title: "Nome", render: encode, data: "nome" },
+			{ title: "", "class": "col-min", searchable: false, orderable: false, data: "id", render: function (v, type, row) { return '<a target="_blank" title="Editar" href="<%- root %>/pgt/editar?id=' + row.id + '" class="btn btn-sm btn-outline-primary"><i class="fa fa-fw fa-edit"></i></a> <button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>'; } },
+			{ title: "Nome", render: encode, data: "nome", render: function (v, type, row) { return `<a target="_blank" href="<%- root %>/pgt/detalhar?id=${row.id}" class="btn btn-sm btn-outline-primary">${row.nome}</a>`} },
 			{ title: "Tipo", render: encode, data: "tipo" }, 
-			{ title: "Orientador", render: encode, data: "usuario" },
+			{ title: "Fase", render: encode, data: "fase" }, 
+			{ title: "Semestre", render: encode, data: "semestre" }, 
+			{ title: "Orientador", render: encode, data: "nomeOrientador" },
 			{ title: "Alunos", data: "alunos", render: function (v, type, row) { return (v ? encode(v).replace(regExpVirgula, '<br/>') : v); } },
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
 		],
 		data: <%- JSON.stringify(lista) %>,
-		export: { title: "PGT's 1" }
+		export: { title: "PGTs" }
 	});
 
 	$("#tabela").on("click", "tbody button", function () {

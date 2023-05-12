@@ -1,8 +1,8 @@
-// Manter sincronizado com models/tipo.ts e sql/script.sql
+// Manter sincronizado com models/tipo.ts e sql/setup.sql
 enum Tipo {
-	PE = 1,
-	PA = 2,
-	EC = 3
+	Pesquisa = 1,
+	Caso = 2,
+	Empreeendimento = 3
 };
 
 export = Tipo;

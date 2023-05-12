@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import perfis = require("../models/perfil");
-import Usuario = require("../models/usuario");
+import Usuario = require("../models/conta");
 
 class UsuarioRoute {
 	public static async criar(req: app.Request, res: app.Response) {

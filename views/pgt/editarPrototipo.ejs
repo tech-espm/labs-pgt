@@ -27,17 +27,17 @@
 </div>
 
 <div class="form-group mb-5">
-	<label for="idusuario">Professor</label>
-	<select id="idusuario" name="idusuario" class="form-control" size="1">
+	<label for="idorientador">Professor</label>
+	<select id="idorientador" name="idorientador" class="form-control" size="1">
 		<option value="">Selecione...</option>
 		<% for (let i = 0; i < usuarios.length; i++) { %>
-		<option value="<%= usuarios[i].id %>" <%-((item && item.idusuario === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 		<% } %>
 	</select>
 </div>
 
 
-<!-- Relatório de Qualificação – PGT PROJETO EMPREENDEDOR (EMP) - 7º Semestre - PGT_1			 -->
+<!-- Relatório de Qualificação – PGT PROJETO EMPREENDEDOR (EMP) - 7º Semestre - PGT			 -->
 
     <div class="mb-5">
 
@@ -293,13 +293,6 @@
 	  </div>
 
 	</div>
-
-
-	
-
-
-
-
 </div>
 
 
@@ -320,7 +313,7 @@
 			idfase: {
 				required: true
 			}, 
-			idusuario: {
+			idorientador: {
 				required: true
 			}
 		}, 
@@ -332,9 +325,9 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/editar1", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
 				if (response.success)
-					Swal.success("PGT 1 alterado com sucesso! " + emoji.happy);
+					Swal.success("PGT alterado com sucesso! " + emoji.happy);
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
@@ -344,7 +337,7 @@
 			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
 				if (response.success) {
 					resetForm("#form");
-					Swal.success("PGT 1 criado com sucesso! " + emoji.happy);
+					Swal.success("PGT criado com sucesso! " + emoji.happy);
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
 				}

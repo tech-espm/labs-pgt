@@ -1,102 +1,68 @@
 ﻿import app = require("teem");
-import Perfil = require("../../enums/perfil");
-import PGT = require("../../models/pgt"); 
-import Usuario = require("../../models/usuario");
+import PGT = require("../../models/pgt");
+import Usuario = require("../../models/conta");
 
 class PGTApiRoute {
+  public static async listar(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res);
+    if (!u) return;
 
-	public static async listar1(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res);
-		if (!u)
-			return;
+    res.json(await PGT.listar());
+  }
 
-		res.json(await PGT.listar1()); 
-	} 
+  @app.http.post()
+  public static async criar(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
 
-	public static async listar2(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res);
-		if (!u)
-			return;
+    const erro = await PGT.criar(req.body);
 
-		res.json(await PGT.listar2());
-	}
+    if (erro) {
+      res.status(400).json(erro);
+      return;
+    }
 
-	@app.http.post()
-	public static async criar(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
-		if (!u)
-			return;
+    res.sendStatus(204);
+  }
 
-		const erro = await PGT.criar(req.body);
+  @app.http.post()
+  public static async editar(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
 
-		if (erro) {
-			res.status(400).json(erro);
-			return;
-		}
+    const pgt: PGT = req.body;
 
-		res.sendStatus(204);
-	}
+    const erro = await PGT.editar(pgt);
 
-	@app.http.post()
-	public static async editar1(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
-		if (!u)
-			return;
+    if (erro) {
+      res.status(400).json(erro);
+      return;
+    }
 
-		const pgt: PGT= req.body;
+    res.sendStatus(204);
+  }
 
-		const erro = await PGT.editar1(pgt);
+  @app.http.delete()
+  public static async excluir(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
 
-		if (erro) {
-			res.status(400).json(erro);
-			return;
-		}
+    const id = parseInt(req.query["id"] as string);
 
-		res.sendStatus(204);
-	} 
- 
-	@app.http.post()
-	public static async editar2(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
-		if (!u)
-			return;
+    if (isNaN(id)) {
+      res.status(400).json("Id inválido");
+      return;
+    }
 
-		const pgt: PGT= req.body;
+    const erro = await PGT.excluir(id);
 
-		const erro = await PGT.editar2(pgt);
+    if (erro) {
+      res.status(400).json(erro);
+      return;
+    }
 
-		if (erro) {
-			res.status(400).json(erro);
-			return;
-		}
-
-		res.sendStatus(204);
-	} 
-	
-
-
-	@app.http.delete()
-	public static async excluir(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
-		if (!u)
-			return;
-
-		const id = parseInt(req.query["id"] as string);
-
-		if (isNaN(id)) {
-			res.status(400).json("Id inválido");
-			return;
-		}
-
-		const erro = await PGT.excluir(id);
-
-		if (erro) {
-			res.status(400).json(erro);
-			return;
-		}
-
-		res.sendStatus(204);
-	}
+    res.sendStatus(204);
+  }
 }
 
 export = PGTApiRoute;

@@ -1,5 +1,5 @@
 ﻿import app = require("teem");
-import Usuario = require("../models/usuario");
+import Usuario = require("../models/conta");
 
 class ExemploRoute {
 	public static async animacoes(req: app.Request, res: app.Response) {

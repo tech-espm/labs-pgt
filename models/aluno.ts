@@ -38,13 +38,13 @@ class Aluno {
 
 	public static async listar(): Promise<Aluno[]> {
 		return await app.sql.connect(async (sql) => {
-			return await sql.query("select id, ra, email, nome, telefone from aluno") || [];
+			return await sql.query("select id, email, nome, telefone from conta where perfil_id = 3") || [];
 		});
 	}
 
 	public static async listarCombo(): Promise<Aluno[]> {
 		return await app.sql.connect(async (sql) => {
-			return await sql.query("select a.id, concat(a.ra, ' - ', a.nome) nome from aluno a order by a.nome asc") || [];
+			return await sql.query("select c.id, concat(c.registro, ' - ', c.nome) nome from conta c where c.perfil_id = 3 order by c.nome asc") || [];
 		});
 	}
 
@@ -52,7 +52,7 @@ class Aluno {
 		let lista: Aluno[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, ra, email, nome, telefone from aluno where id = ?", [id]) as Aluno[];
+			lista = await sql.query("select id, registro, email, nome, telefone from conta where id = ? and perfil_id = 3", [id]) as Aluno[];
 		});
 
 		return ((lista && lista[0]) || null);
@@ -65,11 +65,11 @@ class Aluno {
 
 		await app.sql.connect(async (sql) => {
 			try {
-				await sql.query("insert into aluno (ra, email, nome, telefone) values (?, ?, ?, ?)", [aluno.ra, aluno.email, aluno.nome, aluno.telefone]);
+				await sql.query("insert into conta (email, nome, perfil_id, telefone, registro, criacao) values (?, ?, ?, ?, ?, now())", [aluno.email, aluno.nome, 3, aluno.telefone, aluno.ra.toString()]);
 				return null;
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
-					return `O RA ${aluno.ra} já existe`;
+					return `O ${aluno.email} já existe`;
 				throw e;
 			}
 		});
@@ -84,7 +84,7 @@ class Aluno {
 
 		return await app.sql.connect(async (sql) => {
 			try {
-				await sql.query("update aluno set ra = ?, email = ?, nome = ?, telefone = ? where id = ?", [aluno.ra, aluno.email, aluno.nome, aluno.telefone, aluno.id]);
+				await sql.query("update conta set registro = ?, email = ?, nome = ?, telefone = ? where id = ? and perfil_id = 3", [aluno.ra, aluno.email, aluno.nome, aluno.telefone, aluno.id]);
 				return (sql.affectedRows ? null : "Aluno não encontrado");
 			} catch (e) {
 				if (e.code && e.code === "ER_DUP_ENTRY")
@@ -96,7 +96,7 @@ class Aluno {
 
 	public static async excluir(id: number): Promise<string> {
 		return app.sql.connect(async (sql) => {
-			await sql.query("delete from aluno where id = ?", [id]);
+			await sql.query("delete from conta where id = ? and perfil_id = 3", [id]);
 
 			return (sql.affectedRows ? null : "Aluno não encontrado");
 		});
