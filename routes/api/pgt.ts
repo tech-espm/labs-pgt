@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import PGT = require("../../models/pgt");
-import Usuario = require("../../models/Conta");
+import Usuario = require("../../models/conta");
 
 class PGTApiRoute {
   public static async listar(req: app.Request, res: app.Response) {

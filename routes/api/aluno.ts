@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import Aluno = require("../../models/aluno"); 
-import Usuario = require("../../models/Conta");
+import Usuario = require("../../models/conta");
 
 class AlunoApiRoute {
 	public static async listar(req: app.Request, res: app.Response) {

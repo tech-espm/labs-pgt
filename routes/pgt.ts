@@ -4,7 +4,7 @@ import tipos = require("../models/tipo");
 import fases = require("../models/fase");
 import semestres = require("../models/semestre");
 import PGT = require("../models/pgt");
-import Usuario = require("../models/Conta");
+import Usuario = require("../models/conta");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
