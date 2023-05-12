@@ -11,7 +11,9 @@
                     </div>
                     <div class="col-3">
                         <h3>Semestre do PGT</h3>
-                        <%- Number.parseInt(item.criacao.split("/")[1]) > 6? "2º semestre": "1º semestre" %>
+                        <% for (let i = 0; i < semestres.length; i++) { %>
+                            <%-((item.idsemestre === semestres[i].id) ? '<h4>' + semestres[i].nome + '</h4>' : '') %>
+                        <% } %>
                     </div>
                     <div class="col-3">
                         <h3>Tipo do PGT</h3>

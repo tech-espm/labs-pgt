@@ -12,6 +12,7 @@ interface PGT {
 	nome: string;
 	idfase: number;
 	idtipo: number;
+	idsemestre: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 	alunos?: any[];
@@ -70,6 +71,9 @@ class PGT {
 		
 		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
 			return "Fase inválida";
+		
+		if (isNaN(pgt.idsemestre = parseInt(pgt.idsemestre as any)))
+			return "Semestre inválido";
 
 		if (isNaN(pgt.idOrientador = parseInt(pgt.idOrientador as any)))
 			return "Orientador inválido";
@@ -90,6 +94,7 @@ class PGT {
 					f.nome as fase,
 					p.tipo_id,
 					t.nome as tipo,
+					p.semestre_id,
 					date_format(p.criacao, '%d/%m/%Y') as criacao,
 					c.nome as nomeOrientador,
 					c.id as idOrientador,
@@ -110,7 +115,9 @@ class PGT {
 				f.nome as fase,
 				p.tipo_id,
 				t.nome as tipo,
-				date_format(p.criacao, '%d/%m/%Y') criacao,
+				p.semestre_id,
+				s.nome as semestre,
+				date_format(p.criacao, '%d/%m/%Y') as criacao,
 				c.nome as nomeOrientador,
 				c.id as idOrientador,
 				${PGT.subqueryAlunos}
@@ -119,6 +126,7 @@ class PGT {
 			inner join fase f on f.id = p.fase_id
 			inner join conta_pgt cp on cp.pgt_id = p.id
 			inner join conta c on c.id = cp.conta_id
+			inner join semestre_pgt s on s.id = p.semestre_id
 			where cp.funcao_id = ?`, 
 			[Funcao.Orientador]) as PGT[];
 		});
@@ -148,7 +156,8 @@ class PGT {
 				p.fase_id as idfase, 
 				p.tipo_id as idtipo, 
 				cp.conta_id as idorientador,
-				date_format(p.criacao, '%d/%m/%Y') as criacao
+				date_format(p.criacao, '%d/%m/%Y') as criacao,
+				p.semestre_id as idsemestre
 			from pgt p
 			inner join conta_pgt cp on cp.pgt_id = p.id
 			where p.id = ? and cp.funcao_id = ?
@@ -168,8 +177,8 @@ class PGT {
 
 			try {
 
-				await sql.query("insert into pgt (nome, fase_id, tipo_id, criacao) values (?, ?, ?, now())", 
-				[pgt.nome, pgt.idfase, pgt.idtipo]);
+				await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())", 
+				[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
 
 				pgt.id = await sql.scalar("select last_insert_id()") as number;
 
@@ -280,8 +289,8 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
-			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ? where id = ?", 
-				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.id]); 
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?", 
+				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]); 
 
 			if (!sql.affectedRows)
 				return "PGT não encontrado";

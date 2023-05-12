@@ -30,13 +30,25 @@
 		</div>
 	</div>
 
-	<div class="col-md-6">
+	<div class="col-sm-6 col-md-3">
+		<div class="form-group">
+			<label for="idsemestre">Semestre</label>
+			<select id="idsemestre" name="idsemestre" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < semestres.length; i++) { %>
+				<option value="<%= semestres[i].id %>" <%-((item && item.idsemestre === semestres[i].id) ? 'selected="selected"' : '') %>><%= semestres[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+
+	<div class="col-md-6 col-md-3">
 		<div class="form-group">
 			<label for="idOrientador">Professor</label>
 			<select id="idOrientador" name="idOrientador" class="form-control" size="1">
 				<option value="">Selecione...</option>
 				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.idOrientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 				<% } %>
 			</select>
 		</div>
@@ -58,7 +70,7 @@
 			idtipo: {
 				required: true
 			}, 
-			idfase: {
+			idsemestre: {
 				required: true
 			}, 
 			idOrientador: {
@@ -74,8 +86,10 @@
 			//<% if (item) { %>
 
 			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
-				if (response.success)
-					Swal.success("PGT 1 alterado com sucesso! " + emoji.happy);
+				if (response.success){
+					Swal.success("PGT alterado com sucesso! " + emoji.happy);
+					window.location.href = "/pgt/listar";
+				}
 				else
 					Swal.error(response.value + " " + emoji.sad);
 			});
@@ -86,8 +100,8 @@
 				if (response.success) {
 					resetForm("#form");
 					$("#tabelabody").empty();
-					Swal.success("PGT 1 criado com sucesso! " + emoji.happy).then(() => {
-						window.location.href = "../listar"
+					Swal.success("PGT criado com sucesso! " + emoji.happy).then(() => {
+						window.location.href = "/pgt/listar"
 					});
 				} else {
 					Swal.error(response.value + " " + emoji.sad);

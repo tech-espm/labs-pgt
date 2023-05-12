@@ -2,6 +2,7 @@
 import Aluno = require("../models/aluno");
 import tipos = require("../models/tipo"); 
 import fases = require("../models/fase");
+import semestres = require("../models/semestre");
 import PGT = require("../models/pgt");
 import Usuario = require("../models/Conta");
 
@@ -17,6 +18,7 @@ class PGTRoute {
 				item: null,
 				tipos: tipos.lista, 
 				fases: fases.lista,
+				semestres: semestres.lista,
 				usuarios: await Usuario.listarCombo(),
 				alunos: await Aluno.listarCombo()
 			});
@@ -54,6 +56,7 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista,
 					fases: fases.lista,
+					semestres: semestres.lista,
 					usuarios: await Usuario.listarCombo(),
 					alunos: await Aluno.listarCombo()
 				});
@@ -113,6 +116,7 @@ class PGTRoute {
 					item: item,
 					tipos: tipos.lista,
 					fases: fases.lista,
+					semestres: semestres.lista,
 					usuarios: await Usuario.listarCombo(),
 					alunos: await Aluno.listarCombo()
 				});

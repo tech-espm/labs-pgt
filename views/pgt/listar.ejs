@@ -14,6 +14,7 @@
 			{ title: "Nome", render: encode, data: "nome", render: function (v, type, row) { return `<a target="_blank" href="<%- root %>/pgt/detalhar?id=${row.id}" class="btn btn-sm btn-outline-primary">${row.nome}</a>`} },
 			{ title: "Tipo", render: encode, data: "tipo" }, 
 			{ title: "Fase", render: encode, data: "fase" }, 
+			{ title: "Semestre", render: encode, data: "semestre" }, 
 			{ title: "Orientador", render: encode, data: "nomeOrientador" },
 			{ title: "Alunos", data: "alunos", render: function (v, type, row) { return (v ? encode(v).replace(regExpVirgula, '<br/>') : v); } },
 			{ title: "Criação", "class": "col-min text-right", "type": "customdateint", data: "criacao" }
