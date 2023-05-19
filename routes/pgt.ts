@@ -134,7 +134,7 @@ class PGTRoute {
 				res.render("index/nao-encontrado", { usuario: u });
 			else
 				res.render("pgt/avaliar1", {
-					layout: "layout-sem-form",
+					layout: "layout",
 					titulo: "PGT - " + item.nome,
 					usuario: u,
 					item: item,
