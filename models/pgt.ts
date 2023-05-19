@@ -16,11 +16,11 @@ interface PGT {
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 	alunos?: any[];
-	idOrientador?: any;
+	idOrientador?: number | null;
 	nomeOrientador?: string;
-	idQualificador?: any;
-	idDefesa1?: any;
-	idDefesa2?: any;
+	idQualificador?: number | null;
+	idDefesa1?: number | null;
+	idDefesa2?: number | null;
 	idsaluno?: number[];
 }
 
@@ -28,12 +28,23 @@ class PGT {
 	private static readonly subqueryAlunos = `
 	(
 		select 
-			group_concat(c.nome order by c.nome asc separator ', ') 
+			group_concat(c.nome separator ', ') 
 		from pgt 
 		inner join conta_pgt cp on cp.pgt_id = pgt.id
 		inner join conta c on c.id = cp.conta_id
 		where pgt.id = p.id and cp.pgt_id = pgt.id and cp.funcao_id = ${Funcao.Aluno}
 	) alunos
+	`;
+
+	private static readonly subqueryProfessoresDefesa = `
+	(
+		select 
+			group_concat(c.nome separator ', ') 
+		from pgt 
+		inner join conta_pgt cp on cp.pgt_id = pgt.id
+		inner join conta c on c.id = cp.conta_id
+		where pgt.id = p.id and cp.pgt_id = pgt.id and cp.funcao_id in (${Funcao.Defesa1}, ${Funcao.Defesa2})
+	) defesa
 	`;
 
 	private static validarAlunos(pgt: PGT): string | null {
@@ -77,7 +88,38 @@ class PGT {
 
 		if (isNaN(pgt.idOrientador = parseInt(pgt.idOrientador as any)))
 			return "Orientador inválido";
+		
+		let idProfessores = []
 
+		if (pgt.idQualificador) {
+			if (isNaN(pgt.idQualificador = parseInt(pgt.idQualificador as any)))
+				return "Qualificador inválido";
+			idProfessores.push(pgt.idQualificador)
+		} else {
+			pgt.idQualificador = null;
+		}
+
+		if (pgt.idDefesa1) {
+			if (isNaN(pgt.idDefesa1 = parseInt(pgt.idDefesa1 as any)))
+				return "Defesa 1 inválido";
+			
+			idProfessores.push(pgt.idDefesa1)
+		} else {
+			pgt.idDefesa1 = null;
+		}
+		
+		if (pgt.idDefesa2) {
+			if (isNaN(pgt.idDefesa2 = parseInt(pgt.idDefesa2 as any)))
+				return "Defesa 2 inválido";
+
+			idProfessores.push(pgt.idDefesa2)
+		} else {
+			pgt.idDefesa2 = null;
+		}
+
+		if (!numerosDiferentes(idProfessores)) {
+			return "Professores repetidos";
+		}
 		return PGT.validarAlunos(pgt);
 	}
 
@@ -96,16 +138,20 @@ class PGT {
 					t.nome as tipo,
 					p.semestre_id,
 					date_format(p.criacao, '%d/%m/%Y') as criacao,
-					c.nome as nomeOrientador,
-					c.id as idOrientador,
-					${PGT.subqueryAlunos}
+					ori.nome as nomeOrientador,
+					ori.id as idOrientador,
+					qual.nome as nomeAvaliador,
+					qual.id as idAvaliador,
+					${PGT.subqueryAlunos},
+					${PGT.subqueryProfessoresDefesa}
 				from pgt p
 				inner join tipo_pgt t on t.id = p.tipo_id
 				inner join fase f on f.id = p.fase_id
 				inner join conta_pgt cp on cp.pgt_id = pgt.id
-				inner join conta c on cp.conta_id = c.id
-				where c.id = ? and p.exclusao is null`, 
-				[idOrientador]) as PGT[];
+				inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
+				left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
+				where ori.id = ? and p.exclusao is null`, 
+				[Funcao.Orientador, Funcao.Qualificador, idOrientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select
@@ -118,17 +164,22 @@ class PGT {
 				p.semestre_id,
 				s.nome as semestre,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
-				c.nome as nomeOrientador,
-				c.id as idOrientador,
-				${PGT.subqueryAlunos}
+				ori.nome as nomeOrientador,
+				ori.id as idOrientador,
+				qual.nome as nomeAvaliador,
+				qual.id as idAvaliador,
+				${PGT.subqueryAlunos},
+				${PGT.subqueryProfessoresDefesa}
 			from pgt p
 			inner join tipo_pgt t on t.id = p.tipo_id
 			inner join fase f on f.id = p.fase_id
 			inner join conta_pgt cp on cp.pgt_id = p.id
 			inner join conta c on c.id = cp.conta_id
+			inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
+			left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
 			inner join semestre_pgt s on s.id = p.semestre_id
-			where cp.funcao_id = ? and p.exclusao is null`, 
-			[Funcao.Orientador]) as PGT[];
+			where p.exclusao is null`, 
+			[Funcao.Orientador, Funcao.Qualificador]) as PGT[];
 		});
 
 		return (lista || []);
@@ -184,6 +235,21 @@ class PGT {
 
 				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
 					[pgt.id, pgt.idOrientador, Funcao.Orientador])
+				
+				if (pgt.idQualificador) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
+					[pgt.id, pgt.idQualificador, Funcao.Qualificador])
+				}
+
+				if (pgt.idDefesa1) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
+					[pgt.id, pgt.idDefesa1, Funcao.Defesa1])
+				}
+
+				if (pgt.idDefesa2) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
+					[pgt.id, pgt.idDefesa2, Funcao.Defesa2])
+				}
 
 				if (pgt.idsaluno) {
 					for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
@@ -306,6 +372,18 @@ class PGT {
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
 	}
+}
+
+function numerosDiferentes(numeros: Number[]) {
+	let numerosOrganizados = numeros.sort()
+
+	for (let i = 1; i < numerosOrganizados.length; i++) {
+		if (numerosOrganizados[i] == numerosOrganizados[i -1]) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export = PGT;

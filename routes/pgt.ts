@@ -122,6 +122,30 @@ class PGTRoute {
 				});
 		}
 	}
+
+	public static async avaliar(req: app.Request, res: app.Response){
+		let u = await Usuario.cookie(req);
+		if (!u || !u.admin) {
+			res.redirect(app.root + "/acesso");
+		} else {
+			let id = parseInt(req.query["pgt"] as string);
+			let item: PGT = null;
+			if (isNaN(id) || !(item = await PGT.obter(id)))
+				res.render("index/nao-encontrado", { usuario: u });
+			else
+				res.render("pgt/avaliar1", {
+					layout: "layout-sem-form",
+					titulo: "PGT - " + item.nome,
+					usuario: u,
+					item: item,
+					tipos: tipos.lista,
+					fases: fases.lista,
+					semestres: semestres.lista,
+					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo()
+				});
+		}
+	}
 }
 
 export = PGTRoute;

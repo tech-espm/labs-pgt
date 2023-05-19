@@ -44,7 +44,7 @@
 
 	<div class="col-md-6 col-md-3">
 		<div class="form-group">
-			<label for="idOrientador">Professor</label>
+			<label for="idOrientador">Professor Orientador</label>
 			<select id="idOrientador" name="idOrientador" class="form-control" size="1">
 				<option value="">Selecione...</option>
 				<% for (let i = 0; i < usuarios.length; i++) { %>
@@ -53,6 +53,44 @@
 			</select>
 		</div>
 	</div>
+
+<% if (item) { %>
+	<div class="col-md-6 col-md-3">
+		<div class="form-group">
+			<label for="idQualificador">Professor Qualificador</label>
+			<select id="idQualificador" name="idQualificador" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < usuarios.length; i++) { %>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.idavaliador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+
+	<div class="col-md-6 col-md-3">
+		<div class="form-group">
+			<label for="idOrientador">Professor de Defesa 1</label>
+			<select id="idOrientador" name="idDefesa1" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < usuarios.length; i++) { %>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.iddefesa1 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+
+	<div class="col-md-6 col-md-3">
+		<div class="form-group">
+			<label for="idDefesa2">Professor de Defesa 2</label>
+			<select id="idDefesa2" name="idDefesa2" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < usuarios.length; i++) { %>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.iddefesa2 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+	<% } %>
 </div>
 
 <%- include("editarAlunos") %>

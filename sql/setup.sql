@@ -277,7 +277,6 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
-
 -- Dados dos Enums
 insert into perfil (id, nome) values (1, 'Administrador'), (2, 'Professor'), (3, 'Aluno');
 insert into funcao (id, nome) values (1, 'Qualificador'), (2, 'Defesa1'), (3, 'Defesa2'), (4, 'Orientador'), (5, 'Aluno');
@@ -292,14 +291,26 @@ insert into
   conta (email, nome, perfil_id, criacao) 
   values ('admin@espm.br', 'Admin', 1, now());
 
--- Aluno exemplo
+-- Alunos exemplo
 
 insert into 
   conta (email, nome, perfil_id, registro, criacao) 
   values ('aluno@acad.espm.br', 'Aluno', 3, '123123', now());
 
--- Professor exemplo
+-- Professores exemplo
 
 insert into 
   conta (email, nome, perfil_id, criacao) 
-  values ('prof@espm.br', 'Professor', 2, now());
+  values ('profa@espm.br', 'Professor A', 2, now());
+
+insert into 
+  conta (email, nome, perfil_id, criacao) 
+  values ('profb@espm.br', 'Professor B', 2, now());
+
+insert into 
+  conta (email, nome, perfil_id, criacao) 
+  values ('profc@espm.br', 'Professor C', 2, now());
+
+insert into 
+  conta (email, nome, perfil_id, criacao) 
+  values ('profd@espm.br', 'Professor D', 2, now());
