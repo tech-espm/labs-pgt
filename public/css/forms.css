@@ -74,39 +74,6 @@ button {
     background-color: #e5e5e5;
 }
 
-.colunaCriterio4 {
-    height: 300px;
-    width: 500px;
-    position: relative;
-    border: 2px solid #1a1a1a;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #e5e5e5;
-}
-
-.colunaCriterio2 {
-    height: 270px;
-    width: 500px;
-    position: relative;
-    border: 2px solid #1a1a1a;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #e5e5e5;
-}
-
-.colunaCriterio3 {
-    height: 285px;
-    width: 500px;
-    position: relative;
-    border: 2px solid #1a1a1a;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    background-color: #e5e5e5;
-}
-
 .campo label {
     margin-bottom: 0.2em;
     color: #1a1a1a;
