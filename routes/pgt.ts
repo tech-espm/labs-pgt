@@ -138,7 +138,6 @@ class PGTRoute {
 				let perguntas = Formulario[`${item.idfase}`].perguntas[`${item.idtipo}`];
 
 				res.render("pgt/avaliar", {
-					layout: "layout-sem-form",
 					titulo: "PGT - " + item.nome,
 					usuario: u,
 					item: item,

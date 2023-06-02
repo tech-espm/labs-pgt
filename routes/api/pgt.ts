@@ -63,6 +63,18 @@ class PGTApiRoute {
 
     res.sendStatus(204);
   }
+
+  @app.http.post()
+  public static async avaliar(req: app.Request, res: app.Response) {
+    const id = parseInt(req.body["pgtId"] as string);
+
+    console.log({
+      pgtId: id,
+      avaliacao: req.body,
+    });
+
+    res.sendStatus(204);
+  }
 }
 
 export = PGTApiRoute;

@@ -9,7 +9,6 @@
 <br>
 
 <!-- Início do formulário -->
-<form>
     <% for (let i = 0; i < perguntas.length; i++) {%>
         <div class="colunaCriterio<%= i + 1%>">
             <div class="campo">
@@ -54,7 +53,7 @@
 
             let arrayNotas = []
             <% for (let i = 0; i < perguntas.length; i++) {%>
-                let n<%= i + 1%> = parseFloat(nota1.value.replace(",", "."));
+                let n<%= i + 1%> = parseFloat(nota<%= i + 1%>.value.replace(",", "."));
                     
                 if (isNaN(n<%= i + 1%>))
                     n<%= i + 1%> = 0;
@@ -69,15 +68,39 @@
 
     </script>
 
+    <input name="pgtId" value="<%= item.id %>" class="d-none">
 
-    <!-- Botão para enviar o formulário -->
-    <button class="botao" type="submit" onsubmit="" onclick="clicked(event)">Enviar</button>
+<%- contentFor("scripts") %>
+<script>
+    "use strict";
 
-    <script>
-        function clicked(e) {
-            if (!confirm('Tem certeza que deseja enviar o formulário?')) {
-                e.preventDefault();
-            }
-        }
-    </script>
-</form>
+    let requiredFields = {
+        <% for (let i = 0; i < perguntas.length; i++) {%>
+            nota<%= i + 1%>: {
+                required: true
+            },
+        <%} %>
+    }
+
+	$("#form").validate({
+		rules: requiredFields, 
+		submitHandler: function (form) {
+			if (JsonWebApi.active)
+				return;
+
+			Swal.wait();
+
+			JsonWebApi.postFormData("<%- root %>/api/pgt/avaliar", form, function (response) {
+                console.log({response})
+				if (response.success) {
+					resetForm("#form");
+					Swal.success("PGT avaliado com sucesso! " + emoji.happy).then(() => {
+						window.location.href = "/pgt/detalhar?id=<%= item.id %>"
+					});
+				} else {
+					Swal.error(response.value + " " + emoji.sad);
+				}
+			});
+		}
+	});
+</script>
