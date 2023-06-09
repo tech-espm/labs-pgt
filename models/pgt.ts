@@ -1,5 +1,5 @@
 ﻿import app = require("teem");
-import Funcao = require("../enums/funcao");
+import Funcao = require("../enums/conta/funcao");
 
 interface PGTAluno {
 	id: number;

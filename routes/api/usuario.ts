@@ -1,5 +1,5 @@
 ﻿import app = require("teem");
-import Perfil = require("../../enums/perfil");
+import Perfil = require("../../enums/conta/perfil");
 import Usuario = require("../../models/conta");
 
 class UsuarioApiRoute {

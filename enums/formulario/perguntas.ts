@@ -1,4 +1,4 @@
-let Formulario = {
+let Perguntas = {
   // Manter sincronizado com enum/fase.ts
   //PGT 1
   1: {
@@ -251,4 +251,4 @@ let Formulario = {
   },
 };
 
-export = Formulario;
+export = Perguntas;

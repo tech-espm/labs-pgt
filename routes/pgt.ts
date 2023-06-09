@@ -5,7 +5,7 @@ import fases = require("../models/fase");
 import semestres = require("../models/semestre");
 import PGT = require("../models/pgt");
 import Usuario = require("../models/conta");
-import Formulario = require("../enums/formulario");
+import Perguntas = require("../enums/formulario/perguntas");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
@@ -135,7 +135,7 @@ class PGTRoute {
 			if (isNaN(id) || !(item = await PGT.obter(id))){
 				res.render("index/nao-encontrado", { usuario: u });
 			} else {
-				let perguntas = Formulario[`${item.idfase}`].perguntas[`${item.idtipo}`];
+				let perguntas = Perguntas[`${item.idfase}`].perguntas[`${item.idtipo}`];
 
 				res.render("pgt/avaliar", {
 					titulo: "PGT - " + item.nome,

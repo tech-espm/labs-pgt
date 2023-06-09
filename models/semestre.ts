@@ -1,6 +1,6 @@
 import ItemNomeado = require("../data/itemNomeado");
 import ListaNomeada = require("../data/listaNomeada");
-import Semestre = require("../enums/semestre");
+import Semestre = require("../enums/pgt/semestre");
 
 // Manter sincronizado com enums/tipo.ts e sql/script.sql
 const semestre = new ListaNomeada([

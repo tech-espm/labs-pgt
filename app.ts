@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import appsettings = require("./appsettings");
-import Perfil = require("./enums/perfil");
+import Perfil = require("./enums/conta/perfil");
 
 app.run({
 	root: appsettings.root,
