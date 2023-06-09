@@ -1,6 +1,7 @@
 ﻿import app = require("teem");
 import PGT = require("../../models/pgt");
 import Usuario = require("../../models/conta");
+import Formulario = require("../../models/formulario");
 
 class PGTApiRoute {
   public static async listar(req: app.Request, res: app.Response) {
@@ -66,12 +67,15 @@ class PGTApiRoute {
 
   @app.http.post()
   public static async avaliar(req: app.Request, res: app.Response) {
-    const id = parseInt(req.body["pgtId"] as string);
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
 
-    console.log({
-      pgtId: id,
-      avaliacao: req.body,
-    });
+    const erro = await Formulario.criar(req.body);
+
+    if (erro) {
+      res.status(400).json(erro);
+      return;
+    }
 
     res.sendStatus(204);
   }

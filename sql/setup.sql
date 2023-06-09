@@ -229,11 +229,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `labs_pgt`.`formularios`
+-- Table `labs_pgt`.`formulario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `labs_pgt`.`formularios` ;
+DROP TABLE IF EXISTS `labs_pgt`.`formulario` ;
 
-CREATE TABLE IF NOT EXISTS `labs_pgt`.`formularios` (
+CREATE TABLE IF NOT EXISTS `labs_pgt`.`formulario` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `formulario_tipo_id` INT NOT NULL,
   `nota_1` DECIMAL NULL,

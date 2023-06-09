@@ -1,6 +1,6 @@
 ﻿import app = require("teem");
 import Aluno = require("../models/aluno");
-import tipos = require("../models/tipo"); 
+import tipos = require("../models/tipoPGT"); 
 import fases = require("../models/fase");
 import semestres = require("../models/semestre");
 import PGT = require("../models/pgt");
