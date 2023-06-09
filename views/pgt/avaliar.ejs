@@ -8,36 +8,39 @@
 </h5>
 <br>
 
-<!-- Início do formulário -->
-    <% for (let i = 0; i < perguntas.length; i++) {%>
-        <div class="colunaCriterio<%= i + 1%>">
-            <div class="campo">
-                <label><strong>Critério:</strong></label>
-                <label><Strong><%= i + 1%>. <%= perguntas[i].titulo %></Strong></label>
-                
-                <%- perguntas[i].criterios %>
-    
-                <label style="padding-top: 10px; padding-bottom: 10px;"><strong>Peso: (<%= `${perguntas[i].peso * 100}%` %>)</strong></label>
-                <textarea rows="3" style="width: 26em" id="comentarios<%= i + 1%>" name="comentarios<%= i + 1%>"
-                    placeholder="Comentários"></textarea>
-    
-                <label for="nota<%= i + 1%>" style="padding-top: 10px; padding-bottom: 10px;"><strong>Notas de 0 a
-                        10,0:</strong></label>
-                <input oninput="atualizar(nota<%= i + 1%>, xf, <%= perguntas[i].peso %>)" type="number" id="nota<%= i + 1%>" name="nota<%= i + 1%>" min="0" max="10"
-                    placeholder=" 0 - 10" required>
-    
-                || Nota pós aplicação do peso: <output id="xf" name="xf" for="nota<%= i + 1%>">0,0</output>
+<div class="container">
+    <div class="row">
+        <% for (let i = 0; i < perguntas.length; i++) {%>
+            <div class="colunaCriterio<%= i + 1%> col-md-6 col-12 pb-5 px-1 d-flex flex-column justify-content-between">
+                <div>
+                    <h5><strong>Critério <%= i + 1%>: <%= perguntas[i].titulo %></strong></h5>
+                    <label><strong>Peso: (<%= `${perguntas[i].peso * 100}%` %>)</strong></label>
+                </div>
+
+                <div>
+                    <%- perguntas[i].criterios %>
+                </div>
+
+                <div>
+                    <textarea rows="3" style="resize: none; width: 80%;" id="comentarios<%= i + 1%>" name="comentarios<%= i + 1%>"
+                        placeholder="Comentários"></textarea> <br>
+                    <label for="nota<%= i + 1%>"><strong>Notas de 0 a
+                            10,0:</strong></label>
+                    <input oninput="atualizar(nota<%= i + 1%>, xf, <%= perguntas[i].peso %>)" type="number" id="nota<%= i + 1%>" name="nota<%= i + 1%>" min="0" max="10" placeholder="0" required><br>
+
+                    Nota com peso: <output id="xf" name="xf" for="nota<%= i + 1%>">0,0</output>
+                </div>
             </div>
-        </div>
-    <%}%>
-
-
-    <div style="padding-top: 10px;">
-        <label for="notaFinal"
-            style="padding-top: 10px; padding-bottom: 10px; padding-left: 10px; font-size: larger;"><strong>Nota final
-                do trabalho avaliado:</strong></label>
-        <output name="demo" id="demo" for="notaFinal" style="font-size: 20px;"><strong>0</strong></output>
+        <%}%>
     </div>
+    <div class="row">
+        <h5>
+            <label for="notaFinal"><strong>Nota final
+                do trabalho avaliado:</strong></label>
+            <output name="demo" id="demo" for="notaFinal"><strong>0</strong></output>
+        </h5>
+    </div>
+</div>
 
     <script>
         function atualizar(inputNota, outputSaida, peso) {
