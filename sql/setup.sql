@@ -289,7 +289,19 @@ insert into tipo_formulario (id, nome) values (1, 'Qualificacao'), (2, 'Defesa')
 
 insert into 
   conta (email, nome, perfil_id, criacao) 
-  values ('admin@espm.br', 'Admin', 1, now());
+  values ('admina@espm.br', 'Admin A', 1, now());
+
+insert into
+  conta (email, nome, perfil_id, criacao) 
+  values ('adminb@espm.br', 'Admin B', 1, now());
+
+insert into
+  conta (email, nome, perfil_id, criacao) 
+  values ('adminc@espm.br', 'Admin C', 1, now());
+
+insert into
+  conta (email, nome, perfil_id, criacao) 
+  values ('admind@espm.br', 'Admin D', 1, now());
 
 -- Alunos exemplo
 

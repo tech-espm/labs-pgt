@@ -16,11 +16,13 @@ interface PGT {
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
 	alunos?: any[];
-	idOrientador?: number | null;
-	nomeOrientador?: string;
-	idQualificador?: number | null;
-	idDefesa1?: number | null;
-	idDefesa2?: number | null;
+	idorientador?: number | null;
+	nomeorientador?: string;
+	idqualificador?: number | null;
+	iddefesa1?: number | null;
+	nomedefesa1?: string | null;
+	iddefesa2?: number | null;
+	nomedefesa2?: string | null;
 	idsaluno?: number[];
 }
 
@@ -48,7 +50,7 @@ class PGT {
 	`;
 
 	private static validarAlunos(pgt: PGT): string | null {
-		
+
 		if (!pgt.idsaluno)
 			pgt.idsaluno = [];
 
@@ -78,43 +80,43 @@ class PGT {
 			return "Nome inválido";
 
 		if (isNaN(pgt.idtipo = parseInt(pgt.idtipo as any)))
-			return "Tipo inválido"; 
-		
+			return "Tipo inválido";
+
 		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
 			return "Fase inválida";
-		
+
 		if (isNaN(pgt.idsemestre = parseInt(pgt.idsemestre as any)))
 			return "Semestre inválido";
 
-		if (isNaN(pgt.idOrientador = parseInt(pgt.idOrientador as any)))
+		if (isNaN(pgt.idorientador = parseInt(pgt.idorientador as any)))
 			return "Orientador inválido";
-		
+
 		let idProfessores = []
 
-		if (pgt.idQualificador) {
-			if (isNaN(pgt.idQualificador = parseInt(pgt.idQualificador as any)))
+		if (pgt.idqualificador) {
+			if (isNaN(pgt.idqualificador = parseInt(pgt.idqualificador as any)))
 				return "Qualificador inválido";
-			idProfessores.push(pgt.idQualificador)
+			idProfessores.push(pgt.idqualificador)
 		} else {
-			pgt.idQualificador = null;
+			pgt.idqualificador = null;
 		}
 
-		if (pgt.idDefesa1) {
-			if (isNaN(pgt.idDefesa1 = parseInt(pgt.idDefesa1 as any)))
+		if (pgt.iddefesa1) {
+			if (isNaN(pgt.iddefesa1 = parseInt(pgt.iddefesa1 as any)))
 				return "Defesa 1 inválido";
-			
-			idProfessores.push(pgt.idDefesa1)
+
+			idProfessores.push(pgt.iddefesa1)
 		} else {
-			pgt.idDefesa1 = null;
+			pgt.iddefesa1 = null;
 		}
-		
-		if (pgt.idDefesa2) {
-			if (isNaN(pgt.idDefesa2 = parseInt(pgt.idDefesa2 as any)))
+
+		if (pgt.iddefesa2) {
+			if (isNaN(pgt.iddefesa2 = parseInt(pgt.iddefesa2 as any)))
 				return "Defesa 2 inválido";
 
-			idProfessores.push(pgt.idDefesa2)
+			idProfessores.push(pgt.iddefesa2)
 		} else {
-			pgt.idDefesa2 = null;
+			pgt.iddefesa2 = null;
 		}
 
 		if (!numerosDiferentes(idProfessores)) {
@@ -123,11 +125,11 @@ class PGT {
 		return PGT.validarAlunos(pgt);
 	}
 
-	public static async listar(idOrientador?: number): Promise<PGT[]> {
+	public static async listar(idorientador?: number): Promise<PGT[]> {
 		let lista: PGT[] = null;
 
 		await app.sql.connect(async (sql) => {
-			if (idOrientador)
+			if (idorientador)
 				lista = await sql.query(`
 				select
 					p.id,
@@ -138,10 +140,14 @@ class PGT {
 					t.nome as tipo,
 					p.semestre_id,
 					date_format(p.criacao, '%d/%m/%Y') as criacao,
-					ori.nome as nomeOrientador,
-					ori.id as idOrientador,
-					qual.nome as nomeAvaliador,
-					qual.id as idAvaliador,
+					ori.nome as nomeorientador,
+					ori.id as idorientador,
+					qual.nome as nomequalificador,
+					qual.id as idqualificador,
+					def1.nome as nomedefesa1,
+					def1.id as iddefesa1,
+					def2.nome as nomedefesa2,
+					def2.id as iddefesa2,
 					${PGT.subqueryAlunos},
 					${PGT.subqueryProfessoresDefesa}
 				from pgt p
@@ -150,8 +156,10 @@ class PGT {
 				inner join conta_pgt cp on cp.pgt_id = pgt.id
 				inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
 				left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
-				where ori.id = ? and p.exclusao is null`, 
-				[Funcao.Orientador, Funcao.Qualificador, idOrientador]) as PGT[];
+				left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
+				left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
+				where ori.id = ? and p.exclusao is null`,
+					[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select
@@ -164,10 +172,14 @@ class PGT {
 				p.semestre_id,
 				s.nome as semestre,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
-				ori.nome as nomeOrientador,
-				ori.id as idOrientador,
-				qual.nome as nomeAvaliador,
-				qual.id as idAvaliador,
+				ori.nome as nomeorientador,
+				ori.id as idorientador,
+				qual.nome as nomequalificador,
+				qual.id as idqualificador,
+				def1.nome as nomedefesa1,
+				def1.id as iddefesa1,
+				def2.nome as nomedefesa2,
+				def2.id as iddefesa2,
 				${PGT.subqueryAlunos},
 				${PGT.subqueryProfessoresDefesa}
 			from pgt p
@@ -177,9 +189,11 @@ class PGT {
 			inner join conta c on c.id = cp.conta_id
 			inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
 			left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
+			left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
+			left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
 			inner join semestre_pgt s on s.id = p.semestre_id
-			where p.exclusao is null`, 
-			[Funcao.Orientador, Funcao.Qualificador]) as PGT[];
+			where p.exclusao is null`,
+					[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2]) as PGT[];
 		});
 
 		return (lista || []);
@@ -208,11 +222,23 @@ class PGT {
 				p.tipo_id as idtipo, 
 				cp.conta_id as idorientador,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
-				p.semestre_id as idsemestre
+				p.semestre_id as idsemestre,
+				ori.nome as nomeorientador,
+				ori.id as idorientador,
+				qual.nome as nomequalificador,
+				qual.id as idqualificador,
+				def1.nome as nomedefesa1,
+				def1.id as iddefesa1,
+				def2.nome as nomedefesa2,
+				def2.id as iddefesa2
 			from pgt p
 			inner join conta_pgt cp on cp.pgt_id = p.id
-			where p.id = ? and cp.funcao_id = ?
-			`, [id, Funcao.Orientador]) as PGT[];
+			inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
+			left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
+			left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
+			left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
+			where p.id = ?
+			`, [Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, id]) as PGT[];
 
 			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
 		});
@@ -228,34 +254,35 @@ class PGT {
 
 			try {
 
-				await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())", 
-				[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
+				await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())",
+					[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
 
 				pgt.id = await sql.scalar("select last_insert_id()") as number;
 
-				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
-					[pgt.id, pgt.idOrientador, Funcao.Orientador])
-				
-				if (pgt.idQualificador) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
-					[pgt.id, pgt.idQualificador, Funcao.Qualificador])
+				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+					[pgt.id, pgt.idorientador, Funcao.Orientador])
+
+				if (pgt.idqualificador) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.idqualificador, Funcao.Qualificador])
 				}
 
-				if (pgt.idDefesa1) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
-					[pgt.id, pgt.idDefesa1, Funcao.Defesa1])
+				if (pgt.iddefesa1) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.iddefesa1, Funcao.Defesa1])
 				}
 
-				if (pgt.idDefesa2) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
-					[pgt.id, pgt.idDefesa2, Funcao.Defesa2])
+				if (pgt.iddefesa2) {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.iddefesa2, Funcao.Defesa2])
 				}
 
 				if (pgt.idsaluno) {
 					for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
-						await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", 
-						[pgt.id, pgt.idsaluno[i], Funcao.Aluno]);
+						await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+							[pgt.id, pgt.idsaluno[i], Funcao.Aluno]);
 				}
+
 				await sql.commit();
 
 				return null;
@@ -355,15 +382,18 @@ class PGT {
 		return await app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
 
-			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?", 
-				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]); 
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?",
+				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]);
 
 			if (!sql.affectedRows)
 				return "PGT não encontrado";
 
+			//TODO: fazer update dos professores
+
 			return await PGT.editarAlunos(sql, pgt);
 		});
 	}
+
 
 	public static async excluir(id: number): Promise<string> {
 		return app.sql.connect(async (sql) => {
@@ -378,7 +408,7 @@ function numerosDiferentes(numeros: Number[]) {
 	let numerosOrganizados = numeros.sort()
 
 	for (let i = 1; i < numerosOrganizados.length; i++) {
-		if (numerosOrganizados[i] == numerosOrganizados[i -1]) {
+		if (numerosOrganizados[i] == numerosOrganizados[i - 1]) {
 			return false;
 		}
 	}

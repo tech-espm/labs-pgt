@@ -113,11 +113,11 @@ class Formulario {
         });
     }
 
-    public static async listar(idpgt?: number): Promise<Formulario[]> {
+    public static async listar(idpgt: number, tipoFormulario?: TipoFormulario): Promise<Formulario[]> {
         let lista: Formulario[] = null;
 
         await app.sql.connect(async (sql) => {
-            if (idpgt)
+            if (tipoFormulario)
                 lista = await sql.query(`
 				select
                     f.formulario_tipo_id as idtipo, 
@@ -138,12 +138,12 @@ class Formulario {
                     f.conta_autor_id as idautor,
                     c.nome as nomeautor,
                     tf.nome as nometipo
-                from formularios f 
+                from formulario f 
                 inner join conta c on f.conta_autor_id = c.id
                 inner join tipo_formulario tf on tf.id = f.formulario_tipo_id
                 inner join pgt p on p.id = f.pgt_id
-                where f.pgt_id = ?`,
-                    [idpgt]) as Formulario[];
+                where f.pgt_id = ? and f.formulario_tipo_id = ?`,
+                    [idpgt, tipoFormulario]) as Formulario[];
             else
                 lista = await sql.query(
                     `
@@ -166,14 +166,31 @@ class Formulario {
                         f.conta_autor_id as idautor,
                         c.nome as nomeautor,
                         tf.nome as nometipo
-                    from formularios f 
+                    from formulario f 
                     inner join conta c on f.conta_autor_id = c.id
                     inner join tipo_formulario tf on tf.id = f.formulario_tipo_id
-                    inner join pgt p on p.id = f.pgt_id`
-                    , []) as Formulario[];
+                    inner join pgt p on p.id = f.pgt_id
+                    where f.pgt_id = ?`
+                    , [idpgt]) as Formulario[];
         });
 
         return (lista || []);
+    }
+
+    public static async autoresPreencheram(idautores: number[], idpgt: number) : Promise<boolean>{
+        let formularios: Formulario[] = await this.listar(idpgt)
+
+        if (formularios.length == 0) {
+            return false;
+        }
+
+        for (let i = 0; i < formularios.length; i++) {
+            if (!idautores.find( a => formularios[i].idautor === a)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
