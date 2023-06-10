@@ -307,7 +307,19 @@ insert into
 
 insert into 
   conta (email, nome, perfil_id, registro, criacao) 
-  values ('aluno@acad.espm.br', 'Aluno', 3, '123123', now());
+  values ('alunoa@acad.espm.br', 'Aluno A', 3, '123123', now());
+
+insert into 
+  conta (email, nome, perfil_id, registro, criacao) 
+  values ('alunob@acad.espm.br', 'Aluno B', 3, '123123', now());
+
+insert into 
+  conta (email, nome, perfil_id, registro, criacao) 
+  values ('alunoc@acad.espm.br', 'Aluno C', 3, '123123', now());
+
+insert into 
+  conta (email, nome, perfil_id, registro, criacao) 
+  values ('alunod@acad.espm.br', 'Aluno D', 3, '123123', now());
 
 -- Professores exemplo
 

@@ -304,55 +304,37 @@ class PGT {
 		});
 	}
 
-	private static async editarAlunos(sql: app.Sql, pgt: PGT): Promise<string> {
+	public static async editar(pgt: PGT): Promise<string> {
+		// Validar se o PGT editador está OK
+		let res: string;
+		if ((res = PGT.validar(pgt, false)))
+			return res;
+
+		return await app.sql.connect(async (sql) => {
+			await sql.beginTransaction();
+
+			// Atualizar os dados do PGT
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?",
+				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]);
+
+			if (!sql.affectedRows)
+				return "PGT não encontrado";
+
+			// Atualizar a conexão dos alunos
+			let updateAlunosResult = await PGT.editarAlunos(sql, pgt);
+
+			if (updateAlunosResult) {
+				return updateAlunosResult;
+			}
+
+			// Atualizar a conexão dos professores
+			return await PGT.editarProfessores(sql, pgt);
+		});
+	}
+
+	private static async editarProfessores(sql: app.Sql, pgt: PGT): Promise<string> {
+		//TODO: fazer update dos professores -> query pra atualizar o conta_pgt com a função de defesa/qualificador com o novo conta_id
 		try {
-			const antigos: PGTAluno[] = (await sql.query("select conta_pgt_id, conta_id, pgt_id from conta_pgt where pgt_id = ? and funcao_id = ?", [pgt.id, Funcao.Aluno])) || [];
-			const atualizar: PGTAluno[] = [];
-			const novos: PGTAluno[] = [];
-
-			if (pgt.idsaluno) {
-				for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
-					novos.push({
-						id: 0,
-						idpgt: pgt.id,
-						idaluno: pgt.idsaluno[i]
-					});
-			}
-
-			for (let i = antigos.length - 1; i >= 0; i--) {
-				const antigo = antigos[i];
-
-				for (let j = novos.length - 1; j >= 0; j--) {
-					const novo = novos[j];
-					if (antigo.idaluno === novo.idaluno) {
-						antigos.splice(i, 1);
-						novos.splice(j, 1);
-						break;
-					}
-				}
-			}
-
-			// Tenta reaproveitar os id's antigos se precisar adicionar algo novo
-			for (let i = novos.length - 1; i >= 0; i--) {
-				if (!antigos.length)
-					break;
-
-				const antigo = antigos.pop();
-				antigo.idaluno = novos[i].idaluno;
-
-				atualizar.push(antigo);
-
-				novos.splice(i, 1);
-			}
-
-			for (let i = antigos.length - 1; i >= 0; i--)
-				await sql.query("delete from conta_pgt where conta_pgt_id = ?", [antigos[i].id]);
-
-			for (let i = atualizar.length - 1; i >= 0; i--)
-				await sql.query("update conta_pgt set conta_id = ? where conta_pgt_id = ?", [atualizar[i].idaluno, atualizar[i].id]);
-
-			for (let i = novos.length - 1; i >= 0; i--)
-				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)", [novos[i].idpgt, novos[i].idaluno, Funcao.Aluno]);
 
 			await sql.commit();
 
@@ -374,24 +356,69 @@ class PGT {
 		}
 	}
 
-	public static async editar(pgt: PGT): Promise<string> {
-		let res: string;
-		if ((res = PGT.validar(pgt, false)))
-			return res;
+	private static async editarAlunos(sql: app.Sql, pgt: PGT): Promise<string> {
+		try {
+			const antigos: PGTAluno[] = (await sql.query(`
+			select 
+				conta_pgt_id as id, 
+				conta_id as idaluno, 
+				pgt_id as idpgt 
+			from conta_pgt 
+			where pgt_id = ? and funcao_id = ?`,
+				[pgt.id, Funcao.Aluno])) || [];
 
-		return await app.sql.connect(async (sql) => {
-			await sql.beginTransaction();
+			const novosAlunosId: number[] = [];
 
-			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?",
-				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]);
+			if (pgt.idsaluno) {
+				for (let i = 0; i < pgt.idsaluno.length; i++) {
+					let indAntigo = antigos.findIndex(a => a.idaluno == pgt.idsaluno[i])
+					if (indAntigo == -1) {
+						novosAlunosId.push(pgt.idsaluno[i])
+					} else {
+						antigos.splice(indAntigo, 1)
+					}
+				}
+			}
 
-			if (!sql.affectedRows)
-				return "PGT não encontrado";
+			const deletar: PGTAluno[] = []
 
-			//TODO: fazer update dos professores
+			for (let i = 0; i < antigos.length; i++) {
+				const antigo = antigos[i];
+				// Se o id de um aluno antigo não estiver na lista de id de alunos novos, colocar na lista de remoção
+				// Mas se estiver, remova da lista de criação
+				let indNovoAlunoId = novosAlunosId.findIndex(novoId => novoId === antigo.idaluno)
+				if (indNovoAlunoId == -1) {
+					deletar.push(antigo)
+				} else {
+					novosAlunosId.splice(indNovoAlunoId, 1)
+				}
+			}
 
-			return await PGT.editarAlunos(sql, pgt);
-		});
+			// Dessasociar os antigos que não estão entre os novos
+			for (let i = deletar.length - 1; i >= 0; i--)
+				await sql.query("delete from conta_pgt where conta_pgt_id = ?", [deletar[i].id]);
+
+			// Associar os novos
+			for (let i = novosAlunosId.length - 1; i >= 0; i--)
+				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+					[pgt.id, novosAlunosId[i], Funcao.Aluno]);
+
+			return null;
+		} catch (e) {
+			if (e.code) {
+				switch (e.code) {
+					case "ER_DUP_ENTRY":
+						return "Alunos repetidos no PGT";
+					case "ER_NO_REFERENCED_ROW":
+					case "ER_NO_REFERENCED_ROW_2":
+						return "Aluno não encontrado";
+					default:
+						throw e;
+				}
+			} else {
+				throw e;
+			}
+		}
 	}
 
 
