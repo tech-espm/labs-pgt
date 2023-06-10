@@ -61,7 +61,7 @@
 			<select id="idqualificador" name="idqualificador" class="form-control" size="1">
 				<option value="">Selecione...</option>
 				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.idavaliador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+				<option value="<%= usuarios[i].id %>" <%-((item && item.idqualificador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 				<% } %>
 			</select>
 		</div>

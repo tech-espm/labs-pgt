@@ -1,10 +1,10 @@
 ﻿import app = require("teem");
 import Funcao = require("../enums/conta/funcao");
 
-interface PGTAluno {
+interface PGTConta {
 	id: number;
 	idpgt: number;
-	idaluno: number;
+	idconta: number;
 }
 
 interface PGT {
@@ -15,8 +15,8 @@ interface PGT {
 	idsemestre: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
+	idorientador: number | null;
 	alunos?: any[];
-	idorientador?: number | null;
 	nomeorientador?: string;
 	idqualificador?: number | null;
 	iddefesa1?: number | null;
@@ -24,6 +24,7 @@ interface PGT {
 	iddefesa2?: number | null;
 	nomedefesa2?: string | null;
 	idsaluno?: number[];
+	defesa: string;
 }
 
 class PGT {
@@ -131,7 +132,7 @@ class PGT {
 		await app.sql.connect(async (sql) => {
 			if (idorientador)
 				lista = await sql.query(`
-				select
+				select distinct
 					p.id,
 					p.nome,
 					p.fase_id,
@@ -153,16 +154,19 @@ class PGT {
 				from pgt p
 				inner join tipo_pgt t on t.id = p.tipo_id
 				inner join fase f on f.id = p.fase_id
-				inner join conta_pgt cp on cp.pgt_id = pgt.id
-				inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
-				left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
-				left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
-				left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
+				left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
+				left join conta ori on ori.id = cpori.conta_id
+				left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
+				left join conta qual on qual.id = cpqual.conta_id
+				left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
+				left join conta def1 on def1.id = cpdef1.conta_id
+				left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
+				left join conta def2 on def2.id = cpdef2.conta_id
 				where ori.id = ? and p.exclusao is null`,
 					[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador]) as PGT[];
 			else
 				lista = await sql.query(`
-			select
+			select distinct
 				p.id,
 				p.nome,
 				p.fase_id,
@@ -185,15 +189,18 @@ class PGT {
 			from pgt p
 			inner join tipo_pgt t on t.id = p.tipo_id
 			inner join fase f on f.id = p.fase_id
-			inner join conta_pgt cp on cp.pgt_id = p.id
-			inner join conta c on c.id = cp.conta_id
-			inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
-			left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
-			left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
-			left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
 			inner join semestre_pgt s on s.id = p.semestre_id
+			inner join conta_pgt cp on cp.pgt_id = p.id
+			left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
+			left join conta ori on ori.id = cpori.conta_id
+			left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
+			left join conta qual on qual.id = cpqual.conta_id
+			left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
+			left join conta def1 on def1.id = cpdef1.conta_id
+			left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
+			left join conta def2 on def2.id = cpdef2.conta_id
 			where p.exclusao is null`,
-					[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2]) as PGT[];
+			[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2]) as PGT[];
 		});
 
 		return (lista || []);
@@ -219,8 +226,7 @@ class PGT {
 				p.id, 
 				p.nome, 
 				p.fase_id as idfase, 
-				p.tipo_id as idtipo, 
-				cp.conta_id as idorientador,
+				p.tipo_id as idtipo,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
 				p.semestre_id as idsemestre,
 				ori.nome as nomeorientador,
@@ -230,13 +236,17 @@ class PGT {
 				def1.nome as nomedefesa1,
 				def1.id as iddefesa1,
 				def2.nome as nomedefesa2,
-				def2.id as iddefesa2
+				def2.id as iddefesa2,
+				concat(def1.nome, ' ', def2.nome) as defesa
 			from pgt p
-			inner join conta_pgt cp on cp.pgt_id = p.id
-			inner join conta ori on cp.conta_id = ori.id and cp.funcao_id = ?
-			left join conta qual on cp.conta_id = qual.id and cp.funcao_id = ?
-			left join conta def1 on cp.conta_id = def1.id and cp.funcao_id = ?
-			left join conta def2 on cp.conta_id = def2.id and cp.funcao_id = ?
+			left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
+			left join conta ori on ori.id = cpori.conta_id
+			left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
+			left join conta qual on qual.id = cpqual.conta_id
+			left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
+			left join conta def1 on def1.id = cpdef1.conta_id
+			left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
+			left join conta def2 on def2.id = cpdef2.conta_id
 			where p.id = ?
 			`, [Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, id]) as PGT[];
 
@@ -305,7 +315,7 @@ class PGT {
 	}
 
 	public static async editar(pgt: PGT): Promise<string> {
-		// Validar se o PGT editador está OK
+		// Validar se o PGT editado está OK
 		let res: string;
 		if ((res = PGT.validar(pgt, false)))
 			return res;
@@ -332,9 +342,27 @@ class PGT {
 		});
 	}
 
+	// interface PGTConta {
+	// 	id: number;
+	// 	idpgt: number;
+	// 	idconta: number;
+	// }
+
 	private static async editarProfessores(sql: app.Sql, pgt: PGT): Promise<string> {
-		//TODO: fazer update dos professores -> query pra atualizar o conta_pgt com a função de defesa/qualificador com o novo conta_id
 		try {
+			PGT.atualizarContaPGT(sql, pgt, Funcao.Orientador, pgt.idorientador)
+
+			if (pgt.idqualificador) {
+				PGT.atualizarContaPGT(sql, pgt, Funcao.Qualificador, pgt.idqualificador)
+			}
+
+			if (pgt.iddefesa1) {
+				PGT.atualizarContaPGT(sql, pgt, Funcao.Defesa1, pgt.iddefesa1)
+			}
+
+			if (pgt.iddefesa2) {
+				PGT.atualizarContaPGT(sql, pgt, Funcao.Defesa2, pgt.iddefesa2)
+			}
 
 			await sql.commit();
 
@@ -356,12 +384,42 @@ class PGT {
 		}
 	}
 
+	private static async atualizarContaPGT(sql: app.Sql, pgt: PGT, funcaoId: number, novoIdConta: number) {
+		// Listar a conexão atual da função escolhida no PGT escolhido
+		let conexoesAntigas: PGTConta[] = await sql.query(`
+		select
+			conta_pgt_id as id,
+			pgt_id as idpgt,
+			conta_id as idconta
+		from conta_pgt
+		where funcao_id = ? and pgt_id = ?
+		`, [funcaoId, pgt.id]);
+
+		let conexaoAntiga: PGTConta = conexoesAntigas[0]
+
+		// Se essa conexão exsitir e for de uma conta diferente, colocar a nova conta como essa função
+		// Se essa conexão existir e for da mesma conta, fazer nada
+		// Se não exstir a conexão, crie a conexão
+		if (conexaoAntiga && conexaoAntiga.idconta != novoIdConta) {
+			await sql.query(`
+			update conta_pgt
+			set conta_id = ?
+			where conta_id = ? and funcao_id = ? and pgt_id = ?
+		`, [novoIdConta, conexaoAntiga.idconta, funcaoId, conexaoAntiga.idpgt]);
+		} else if (!conexaoAntiga) {
+			await sql.query(`
+			insert into conta_pgt (pgt_id, conta_id, funcao_id)
+			values (?, ?, ?)
+		`, [pgt.id, novoIdConta, funcaoId]);
+		}
+	}
+
 	private static async editarAlunos(sql: app.Sql, pgt: PGT): Promise<string> {
 		try {
-			const antigos: PGTAluno[] = (await sql.query(`
+			const antigos: PGTConta[] = (await sql.query(`
 			select 
 				conta_pgt_id as id, 
-				conta_id as idaluno, 
+				conta_id as idconta, 
 				pgt_id as idpgt 
 			from conta_pgt 
 			where pgt_id = ? and funcao_id = ?`,
@@ -371,7 +429,7 @@ class PGT {
 
 			if (pgt.idsaluno) {
 				for (let i = 0; i < pgt.idsaluno.length; i++) {
-					let indAntigo = antigos.findIndex(a => a.idaluno == pgt.idsaluno[i])
+					let indAntigo = antigos.findIndex(a => a.idconta == pgt.idsaluno[i])
 					if (indAntigo == -1) {
 						novosAlunosId.push(pgt.idsaluno[i])
 					} else {
@@ -380,13 +438,13 @@ class PGT {
 				}
 			}
 
-			const deletar: PGTAluno[] = []
+			const deletar: PGTConta[] = []
 
 			for (let i = 0; i < antigos.length; i++) {
 				const antigo = antigos[i];
 				// Se o id de um aluno antigo não estiver na lista de id de alunos novos, colocar na lista de remoção
 				// Mas se estiver, remova da lista de criação
-				let indNovoAlunoId = novosAlunosId.findIndex(novoId => novoId === antigo.idaluno)
+				let indNovoAlunoId = novosAlunosId.findIndex(novoId => novoId === antigo.idconta)
 				if (indNovoAlunoId == -1) {
 					deletar.push(antigo)
 				} else {

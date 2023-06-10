@@ -288,53 +288,26 @@ insert into tipo_formulario (id, nome) values (1, 'Qualificacao'), (2, 'Defesa')
 -- Dados da conta admin
 
 insert into 
-  conta (email, nome, perfil_id, criacao) 
-  values ('admina@espm.br', 'Admin A', 1, now());
-
-insert into
-  conta (email, nome, perfil_id, criacao) 
-  values ('adminb@espm.br', 'Admin B', 1, now());
-
-insert into
-  conta (email, nome, perfil_id, criacao) 
-  values ('adminc@espm.br', 'Admin C', 1, now());
-
-insert into
-  conta (email, nome, perfil_id, criacao) 
-  values ('admind@espm.br', 'Admin D', 1, now());
+  conta (email, nome, perfil_id, criacao) values 
+  ('admina@espm.br', 'Admin A', 1, now()),
+  ('adminb@espm.br', 'Admin B', 1, now()),
+  ('adminc@espm.br', 'Admin C', 1, now()),
+  ('admind@espm.br', 'Admin D', 1, now());
 
 -- Alunos exemplo
 
 insert into 
-  conta (email, nome, perfil_id, registro, criacao) 
-  values ('alunoa@acad.espm.br', 'Aluno A', 3, '123123', now());
-
-insert into 
-  conta (email, nome, perfil_id, registro, criacao) 
-  values ('alunob@acad.espm.br', 'Aluno B', 3, '123123', now());
-
-insert into 
-  conta (email, nome, perfil_id, registro, criacao) 
-  values ('alunoc@acad.espm.br', 'Aluno C', 3, '123123', now());
-
-insert into 
-  conta (email, nome, perfil_id, registro, criacao) 
-  values ('alunod@acad.espm.br', 'Aluno D', 3, '123123', now());
+  conta (email, nome, perfil_id, registro, criacao) values 
+  ('alunoa@acad.espm.br', 'Aluno A', 3, '123123', now()),
+  ('alunob@acad.espm.br', 'Aluno B', 3, '234234', now()),
+  ('alunoc@acad.espm.br', 'Aluno C', 3, '345345', now()),
+  ('alunod@acad.espm.br', 'Aluno D', 3, '456456', now());
 
 -- Professores exemplo
 
 insert into 
-  conta (email, nome, perfil_id, criacao) 
-  values ('profa@espm.br', 'Professor A', 2, now());
-
-insert into 
-  conta (email, nome, perfil_id, criacao) 
-  values ('profb@espm.br', 'Professor B', 2, now());
-
-insert into 
-  conta (email, nome, perfil_id, criacao) 
-  values ('profc@espm.br', 'Professor C', 2, now());
-
-insert into 
-  conta (email, nome, perfil_id, criacao) 
-  values ('profd@espm.br', 'Professor D', 2, now());
+  conta (email, nome, perfil_id, criacao) values 
+  ('profa@espm.br', 'Professor A', 2, now()),
+  ('profb@espm.br', 'Professor B', 2, now()),
+  ('profc@espm.br', 'Professor C', 2, now()),
+  ('profd@espm.br', 'Professor D', 2, now());

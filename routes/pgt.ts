@@ -25,22 +25,6 @@ class PGTRoute {
 				usuarios: await Usuario.listarCombo(),
 				alunos: await Aluno.listarCombo()
 			});
-	} 
-
-	public static async criarprototipo(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u || !u.admin)
-			res.redirect(app.root + "/acesso");
-		else
-			res.render("pgt/editarPrototipo", {
-				titulo: "Criar PGT",
-				usuario: u,
-				item: null,
-				tipos: tipos.lista, 
-				fases: fases.lista,
-				usuarios: await Usuario.listarCombo(),
-				alunos: await Aluno.listarCombo()
-			});
 	}
 
 	public static async editar(req: app.Request, res: app.Response) {
@@ -60,28 +44,6 @@ class PGTRoute {
 					tipos: tipos.lista,
 					fases: fases.lista,
 					semestres: semestres.lista,
-					usuarios: await Usuario.listarCombo(),
-					alunos: await Aluno.listarCombo()
-				});
-		}
-	} 
-
-	public static async editarPrototipo(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u || !u.admin) {
-			res.redirect(app.root + "/acesso");
-		} else {
-			let id = parseInt(req.query["id"] as string);
-			let item: PGT = null;
-			if (isNaN(id) || !(item = await PGT.obter(id)))
-				res.render("index/nao-encontrado", { usuario: u });
-			else
-				res.render("pgt/editarPrototipo", {
-					titulo: "Editar PGT",
-					usuario: u,
-					item: item,
-					tipos: tipos.lista,
-					fases: fases.lista,
 					usuarios: await Usuario.listarCombo(),
 					alunos: await Aluno.listarCombo()
 				});
