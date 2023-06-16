@@ -97,10 +97,11 @@ class Formulario {
             await sql.beginTransaction();
 
             try {
-                await sql.query("insert into formulario (formulario_tipo_id, nota_1, nota_2, nota_3, nota_4, nota_5, nota_6, comentario_1, comentario_2, comentario_3, comentario_4, comentario_5, comentario_6 , pgt_id, conta_autor_id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                await sql.query("insert into formulario (formulario_tipo_id, nota_1, nota_2, nota_3, nota_4, nota_5, nota_6, comentario_1, comentario_2, comentario_3, comentario_4, comentario_5, comentario_6 , pgt_id, conta_autor_id, nota_final) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [formulario.idtipo, formulario.nota1, formulario.nota2, formulario.nota3, formulario.nota4, formulario.nota5,
                     formulario.nota6, formulario.comentario1, formulario.comentario2, formulario.comentario3, formulario.comentario4,
-                    formulario.comentario5, formulario.comentario6, formulario.idpgt, formulario.idautor]);
+                    formulario.comentario5, formulario.comentario6, formulario.idpgt, formulario.idautor,
+                    formulario.notafinal]);
 
                 formulario.id = await sql.scalar("select last_insert_id()") as number;
 
@@ -127,6 +128,7 @@ class Formulario {
                     f.nota_4 as nota4, 
                     f.nota_5 as nota5, 
                     f.nota_6 as nota6, 
+                    f.nota_final as notafinal,
                     f.comentario_1 as comentario1, 
                     f.comentario_2 as comentario2, 
                     f.comentario_3 as comentario3, 
@@ -154,7 +156,8 @@ class Formulario {
                         f.nota_3 as nota3, 
                         f.nota_4 as nota4, 
                         f.nota_5 as nota5, 
-                        f.nota_6 as nota6, 
+                        f.nota_6 as nota6,
+                        f.nota_final as notafinal,
                         f.comentario_1 as comentario1, 
                         f.comentario_2 as comentario2, 
                         f.comentario_3 as comentario3, 
@@ -177,20 +180,67 @@ class Formulario {
         return (lista || []);
     }
 
-    public static async autoresPreencheram(idautores: number[], idpgt: number) : Promise<boolean>{
-        let formularios: Formulario[] = await this.listar(idpgt)
+    public static async autores(idpgt: number, tipoFormulario: TipoFormulario): Promise<number[]> {
+        let formularios: Formulario[] = await this.listar(idpgt, tipoFormulario)
+
+        let autoredId: number[] = []
+
+        for (let i = 0; i < formularios.length; i++) {
+            autoredId.push(formularios[i].idautor)
+        }
+
+        return autoredId;
+    }
+
+    public static async autoresPreencheram(idautores: number[], idpgt: number, tipoFormulario: TipoFormulario): Promise<boolean> {
+        let formularios: Formulario[] = await this.listar(idpgt, tipoFormulario)
 
         if (formularios.length == 0) {
             return false;
         }
 
-        for (let i = 0; i < formularios.length; i++) {
-            if (!idautores.find( a => formularios[i].idautor === a)) {
+        for (let i = 0; i < idautores.length; i++) {
+            const autorId = idautores[i];
+            if (formularios.findIndex(form => form.idautor === autorId) === -1) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public static async calcularNotaFinalQualificacao(idpgt: number, idorientador: number, idqualificador: number): Promise<Number> {
+        let formularios: Formulario[] = await this.listar(idpgt, TipoFormulario.Qualificacao)
+
+        let notaFinal: number = 0;
+
+        for (let i = 0; i < formularios.length; i++) {
+            let peso: number = 0
+
+            if (formularios[i].idautor === idorientador) {
+                peso = 0.6
+            }
+
+            if (formularios[i].idautor === idqualificador) {
+                peso = 0.4
+            }
+
+            notaFinal += (formularios[i].notafinal * peso)
+        }
+
+        return notaFinal
+    }
+
+    public static async calcularNotaFinalDefesa(idpgt: number): Promise<Number> {
+        let formularios: Formulario[] = await this.listar(idpgt, TipoFormulario.Defesa)
+
+        let notaFinal: number = 0;
+
+        for (let i = 0; i < formularios.length; i++) {
+            notaFinal += (formularios[i].notafinal * (1 / 3))
+        }
+
+        return notaFinal
     }
 }
 

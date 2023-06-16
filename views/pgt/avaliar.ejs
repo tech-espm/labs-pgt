@@ -45,6 +45,7 @@
 <input name="idpgt" value="<%= item.id %>" class="d-none">
 <input name="idautor" value="<%= usuario.id %>" class="d-none">
 <input name="idtipo" value="<%= ((item.idfase === 1) ? 1 : 2 ) %>" class="d-none">
+<input name="notafinal" id="notafinal" value="0" class="d-none">
 
 <%- contentFor("scripts") %>
 <script>
@@ -64,9 +65,7 @@
             let arrayNotas = []
             <% for (let i = 0; i < perguntas.length; i++) {%>
                 let n<%= i + 1%> = parseFloat(nota<%= i + 1%>.value.replace(",", "."));
-
                 
-                    
                 if (isNaN(n<%= i + 1%>))
                     n<%= i + 1%> = 0;
             
@@ -78,7 +77,10 @@
                 outputSaida.value = n<%= i + 1%>.toFixed(1).replace(".", ",");
             <%} %>
 
-            demo.value = arrayNotas.reduce((acc, elem) => acc + elem).toFixed(1).replace(".", ",");
+            let notaFinal = arrayNotas.reduce((acc, elem) => acc + elem).toFixed(1);
+
+            demo.value = notaFinal.replace(".", ",");
+            document.querySelector("#notafinal").value = notaFinal;
         }
 
     let requiredFields = {
