@@ -1,32 +1,22 @@
-﻿import app = require("teem");
-import Perfil = require("../../enums/conta/perfil");
+import app = require("teem");
+import Etapa = require("../../models/etapa");
 import Usuario = require("../../models/conta");
 
-class UsuarioApiRoute {
-	@app.http.post()
-	public static async alterarPerfil(req: app.Request, res: app.Response) {
+class EtapaApiRoute {
+	public static async listar(req: app.Request, res: app.Response) {
 		const u = await Usuario.cookie(req, res);
 		if (!u)
 			return;
 
-		const erro = await Usuario.alterarPerfil(u, res, req.body.nome);
+        const idpgt = parseInt(req.query["idpgt"] as string);
 
-		if (erro) {
-			res.status(400).json(erro);
+		if (isNaN(idpgt)) {
+			res.status(400).json("Id de PGT inválido");
 			return;
 		}
 
-		res.sendStatus(204);
+		res.json(await Etapa.listar(idpgt)); 
 	}
-
-	public static async listar(req: app.Request, res: app.Response) {
-		const u = await Usuario.cookie(req, res, true);
-		if (!u)
-			return;
-
-		res.json(await Usuario.listar());
-	}
-
 
 	@app.http.post()
 	public static async criar(req: app.Request, res: app.Response) {
@@ -34,7 +24,7 @@ class UsuarioApiRoute {
 		if (!u)
 			return;
 
-		const erro = await Usuario.criar(req.body);
+		const erro = await Etapa.criar(req.body);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -50,16 +40,7 @@ class UsuarioApiRoute {
 		if (!u)
 			return;
 
-		const usuario: Usuario = req.body;
-
-		if (usuario) {
-			if (parseInt(usuario.id as any) === u.id) {
-				res.status(400).json("Um usuário não pode editar a si próprio");
-				return;
-			}
-		}
-
-		const erro = await Usuario.editar(usuario);
+		const erro = await Etapa.editar(req.body);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -82,12 +63,7 @@ class UsuarioApiRoute {
 			return;
 		}
 
-		if (id === u.id) {
-			res.status(400).json("Um usuário não pode excluir a si próprio");
-			return;
-		}
-
-		const erro = await Usuario.excluir(id);
+		const erro = await Etapa.excluir(id);
 
 		if (erro) {
 			res.status(400).json(erro);
@@ -98,4 +74,4 @@ class UsuarioApiRoute {
 	}
 }
 
-export = UsuarioApiRoute;
+export = EtapaApiRoute;

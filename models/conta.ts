@@ -3,7 +3,7 @@ import { randomBytes } from "crypto";
 import appsettings = require("../appsettings");
 import GeradorHash = require("../utils/geradorHash");
 import intToHex = require("../utils/intToHex");
-import Perfil = require("../enums/perfil");
+import Perfil = require("../enums/conta/perfil");
 import Validacao = require("../utils/validacao");
 
 interface Conta {

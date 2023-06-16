@@ -1,65 +1,88 @@
-<div class="container">
-    <div class="row">
-        <div class="col-8">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-3">
-                        <h3>Fase do PGT</h3>
-                        <% for (let i = 0; i < fases.length; i++) { %>
-                            <%-((item.idfase === fases[i].id) ? '<h4>' + fases[i].nome + '</h4>' : '') %>
-                        <% } %>
-                    </div>
-                    <div class="col-3">
-                        <h3>Semestre do PGT</h3>
-                        <% for (let i = 0; i < semestres.length; i++) { %>
-                            <%-((item.idsemestre === semestres[i].id) ? '<h4>' + semestres[i].nome + '</h4>' : '') %>
-                        <% } %>
-                    </div>
-                    <div class="col-3">
-                        <h3>Tipo do PGT</h3>
-                        <% for (let i = 0; i < tipos.length; i++) { %>
-                            <%-((item.idtipo === tipos[i].id) ? '<h4>' + tipos[i].nome + '</h4>' : '') %>
-                        <% } %>
-                    </div>
-                </div>
-                <div class="row">
-                    Tabela de atas
-                </div>
+<div class="container-fluid d-flex flex-row">
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <h4>Fase</h4>
+                <% for (let i=0; i < fases.length; i++) { %>
+                    <%-((item.idfase===fases[i].id) ? '<h5>' + fases[i].nome + '</h5>' : '' ) %>
+                <% } %>
+            </div>
+            <div class="col-4">
+                <h4>Semestre</h4>
+                <% for (let i=0; i < semestres.length; i++) { %>
+                    <%-((item.idsemestre===semestres[i].id) ? '<h5>' + semestres[i].nome + '</h5>' : '' ) %>
+                <% } %>
+            </div>
+            <div class="col-4">
+                <h4>Tipo</h4>
+                <% for (let i=0; i < tipos.length; i++) { %>
+                    <%-((item.idtipo===tipos[i].id) ? '<h5>' + tipos[i].nome + '</h5>' : '' ) %>
+                <% } %>
             </div>
         </div>
-        <div class="col-4">
-            <div class="container-fluid">
-                <div class="row">
-                    <h3>Alunos</h3>
-                </div>
-                <div class="row">
-                    <h3>Bancas e notas</h3>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-6">
-                                Qualificação
-                            </div>
-                            <div class="col-6">
-                                Defesa
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                Editar qualificação
-                            </div>
-                            <div class="col-6">
-                                Editar defesa
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                Nota final qualificação
-                            </div>
-                            <div class="col-6">
-                                Nota final defesa
-                            </div>
-                        </div>
+        <div class="row">
+            <div class="col-4">
+                <h4>Alunos membros</h4>
+                <% for (let i=0; i < alunos.length; i++) { %>
+                    <%-'<h5>' + alunos[i].nome + '</h5>' %>
+                <% } %>
+            </div>
+        </div>
+        <div class="row">
+            <h3>Bancas e notas</h3>
+            <div class="container">
+                <div class="row flex-column">
+                    <h4>Qualificação</h4>
+                    <div>
+                        <%- qualificacao.nota.toFixed(1) %>
                     </div>
+                    <% if(qualificacao.preencheu) {%>
+                        <div class="alert alert-success">
+                            Avaliação de qualificação já preenchida!
+                        </div>
+                    <% }else if(item.idfase != 1) {%>
+                        <div class="alert alert-warning">
+                            Não pode avaliar qualificacao de o pgt não é fase 1
+                        </div>
+                    <% } else if (!item.idqualificador) { %>
+                        <div class="alert alert-warning">
+                            Professor de qualificacao não associado!
+                        </div>
+                    <% } else if((usuario.id === item.idqualificador || usuario.id === item.idorientador) && qualificacao.preencher) { %>
+                        <a type="button" class="btn btn-primary"
+                            href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar Qualificação</a>
+                    <% } else { %>
+                        <div class="alert alert-warning">
+                            Aguardando avaliação dos professores de qualificacao e orientador
+                        </div>
+                    <% } %>
+                </div>
+                <div class="row flex-column">
+                    <h4>Defesa</h4>
+                    <div>
+                        <%- defesa.nota.toFixed(1) %>
+                    </div>
+                    <% if(defesa.preencheu) {%>
+                        <div class="alert alert-success">
+                            Avaliação de qualificação já preenchida!
+                        </div>
+                    <% }else if(item.idfase != 2) {%>
+                        <div class="alert alert-warning">
+                            Não pode avaliar defesa de o pgt não é fase 2
+                        </div>
+                    <% } else if (!(item.iddefesa1 && item.iddefesa2)) { %>
+                        <div class="alert alert-warning">
+                            Professores de defesa não associados!
+                        </div>
+                    <% } else if((usuario.id === item.iddefesa1 || usuario.id === item.iddefesa2 
+                        || usuario.id === item.idorientador) && defesa.preencher) { %>
+                        <a type="button" class="btn btn-primary"
+                            href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar Defesa</a>
+                    <% } else { %>
+                        <div class="alert alert-warning">
+                            Aguardando avaliação dos professores de defesa e orientador
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </div>

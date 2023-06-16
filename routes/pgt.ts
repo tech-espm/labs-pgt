@@ -1,10 +1,13 @@
 ﻿import app = require("teem");
 import Aluno = require("../models/aluno");
-import tipos = require("../models/tipo"); 
+import tipos = require("../models/tipoPGT");
 import fases = require("../models/fase");
 import semestres = require("../models/semestre");
 import PGT = require("../models/pgt");
 import Usuario = require("../models/conta");
+import Perguntas = require("../enums/formulario/perguntas");
+import Formulario = require("../models/formulario");
+import TipoFormulario = require("../enums/formulario/tipo");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
@@ -16,25 +19,9 @@ class PGTRoute {
 				titulo: "Criar PGT",
 				usuario: u,
 				item: null,
-				tipos: tipos.lista, 
+				tipos: tipos.lista,
 				fases: fases.lista,
 				semestres: semestres.lista,
-				usuarios: await Usuario.listarCombo(),
-				alunos: await Aluno.listarCombo()
-			});
-	} 
-
-	public static async criarprototipo(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u || !u.admin)
-			res.redirect(app.root + "/acesso");
-		else
-			res.render("pgt/editarPrototipo", {
-				titulo: "Criar PGT",
-				usuario: u,
-				item: null,
-				tipos: tipos.lista, 
-				fases: fases.lista,
 				usuarios: await Usuario.listarCombo(),
 				alunos: await Aluno.listarCombo()
 			});
@@ -61,28 +48,6 @@ class PGTRoute {
 					alunos: await Aluno.listarCombo()
 				});
 		}
-	} 
-
-	public static async editarPrototipo(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u || !u.admin) {
-			res.redirect(app.root + "/acesso");
-		} else {
-			let id = parseInt(req.query["id"] as string);
-			let item: PGT = null;
-			if (isNaN(id) || !(item = await PGT.obter(id)))
-				res.render("index/nao-encontrado", { usuario: u });
-			else
-				res.render("pgt/editarPrototipo", {
-					titulo: "Editar PGT",
-					usuario: u,
-					item: item,
-					tipos: tipos.lista,
-					fases: fases.lista,
-					usuarios: await Usuario.listarCombo(),
-					alunos: await Aluno.listarCombo()
-				});
-		}
 	}
 
 	public static async listar(req: app.Request, res: app.Response) {
@@ -99,7 +64,7 @@ class PGTRoute {
 			});
 	}
 
-	public static async detalhar(req: app.Request, res: app.Response){
+	public static async detalhar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
 		if (!u || !u.admin) {
 			res.redirect(app.root + "/acesso");
@@ -108,7 +73,13 @@ class PGTRoute {
 			let item: PGT = null;
 			if (isNaN(id) || !(item = await PGT.obter(id)))
 				res.render("index/nao-encontrado", { usuario: u });
-			else
+			else {
+				let usuarioPreencherQualificaco: boolean = (await Formulario.autores(
+					item.id, TipoFormulario.Qualificacao)).findIndex(autorId => autorId === u.id) === -1
+
+				let usuarioPreencherDefesa: boolean = (await Formulario.autores(
+					item.id, TipoFormulario.Defesa)).findIndex(autorId => autorId === u.id) === -1
+
 				res.render("pgt/detalhar", {
 					layout: "layout-sem-form",
 					titulo: "PGT - " + item.nome,
@@ -118,8 +89,49 @@ class PGTRoute {
 					fases: fases.lista,
 					semestres: semestres.lista,
 					usuarios: await Usuario.listarCombo(),
+					alunos: await Aluno.listarCombo(),
+					qualificacao: {
+						formularios: await Formulario.listar(item.id, TipoFormulario.Qualificacao),
+						preencher: usuarioPreencherQualificaco,
+						preencheu: await Formulario.autoresPreencheram([u.id], item.id, TipoFormulario.Qualificacao),
+						nota: await Formulario.calcularNotaFinalQualificacao(item.id, item.idorientador, item.idqualificador)
+					},
+					defesa: {
+						formularios: await Formulario.listar(item.id, TipoFormulario.Defesa),
+						preencher: usuarioPreencherDefesa,
+						preencheu: await Formulario.autoresPreencheram([u.id], item.id, TipoFormulario.Defesa),
+						nota: await Formulario.calcularNotaFinalDefesa(item.id)
+					}
+				});
+			}
+		}
+	}
+
+	public static async avaliar(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req);
+		if (!u || !u.admin) {
+			res.redirect(app.root + "/acesso");
+		} else {
+			let id = parseInt(req.query["pgt"] as string);
+			let item: PGT = null;
+
+			if (isNaN(id) || !(item = await PGT.obter(id))) {
+				res.render("index/nao-encontrado", { usuario: u });
+			} else {
+				let perguntas = Perguntas[`${item.idfase}`].perguntas[`${item.idtipo}`];
+
+				res.render("pgt/avaliar", {
+					titulo: "PGT - " + item.nome,
+					usuario: u,
+					item: item,
+					perguntas: perguntas,
+					tipos: tipos.lista,
+					fases: fases.lista,
+					semestres: semestres.lista,
+					usuarios: await Usuario.listarCombo(),
 					alunos: await Aluno.listarCombo()
 				});
+			}
 		}
 	}
 }
