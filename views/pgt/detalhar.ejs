@@ -1,90 +1,202 @@
-<div class="container-fluid d-flex flex-row">
-    <div class="container">
+<div class="row">
+    <div class="col-sm-8">
         <div class="row">
-            <div class="col-4">
-                <h4>Fase</h4>
-                <% for (let i=0; i < fases.length; i++) { %>
-                    <%-((item.idfase===fases[i].id) ? '<h5>' + fases[i].nome + '</h5>' : '' ) %>
-                <% } %>
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    Fase</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <% for (let i=0; i < fases.length; i++) { %>
+                                        <%-((item.idfase===fases[i].id) ? fases[i].nome  : '' ) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-book-open fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-4">
-                <h4>Semestre</h4>
-                <% for (let i=0; i < semestres.length; i++) { %>
-                    <%-((item.idsemestre===semestres[i].id) ? '<h5>' + semestres[i].nome + '</h5>' : '' ) %>
-                <% } %>
+            <div class="col-xl-6 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    Semestre</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <% for (let i=0; i < semestres.length; i++) { %>
+                                        <%-((item.idsemestre===semestres[i].id) ? semestres[i].nome  : '' ) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-4">
-                <h4>Tipo</h4>
-                <% for (let i=0; i < tipos.length; i++) { %>
-                    <%-((item.idtipo===tipos[i].id) ? '<h5>' + tipos[i].nome + '</h5>' : '' ) %>
-                <% } %>
+
+        </div>
+        <div class="row">
+            <div class="col-xl-12 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body h-100">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Membros
+                                </div>
+                                <div class="mb-0 text-gray-800">
+                                    <% if (item && item.alunos) { 
+                                        for (let i = 0; i < item.alunos.length; i++) { 
+                                        const aluno = item.alunos[i]; %>
+                                        <%- aluno.nome + ' ' %>
+                                            <br>
+                                        <% } 
+                                    } %>                            
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-4">
-                <h4>Alunos membros</h4>
-                <% for (let i=0; i < alunos.length; i++) { %>
-                    <%-'<h5>' + alunos[i].nome + '</h5>' %>
-                <% } %>
+            <div class="col-xl-6 mb-4">
+            <div class="card shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center" style="text-align: center;">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1 align-items-center" style="font-size: 23px;">
+                            Qualificação</div>
+                        <div class="h5 mb-2 text-gray-800" style="font-size: 30px;">
+                            <%=(qualificacao.nota ? qualificacao.nota.toFixed(1) : 'Não Avaliado') %>
+                        </div>
+                        <div>
+                            <% if((usuario.id === item.idqualificador || usuario.id === item.idorientador) && qualificacao.preencher) { %>
+                                <a class="btn btn-primary" href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar</a>
+                            <% } %>    
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+            </div>
+            <div class="col-xl-6 mb-4">
+                <div class="card shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center" style="text-align: center;">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1 align-items-center" style="font-size: 23px;">
+                            Defesa</div>
+                        <div class="h5 text-gray-800 mb-1" style="font-size: 30px;">
+                            <%=(defesa.nota ? defesa.nota.toFixed(1) : 'Não Avaliado') %>
+                        </div>
+                        <% if((usuario.id === item.idqualificador || usuario.id === item.idorientador) && defesa.preencher) { %>
+                                <a class="btn btn-primary" href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar</a>
+                        <% } %>    
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
             </div>
         </div>
+    </div>
+    <div class="col-xl-4">
         <div class="row">
-            <h3>Bancas e notas</h3>
-            <div class="container">
-                <div class="row flex-column">
-                    <h4>Qualificação</h4>
-                    <div>
-                        <%- qualificacao.nota.toFixed(1) %>
+            <div class="col-xl-12 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Professor Orientador</div>
+                        <div class="h5 mb-0 text-gray-800">
+                            <%=(item.nomeorientador ? item.nomeorientador : 'Nenhum') %>
+                        </div>
                     </div>
-                    <% if(qualificacao.preencheu) {%>
-                        <div class="alert alert-success">
-                            Avaliação de qualificação já preenchida!
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
                         </div>
-                    <% }else if(item.idfase != 1) {%>
-                        <div class="alert alert-warning">
-                            Não pode avaliar qualificacao de o pgt não é fase 1
-                        </div>
-                    <% } else if (!item.idqualificador) { %>
-                        <div class="alert alert-warning">
-                            Professor de qualificacao não associado!
-                        </div>
-                    <% } else if((usuario.id === item.idqualificador || usuario.id === item.idorientador) && qualificacao.preencher) { %>
-                        <a type="button" class="btn btn-primary"
-                            href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar Qualificação</a>
-                    <% } else { %>
-                        <div class="alert alert-warning">
-                            Aguardando avaliação dos professores de qualificacao e orientador
-                        </div>
-                    <% } %>
-                </div>
-                <div class="row flex-column">
-                    <h4>Defesa</h4>
-                    <div>
-                        <%- defesa.nota.toFixed(1) %>
                     </div>
-                    <% if(defesa.preencheu) {%>
-                        <div class="alert alert-success">
-                            Avaliação de qualificação já preenchida!
-                        </div>
-                    <% }else if(item.idfase != 2) {%>
-                        <div class="alert alert-warning">
-                            Não pode avaliar defesa de o pgt não é fase 2
-                        </div>
-                    <% } else if (!(item.iddefesa1 && item.iddefesa2)) { %>
-                        <div class="alert alert-warning">
-                            Professores de defesa não associados!
-                        </div>
-                    <% } else if((usuario.id === item.iddefesa1 || usuario.id === item.iddefesa2 
-                        || usuario.id === item.idorientador) && defesa.preencher) { %>
-                        <a type="button" class="btn btn-primary"
-                            href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar Defesa</a>
-                    <% } else { %>
-                        <div class="alert alert-warning">
-                            Aguardando avaliação dos professores de defesa e orientador
-                        </div>
-                    <% } %>
                 </div>
             </div>
+        
+         </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Qualificador</div>
+                        <div class="h5 mb-0 text-gray-800">
+                            <%=(item.nomequalificador ? item.nomequalificador : 'Nenhum') %>
+                        </div>
+                    </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Defesa 1</div>
+                        <div class="h5 mb-0 text-gray-800">
+                            <%=(item.nomedefesa1 ? item.nomedefesa1 : 'Nenhum') %>
+                        </div>
+                    </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Defesa 2</div>
+                        <div class="h5 mb-0 text-gray-800">
+                            <%=(item.nomedefesa2 ? item.nomedefesa2 : 'Nenhum') %>
+                        </div>
+                    </div>
+                        <div class="col-auto">
+                            <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
         </div>
     </div>
 </div>
