@@ -89,6 +89,13 @@ class PGTApiRoute {
 
     res.sendStatus(204);
   }
+
+  public static async downloadAnexo(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
+
+    await PGT.downloadAnexo(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
+  }
 }
 
 export = PGTApiRoute;

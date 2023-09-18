@@ -254,6 +254,16 @@ class PGT {
 		});
 	}
 
+	public static async downloadAnexo(res: app.Response, id: number, idfase: number): Promise<void> {
+		const caminho = `dados/anexos/${id}-${idfase}.pdf`;
+		if (!await app.fileSystem.exists(caminho)) {
+			res.status(404).json("Anexo não encontrado");
+			return;
+		}
+
+		res.sendFile(app.fileSystem.absolutePath(caminho));
+	}
+
 	public static async criar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
 		let res: string;
 		if ((res = PGT.validar(pgt, true)))
@@ -342,6 +352,10 @@ class PGT {
 			if (updateAlunosResult) {
 				return updateAlunosResult;
 			}
+
+			if (anexo)
+			await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-${pgt.idfase}.pdf`, anexo);
+
 
 			// Atualizar a conexão dos professores
 			return await PGT.editarProfessores(sql, pgt);

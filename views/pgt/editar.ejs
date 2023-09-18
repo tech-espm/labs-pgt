@@ -42,7 +42,7 @@
 		</div>
 	</div>
 
-	<div class="col-md-6 col-md-3">
+	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
 			<label for="idorientador">Professor Orientador</label>
 			<select id="idorientador" name="idorientador" class="form-control" size="1">
@@ -55,7 +55,7 @@
 	</div>
 
 <% if (item) { %>
-	<div class="col-md-6 col-md-3">
+	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
 			<label for="idqualificador">Professor Qualificador</label>
 			<select id="idqualificador" name="idqualificador" class="form-control" size="1">
@@ -67,7 +67,7 @@
 		</div>
 	</div>
 
-	<div class="col-md-6 col-md-3">
+	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
 			<label for="iddefesa1">Professor de Defesa 1</label>
 			<select id="iddefesa1" name="iddefesa1" class="form-control" size="1">
@@ -79,7 +79,7 @@
 		</div>
 	</div>
 
-	<div class="col-md-6 col-md-3">
+	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
 			<label for="iddefesa2">Professor de Defesa 2</label>
 			<select id="iddefesa2" name="iddefesa2" class="form-control" size="1">
@@ -90,13 +90,11 @@
 			</select>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-6 col-md-3">
-			<div class="form-group">
-				<label for="anexo">Trabalho</label>
-				<input type="file" id="anexo" name="anexo" accept=".pdf" />
-			</div>
-			
+
+	<div class="col-12">
+		<div class="form-group">
+			<label for="anexo">Trabalho</label>
+			<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
 		</div>
 	</div>
 	<% } %>
