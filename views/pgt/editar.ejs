@@ -90,6 +90,15 @@
 			</select>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-6 col-md-3">
+			<div class="form-group">
+				<label for="anexo">Trabalho</label>
+				<input type="file" id="anexo" name="anexo" accept=".pdf" />
+			</div>
+			
+		</div>
+	</div>
 	<% } %>
 </div>
 
@@ -113,6 +122,9 @@
 			}, 
 			idorientador: {
 				required: true
+			},
+			anexo: {
+				required: false
 			}
 		}, 
 		submitHandler: function (form) {
@@ -123,7 +135,7 @@
 
 			//<% if (item) { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", new FormData(form), function (response) {
 				if (response.success){
 					Swal.success("PGT alterado com sucesso! " + emoji.happy);
 					window.location.href = "/pgt/listar";
@@ -134,7 +146,7 @@
 
 			//<% } else { %>
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", form, function (response) {
+			JsonWebApi.postFormData("<%- root %>/api/pgt/criar", new FormData(form), function (response) {
 				if (response.success) {
 					resetForm("#form");
 					$("#tabelabody").empty();

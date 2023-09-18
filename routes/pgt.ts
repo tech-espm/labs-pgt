@@ -8,6 +8,7 @@ import Usuario = require("../models/conta");
 import Perguntas = require("../enums/formulario/perguntas");
 import Formulario = require("../models/formulario");
 import TipoFormulario = require("../enums/formulario/tipo");
+import FasePGT = require("../enums/pgt/fase");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
@@ -117,6 +118,8 @@ class PGTRoute {
 
 			if (isNaN(id) || !(item = await PGT.obter(id))) {
 				res.render("index/nao-encontrado", { usuario: u });
+			} else if ((u.id === item.iddefesa1 || u.id === item.iddefesa2) && item.idfase === FasePGT.PGT1) {
+				res.redirect(app.root + "/acesso");
 			} else {
 				let perguntas = Perguntas[`${item.idfase}`].perguntas[`${item.idtipo}`];
 

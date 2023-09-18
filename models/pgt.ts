@@ -254,10 +254,13 @@ class PGT {
 		});
 	}
 
-	public static async criar(pgt: PGT): Promise<string> {
+	public static async criar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
 		let res: string;
 		if ((res = PGT.validar(pgt, true)))
 			return res;
+
+		if (!anexo || !anexo.buffer)
+			return "Anexo inválido";
 
 		return await app.sql.connect(async (sql) => {
 			await sql.beginTransaction();
@@ -293,6 +296,9 @@ class PGT {
 							[pgt.id, pgt.idsaluno[i], Funcao.Aluno]);
 				}
 
+				if (anexo)
+					await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-${pgt.idfase}.pdf`, anexo);
+
 				await sql.commit();
 
 				return null;
@@ -314,7 +320,7 @@ class PGT {
 		});
 	}
 
-	public static async editar(pgt: PGT): Promise<string> {
+	public static async editar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
 		// Validar se o PGT editado está OK
 		let res: string;
 		if ((res = PGT.validar(pgt, false)))

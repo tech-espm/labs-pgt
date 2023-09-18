@@ -12,11 +12,16 @@ class PGTApiRoute {
   }
 
   @app.http.post()
+  @app.route.formData()
   public static async criar(req: app.Request, res: app.Response) {
     const u = await Usuario.cookie(req, res, true);
     if (!u) return;
 
-    const erro = await PGT.criar(req.body);
+    let anexo: app.UploadedFile | null = null;
+    if (req.uploadedFiles)
+      anexo = req.uploadedFiles.anexo;
+
+    const erro = await PGT.criar(req.body, anexo);
 
     if (erro) {
       res.status(400).json(erro);
@@ -27,13 +32,18 @@ class PGTApiRoute {
   }
 
   @app.http.post()
+  @app.route.formData()
   public static async editar(req: app.Request, res: app.Response) {
     const u = await Usuario.cookie(req, res, true);
     if (!u) return;
 
     const pgt: PGT = req.body;
 
-    const erro = await PGT.editar(pgt);
+    let anexo: app.UploadedFile | null = null;
+    if (req.uploadedFiles)
+      anexo = req.uploadedFiles.anexo;
+
+    const erro = await PGT.editar(pgt, anexo);
 
     if (erro) {
       res.status(400).json(erro);
