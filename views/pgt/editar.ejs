@@ -121,9 +121,6 @@
 			idorientador: {
 				required: true
 			},
-			anexo: {
-				required: false
-			}
 		}, 
 		submitHandler: function (form) {
 			if (JsonWebApi.active)
@@ -136,7 +133,6 @@
 			JsonWebApi.postFormData("<%- root %>/api/pgt/editar", new FormData(form), function (response) {
 				if (response.success){
 					Swal.success("PGT alterado com sucesso! " + emoji.happy);
-					window.location.href = "/pgt/listar";
 				}
 				else
 					Swal.error(response.value + " " + emoji.sad);
@@ -149,7 +145,6 @@
 					resetForm("#form");
 					$("#tabelabody").empty();
 					Swal.success("PGT criado com sucesso! " + emoji.happy).then(() => {
-						window.location.href = "/pgt/listar"
 					});
 				} else {
 					Swal.error(response.value + " " + emoji.sad);
