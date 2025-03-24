@@ -11,33 +11,36 @@
 <div class="container">
     <div class="row">
         <% for (let i = 0; i < perguntas.length; i++) {%>
-            <div class="colunaCriterio<%= i + 1%> col-md-6 col-12 pb-5 px-1 d-flex flex-column justify-content-between">
-                <div>
-                    <h5><strong>Critério <%= i + 1%>: <%= perguntas[i].titulo %></strong></h5>
-                    <label><strong>Peso: (<%= `${perguntas[i].peso * 100}%` %>)</strong></label>
-                </div>
-
-                <div>
-                    <%- perguntas[i].criterios %>
-                </div>
-
-                <div>
-                    <textarea rows="3" style="resize: none; width: 80%;" id="comentario<%= i + 1%>" name="comentario<%= i + 1%>"
-                        placeholder="Comentários"></textarea> <br>
-                    <label for="nota<%= i + 1%>"><strong>Notas de 0 a
-                            10,0:</strong></label>
-                    <input oninput="atualizar(nota<%= i + 1%>, <%= perguntas[i].peso %>)" type="number" id="nota<%= i + 1%>" name="nota<%= i + 1%>" min="0" max="10" placeholder="0" required><br>
-
-                    Nota com peso: <output id="xf" name="xf" for="nota<%= i + 1%>">0,0</output>
+            <div class="colunaCriterio<%= i + 1%> col-xl-6 col-lg-6 col-md-12 pb-3 px-1 d-flex flex-column justify-content-between">
+                <div class="card shadow-sm h-100 m-lg-2 m-xl-3">
+                    <div class="card-header" style="padding-bottom: 0px">
+                        <h5 class="card-title"><strong>Critério <%= i + 1%>: <%= perguntas[i].titulo %></strong></h5>
+                    </div>
+                    <div class="card-body">
+                        <label class="card-subtitle text-muted"><strong>Peso: (<%= `${perguntas[i].peso * 100}%` %>)</strong></label>
+                        <div class="mt-3">
+                            <%- perguntas[i].criterios %>
+                        </div>
+                        <div class="mt-3">
+                            <textarea class="form-control" rows="3" id="comentario<%= i + 1%>" name="comentario<%= i + 1%>"
+                                placeholder="Comentários"></textarea>
+                        </div>
+                        <div class="mt-3">
+                            <label for="nota<%= i + 1%>"><strong>Notas de 0 a 10,0:</strong></label>
+                            <input class="form-control w-50" oninput="atualizar(nota<%= i + 1%>, <%= perguntas[i].peso %>)" type="number" id="nota<%= i + 1%>" name="nota<%= i + 1%>" min="0" max="10" placeholder="0" required>
+                        </div>
+                        <div class="mt-3">
+                            Nota com peso: <output id="xf" name="xf" for="nota<%= i + 1%>">0,0</output>
+                        </div>
+                    </div>
                 </div>
             </div>
         <%}%>
     </div>
-    <div class="row">
+    <div class="row mt-4">
         <h5>
-            <label for="notaFinal"><strong>Nota final
-                do trabalho avaliado:</strong></label>
-            <output name="demo" id="demo" for="notaFinal"><strong>0</strong></output>
+            <label for="notaFinal"><strong>Nota final do trabalho avaliado:</strong></label>
+            <output name="demo" id="demo" for="notaFinal" class="fw-bold">0</output>
         </h5>
     </div>
 </div>
@@ -48,6 +51,7 @@
 <input name="notafinal" id="notafinal" value="0" class="d-none">
 
 <%- contentFor("scripts") %>
+
 <script>
     "use strict";
 

@@ -1,3 +1,22 @@
+import tiposPGT = require("../../models/tipoFormulario");
+
+/*
+tabela tipo
+id int
+nome string
+
+tabela fase
+id int
+nome string
+
+tabela criterio
+id
+idtipo
+idfase
+nome
+descricao..
+
+*/
 let Perguntas = {
   // Manter sincronizado com enum/fase.ts
   //PGT 1
