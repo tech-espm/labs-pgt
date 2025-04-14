@@ -45,12 +45,14 @@
 	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
 			<label for="idorientador">Professor Orientador</label>
-			<select id="idorientador" name="idorientador" class="form-control" size="1">
-				<option value="">Selecione...</option>
-				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
-				<% } %>
-			</select>
+			<div class="cb-search">
+				<select id="idorientador" name="idorientador" class="form-control" size="1">
+					<option value="">Selecione...</option>
+					<% for (let i = 0; i < usuarios.length; i++) { %>
+					<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+					<% } %>
+				</select>
+			</div>
 		</div>
 	</div>
 
@@ -106,6 +108,8 @@
 <script type="text/javascript">
 	//<![CDATA[
 	"use strict";
+
+	prepareCbSearch(document.getElementById("idorientador"));
 
 	$("#form").validate({
 		rules: {
