@@ -17,14 +17,18 @@ class AlunoRoute {
 
 	public static async editar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		const uExcluidoRegex = /^@\d+:.+$/;
 		if (!u || !u.admin) {
 			res.redirect(app.root + "/acesso");
 		} else {
 			let id = parseInt(req.query["id"] as string);
 			let item: Aluno = null;
-			if (isNaN(id) || !(item = await Aluno.obter(id)) || uExcluidoRegex.test(item.email))
-				res.render("index/nao-encontrado", { usuario: u });
+			if (isNaN(id) || !(item = await Aluno.obter(id)))
+				res.render("index/erro", {
+					layout: "layout-externo",
+					titulo: "Não encontrado",
+					mensagem: "Não foi possível encontrar o aluno " + id,
+					usuario: u
+				});
 			else
 				res.render("aluno/editar", {
 					titulo: "Editar Aluno",

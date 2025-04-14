@@ -36,7 +36,12 @@ class PGTRoute {
 			let id = parseInt(req.query["id"] as string);
 			let item: PGT = null;
 			if (isNaN(id) || !(item = await PGT.obter(id)))
-				res.render("index/nao-encontrado", { usuario: u });
+				res.render("index/erro", {
+					layout: "layout-externo",
+					titulo: "Não encontrado",
+					mensagem: "Não foi possível encontrar o PGT " + id,
+					usuario: u
+				});
 			else
 				res.render("pgt/editar", {
 					titulo: "Editar PGT",
@@ -73,7 +78,12 @@ class PGTRoute {
 			let id = parseInt(req.query["id"] as string);
 			let item: PGT = null;
 			if (isNaN(id) || !(item = await PGT.obter(id)))
-				res.render("index/nao-encontrado", { usuario: u });
+				res.render("index/erro", {
+					layout: "layout-externo",
+					titulo: "Não encontrado",
+					mensagem: "Não foi possível encontrar o PGT " + id,
+					usuario: u
+				});
 			else {
 				let usuarioPreencherQualificaco: boolean = (await Formulario.autores(
 					item.id, TipoFormulario.Qualificacao)).findIndex(autorId => autorId === u.id) === -1
@@ -117,7 +127,12 @@ class PGTRoute {
 			let item: PGT = null;
 
 			if (isNaN(id) || !(item = await PGT.obter(id))) {
-				res.render("index/nao-encontrado", { usuario: u });
+				res.render("index/erro", {
+					layout: "layout-externo",
+					titulo: "Não encontrado",
+					mensagem: "Não foi possível encontrar o PGT " + id,
+					usuario: u
+				});
 			} else if ((u.id === item.iddefesa1 || u.id === item.iddefesa2) && item.idfase === FasePGT.PGT1) {
 				res.redirect(app.root + "/acesso");
 			} else {

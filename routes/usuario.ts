@@ -26,7 +26,12 @@ class UsuarioRoute {
 			let id = parseInt(req.query["id"] as string);
 			let item: Usuario = null;
 			if (isNaN(id) || !(item = await Usuario.obter(id)) || item.perfil_id === 3 || uExcluidoRegex.test(item.email))
-				res.render("index/nao-encontrado", { usuario: u });
+				res.render("index/erro", {
+					layout: "layout-externo",
+					titulo: "Não encontrado",
+					mensagem: "Não foi possível encontrar o usuário " + id,
+					usuario: u
+				});
 			else
 				res.render("usuario/editar", {
 					titulo: "Editar Usuário",
