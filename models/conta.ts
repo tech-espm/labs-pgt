@@ -226,7 +226,7 @@ class Conta {
 		return app.sql.connect(async (sql) => {
 			// Utilizar substr(email, instr(email, ':') + 1) para remover o prefixo, caso precise desfazer a exclusão (caso
 			// não exista o prefixo, instr() vai retornar 0, que, com o + 1, faz o substr() retornar a própria string inteira)
-			await sql.query("update conta set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ?", [id]);
+			await sql.query("update conta set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ? and exclusao is null and perfil_id != 3", [id]);
 
 			return (sql.affectedRows ? null : "Usuário não encontrado");
 		});

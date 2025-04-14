@@ -96,7 +96,9 @@ class Aluno {
 
 	public static async excluir(id: number): Promise<string> {
 		return app.sql.connect(async (sql) => {
-			await sql.query("delete from conta where id = ? and perfil_id = 3", [id]);
+			// Utilizar substr(email, instr(email, ':') + 1) para remover o prefixo, caso precise desfazer a exclusão (caso
+			// não exista o prefixo, instr() vai retornar 0, que, com o + 1, faz o substr() retornar a própria string inteira)
+			await sql.query("update conta set email = concat('@', id, ':', email), token = null, exclusao = now() where id = ? and exclusao is null and perfil_id = 3", [id]);
 
 			return (sql.affectedRows ? null : "Aluno não encontrado");
 		});
