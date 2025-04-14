@@ -14,6 +14,7 @@
 - [Guilherme Oliveira Casagrande](https://github.com/ryguigas0)
 - [Henrique Evelim](https://github.com/Henriqueevelim)
 - [Leonardo Nunes Negrão](https://github.com/LeonardoNunes-N)
+- [Luiz Felipe Pimenta Berrettini](https://github.com/PimentaBrrt)
 - [Mateus Pinho](https://github.com/Matpifre)
 
 ## Cliente do Projeto

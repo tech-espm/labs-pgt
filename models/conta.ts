@@ -148,7 +148,7 @@ class Conta {
 		let lista: Conta[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select u.id, u.email, u.nome, p.nome perfil, date_format(u.criacao, '%d/%m/%Y') criacao from conta u inner join perfil p on p.id = u.perfil_id where u.exclusao is null order by u.email asc") as Conta[];
+			lista = await sql.query("select u.id, u.email, u.nome, p.nome perfil, date_format(u.criacao, '%d/%m/%Y') criacao from conta u inner join perfil p on p.id = u.perfil_id where u.exclusao is null and perfil_id != 3 order by u.email asc") as Conta[];
 		});
 
 		return (lista || []);
