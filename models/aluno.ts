@@ -52,7 +52,7 @@ class Aluno {
 		let lista: Aluno[] = null;
 
 		await app.sql.connect(async (sql) => {
-			lista = await sql.query("select id, registro, email, nome, telefone from conta where id = ? and exclusao is null and c.perfil_id = 3", [id]) as Aluno[];
+			lista = await sql.query("select id, registro, email, nome, telefone from conta where id = ? and exclusao is null and perfil_id = 3", [id]) as Aluno[];
 		});
 
 		return ((lista && lista[0]) || null);
