@@ -27,11 +27,21 @@
 </div>
 
 <div class="form-group mb-5">
-	<label for="idorientador">Professor</label>
-	<select id="idorientador" name="idorientador" class="form-control" size="1">
+	<label for="idorientador1">Orientador 1</label>
+	<select id="idorientador1" name="idorientador1" class="form-control" size="1">
 		<option value="">Selecione...</option>
 		<% for (let i = 0; i < usuarios.length; i++) { %>
-		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador1 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+		<% } %>
+	</select>
+</div>
+
+<div class="form-group mb-5">
+	<label for="idorientador2">Orientador 2</label>
+	<select id="idorientador2" name="idorientador2" class="form-control" size="1">
+		<option value="">Selecione...</option>
+		<% for (let i = 0; i < usuarios.length; i++) { %>
+		<option value="<%= usuarios[i].id %>" <%-((item && item.idorientador2 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
 		<% } %>
 	</select>
 </div>
@@ -313,7 +323,7 @@
 			idfase: {
 				required: true
 			}, 
-			idorientador: {
+			idorientador1: {
 				required: true
 			}
 		}, 

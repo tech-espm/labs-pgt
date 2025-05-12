@@ -15,9 +15,11 @@ interface PGT {
 	idsemestre: number;
 	//exclusao: string; // Esse campo não precisa ser listado na classe... É apenas para controle de exclusão
 	criacao: string;
-	idorientador: number | null;
+	idorientador1: number | null;
+	idorientador2?: number | null;
 	alunos?: any[];
-	nomeorientador?: string;
+	nomeorientador1?: string;
+	nomeorientador2?: string;
 	idqualificador?: number | null;
 	iddefesa1?: number | null;
 	nomedefesa1?: string | null;
@@ -89,8 +91,15 @@ class PGT {
 		if (isNaN(pgt.idsemestre = parseInt(pgt.idsemestre as any)))
 			return "Semestre inválido";
 
-		if (isNaN(pgt.idorientador = parseInt(pgt.idorientador as any)))
-			return "Orientador inválido";
+		if (isNaN(pgt.idorientador1 = parseInt(pgt.idorientador1 as any)))
+			return "Orientador 1 inválido";
+
+		if (pgt.idorientador2) {
+			if (isNaN(pgt.idorientador1 = parseInt(pgt.idorientador1 as any)))
+				return "Orientador 2 inválido";
+		} else {
+			pgt.idorientador2 = null;
+		}
 
 		let idProfessores = []
 
@@ -141,8 +150,10 @@ class PGT {
 					t.nome as tipo,
 					p.semestre_id,
 					date_format(p.criacao, '%d/%m/%Y') as criacao,
-					ori.nome as nomeorientador,
-					ori.id as idorientador,
+					ori1.nome as nomeorientador1,
+					ori1.id as idorientador1,
+					ori2.nome as nomeorientador2,
+					ori2.id as idorientador2,
 					qual.nome as nomequalificador,
 					qual.id as idqualificador,
 					def1.nome as nomedefesa1,
@@ -154,16 +165,18 @@ class PGT {
 				from pgt p
 				inner join tipo_pgt t on t.id = p.tipo_id
 				inner join fase f on f.id = p.fase_id
-				left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
-				left join conta ori on ori.id = cpori.conta_id
+				left join conta_pgt cpori1 on cpori1.pgt_id = p.id and cpori1.funcao_id = ?
+				left join conta ori1 on ori1.id = cpori1.conta_id
+				left join conta_pgt cpori2 on cpori2.pgt_id = p.id and cpori2.funcao_id = ?
+				left join conta ori on ori2.id = cpori2.conta_id
 				left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
 				left join conta qual on qual.id = cpqual.conta_id
 				left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
 				left join conta def1 on def1.id = cpdef1.conta_id
 				left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
 				left join conta def2 on def2.id = cpdef2.conta_id
-				where ori.id = ? and p.exclusao is null`,
-					[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador]) as PGT[];
+				where ori1.id = ? and p.exclusao is null`,
+					[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select distinct
@@ -176,8 +189,10 @@ class PGT {
 				p.semestre_id,
 				s.nome as semestre,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
-				ori.nome as nomeorientador,
-				ori.id as idorientador,
+				ori1.nome as nomeorientador1,
+				ori1.id as idorientador1,
+				ori2.nome as nomeorientador2,
+				ori2.id as idorientador2,
 				qual.nome as nomequalificador,
 				qual.id as idqualificador,
 				def1.nome as nomedefesa1,
@@ -191,8 +206,10 @@ class PGT {
 			inner join fase f on f.id = p.fase_id
 			inner join semestre_pgt s on s.id = p.semestre_id
 			inner join conta_pgt cp on cp.pgt_id = p.id
-			left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
-			left join conta ori on ori.id = cpori.conta_id
+			left join conta_pgt cpori1 on cpori1.pgt_id = p.id and cpori1.funcao_id = ?
+			left join conta ori1 on ori1.id = cpori1.conta_id
+			left join conta_pgt cpori2 on cpori2.pgt_id = p.id and cpori2.funcao_id = ?
+			left join conta ori2 on ori2.id = cpori2.conta_id
 			left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
 			left join conta qual on qual.id = cpqual.conta_id
 			left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
@@ -200,7 +217,7 @@ class PGT {
 			left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
 			left join conta def2 on def2.id = cpdef2.conta_id
 			where p.exclusao is null`,
-			[Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2]) as PGT[];
+			[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2]) as PGT[];
 		});
 
 		return (lista || []);
@@ -229,8 +246,10 @@ class PGT {
 				p.tipo_id as idtipo,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
 				p.semestre_id as idsemestre,
-				ori.nome as nomeorientador,
-				ori.id as idorientador,
+				ori1.nome as nomeorientador1,
+				ori1.id as idorientador1,
+				ori2.nome as nomeorientador2,
+				ori2.id as idorientador2,
 				qual.nome as nomequalificador,
 				qual.id as idqualificador,
 				def1.nome as nomedefesa1,
@@ -239,16 +258,18 @@ class PGT {
 				def2.id as iddefesa2,
 				concat(def1.nome, ' ', def2.nome) as defesa
 			from pgt p
-			left join conta_pgt cpori on cpori.pgt_id = p.id and cpori.funcao_id = ?
-			left join conta ori on ori.id = cpori.conta_id
+			left join conta_pgt cpori1 on cpori1.pgt_id = p.id and cpori1.funcao_id = ?
+			left join conta ori1 on ori1.id = cpori1.conta_id
+			left join conta_pgt cpori2 on cpori2.pgt_id = p.id and cpori2.funcao_id = ?
+			left join conta ori2 on ori2.id = cpori2.conta_id
 			left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
 			left join conta qual on qual.id = cpqual.conta_id
 			left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
 			left join conta def1 on def1.id = cpdef1.conta_id
 			left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
 			left join conta def2 on def2.id = cpdef2.conta_id
-			where p.id = ?
-			`, [Funcao.Orientador, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, id]) as PGT[];
+			where p.id = ? and p.exclusao is null
+			`, [Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, id]) as PGT[];
 
 			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
 		});
@@ -265,64 +286,106 @@ class PGT {
 	}
 
 	public static async criar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
-		let res: string;
-		if ((res = PGT.validar(pgt, true)))
-			return res;
+	let res: string;
+	if ((res = PGT.validar(pgt, true)))
+		return res;
 
-		return await app.sql.connect(async (sql) => {
-			await sql.beginTransaction();
+	return await app.sql.connect(async (sql) => {
+		await sql.beginTransaction();
+
+		try {
+
+			await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())",
+				[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
+
+			pgt.id = await sql.scalar("select last_insert_id()") as number;
 
 			try {
-
-				await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())",
-					[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
-
-				pgt.id = await sql.scalar("select last_insert_id()") as number;
-
 				await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
-					[pgt.id, pgt.idorientador, Funcao.Orientador])
-
-				if (pgt.idqualificador) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
-						[pgt.id, pgt.idqualificador, Funcao.Qualificador])
-				}
-
-				if (pgt.iddefesa1) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
-						[pgt.id, pgt.iddefesa1, Funcao.Defesa1])
-				}
-
-				if (pgt.iddefesa2) {
-					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
-						[pgt.id, pgt.iddefesa2, Funcao.Defesa2])
-				}
-
-				if (pgt.idsaluno) {
-					for (let i = pgt.idsaluno.length - 1; i >= 0; i--)
-						await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
-							[pgt.id, pgt.idsaluno[i], Funcao.Aluno]);
-				}
-
-				await sql.commit();
-
-				return null;
+					[pgt.id, pgt.idorientador1, Funcao.Orientador1]);
 			} catch (e) {
-				if (e.code) {
-					switch (e.code) {
-						case "ER_DUP_ENTRY":
-							return "Alunos repetidos no PGT";
-						case "ER_NO_REFERENCED_ROW":
-						case "ER_NO_REFERENCED_ROW_2":
-							return "Aluno não encontrado";
-						default:
-							throw e;
+				if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+					return "Orientador 1 não encontrado";
+				}
+				throw e;
+			}
+
+			if (pgt.idorientador2) {
+
+				if (pgt.idsemestre !== 2) {
+					throw new Error("O campo de Professor Orientador 2 só pode ser preenchido se o PGT for do 8° semestre.");
+				}
+
+				try {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.idorientador2, Funcao.Orientador2]);
+				} catch (e) {
+					if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+						return "Orientador 2 não encontrado";
 					}
-				} else {
 					throw e;
 				}
 			}
-		});
-	}
+
+			if (pgt.idqualificador) {
+				try {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.idqualificador, Funcao.Qualificador]);
+				} catch (e) {
+					if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+						return "Qualificador não encontrado";
+					}
+					throw e;
+				}
+			}
+
+			if (pgt.iddefesa1) {
+				try {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.iddefesa1, Funcao.Defesa1]);
+				} catch (e) {
+					if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+						return "Defesa 1 não encontrada";
+					}
+					throw e;
+				}
+			}
+
+			if (pgt.iddefesa2) {
+				try {
+					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+						[pgt.id, pgt.iddefesa2, Funcao.Defesa2]);
+				} catch (e) {
+					if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+						return "Defesa 2 não encontrada";
+					}
+					throw e;
+				}
+			}
+
+			if (pgt.idsaluno) {
+				for (let i = pgt.idsaluno.length - 1; i >= 0; i--) {
+					try {
+						await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
+							[pgt.id, pgt.idsaluno[i], Funcao.Aluno]);
+					} catch (e) {
+						if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
+							return `Aluno não encontrado (ID: ${pgt.idsaluno[i]})`;
+						}
+						throw e;
+					}
+				}
+			}
+
+			await sql.commit();
+
+			return null;
+
+		} catch (e) {
+			throw e;
+		}
+	});
+}
 
 	public static async editar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
 		// Validar se o PGT editado está OK
@@ -334,7 +397,7 @@ class PGT {
 			await sql.beginTransaction();
 
 			// Atualizar os dados do PGT
-			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ?",
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ? and exclusao is null",
 				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]);
 
 			if (!sql.affectedRows)
@@ -364,7 +427,11 @@ class PGT {
 
 	private static async editarProfessores(sql: app.Sql, pgt: PGT): Promise<string> {
 		try {
-			PGT.atualizarContaPGT(sql, pgt, Funcao.Orientador, pgt.idorientador)
+			PGT.atualizarContaPGT(sql, pgt, Funcao.Orientador1, pgt.idorientador1)
+
+			if (pgt.idorientador2) {
+				PGT.atualizarContaPGT(sql, pgt, Funcao.Orientador2, pgt.idorientador2)
+			}
 
 			if (pgt.idqualificador) {
 				PGT.atualizarContaPGT(sql, pgt, Funcao.Qualificador, pgt.idqualificador)

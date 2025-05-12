@@ -105,7 +105,7 @@ class PGTRoute {
 						formularios: await Formulario.listar(item.id, TipoFormulario.Qualificacao),
 						preencher: usuarioPreencherQualificaco,
 						preencheu: await Formulario.autoresPreencheram([u.id], item.id, TipoFormulario.Qualificacao),
-						nota: await Formulario.calcularNotaFinalQualificacao(item.id, item.idorientador, item.idqualificador)
+						nota: await Formulario.calcularNotaFinalQualificacao(item.id, item.idorientador2, item.idqualificador)
 					},
 					defesa: {
 						formularios: await Formulario.listar(item.id, TipoFormulario.Defesa),

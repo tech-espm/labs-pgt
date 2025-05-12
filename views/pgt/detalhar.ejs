@@ -82,7 +82,7 @@
                             <%=(qualificacao.nota ? qualificacao.nota.toFixed(1) : 'Não Avaliado') %>
                         </div>
                         <div>
-                            <% if((usuario.id === item.idqualificador || usuario.id === item.idorientador) && qualificacao.preencher) { %>
+                            <% if((usuario.id === item.idqualificador || usuario.id === item.idorientador1 || usuario.id === item.idorientador2) && qualificacao.preencher) { %>
                                 <a class="btn btn-primary" href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar</a>
                             <% } %>    
                         </div>
@@ -121,9 +121,10 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Professor Orientador</div>
+                            Professores Orientadores</div>
                         <div class="h5 mb-0 text-gray-800">
-                            <%=(item.nomeorientador ? item.nomeorientador : 'Nenhum') %>
+                            <%="Orientador 1 - " + (item.nomeorientador1 ? item.nomeorientador1 : 'Nenhum') +
+                            "\n Orientador 2 - " + (item.nomeorientador2 ? item.nomeorientador2 : 'Nenhum')%>
                         </div>
                     </div>
                         <div class="col-auto">
