@@ -157,7 +157,7 @@
         
         </div>
         </div>
-        <div class="row">
+        <div class="row d-none">
             <div class="col-xl-12 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
@@ -185,7 +185,7 @@
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                            Defesa 2</div>
+                            Avaliador</div>
                         <div class="h5 mb-0 text-gray-800">
                             <%=(item.nomedefesa2 ? item.nomedefesa2 : 'Nenhum') %>
                         </div>
@@ -201,4 +201,12 @@
         </div>
     </div>
 </div>
-<a target="_blank" class="btn btn-primary mb-3" href="http://localhost:2000/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=<%- item.idfase%>"><i class="fa fa-paperclip"></i> Projeto </i></a>
+
+<a target="_blank" class="btn btn-primary mb-3" href="http://localhost:2000/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=<%- item.idfase%>">
+    <i class="fa fa-paperclip"></i>
+    Projeto
+</a>
+
+<a target="_blank" class="btn btn-primary mb-3 ml-3" href="<%- root %>/pgt/visualizar">
+    Visualizar atas PGT
+</a>

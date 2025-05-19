@@ -209,7 +209,7 @@ class Formulario {
         return true;
     }
 
-    public static async calcularNotaFinalQualificacao(idpgt: number, idorientador: number, idqualificador: number): Promise<Number> {
+    public static async calcularNotaFinalQualificacao(idpgt: number, idorientador1: number, idqualificador: number): Promise<Number> {
         let formularios: Formulario[] = await this.listar(idpgt, TipoFormulario.Qualificacao)
 
         let notaFinal: number = 0;
@@ -217,7 +217,7 @@ class Formulario {
         for (let i = 0; i < formularios.length; i++) {
             let peso: number = 0
 
-            if (formularios[i].idautor === idorientador) {
+            if (formularios[i].idautor === idorientador1) {
                 peso = 0.6
             }
 
@@ -231,13 +231,26 @@ class Formulario {
         return notaFinal
     }
 
-    public static async calcularNotaFinalDefesa(idpgt: number): Promise<Number> {
+    public static async calcularNotaFinalDefesa(idpgt: number, idorientador2: number): Promise<Number> {
         let formularios: Formulario[] = await this.listar(idpgt, TipoFormulario.Defesa)
 
         let notaFinal: number = 0;
+        let peso: number = 0
 
+        // orientador final = 0.4
+        // avaliador = 0.3
+        // qualificador = 0.3
         for (let i = 0; i < formularios.length; i++) {
-            notaFinal += (formularios[i].notafinal * (1 / 3))
+
+            if (formularios[i].idautor === idorientador2) {
+                peso = 0.4
+            }
+            else {
+                peso = 0.3
+            }
+
+            notaFinal += (formularios[i].notafinal * peso)
+            
         }
 
         return notaFinal
