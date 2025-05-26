@@ -9,6 +9,7 @@ import Perguntas = require("../enums/formulario/perguntas");
 import Formulario = require("../models/formulario");
 import TipoFormulario = require("../enums/formulario/tipo");
 import FasePGT = require("../enums/pgt/fase");
+import Perfil = require("../enums/conta/perfil");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
@@ -62,6 +63,20 @@ class PGTRoute {
 			res.redirect(app.root + "/acesso");
 		else
 			res.render("pgt/listar", {
+				layout: "layout-tabela",
+				titulo: "Gerenciar PGTs",
+				datatables: true,
+				usuario: u,
+				lista: await PGT.listar(u.admin ? 0 : u.id)
+			});
+	}
+
+	public static async visualizar(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req);
+		if (!u || (u.perfil_id !== Perfil.Administrador && u.perfil_id !== Perfil.Professor))
+			res.redirect(app.root + "/acesso");
+		else
+			res.render("pgt/visualizar", {
 				layout: "layout-tabela",
 				titulo: "Gerenciar PGTs",
 				datatables: true,

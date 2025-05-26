@@ -56,6 +56,20 @@
 		</div>
 	</div>
 
+	<div class="col-sm-6 col-md-3">
+		<div class="form-group">
+			<label for="idqualificador">Professor Qualificador</label>
+			<div class="cb-search">
+				<select id="idqualificador" name="idqualificador" class="form-control" size="1">
+					<option value="">Selecione...</option>
+					<% for (let i = 0; i < usuarios.length; i++) { %>
+					<option value="<%= usuarios[i].id %>" <%-((item && item.idqualificador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+					<% } %>
+				</select>
+			</div>
+		</div>
+	</div>
+
 	<div class="col-sm-6 col-md-3" id="orientador2">
 		<div class="form-group">
 			<label for="idorientador2">Professor Orientador 2</label>
@@ -67,19 +81,6 @@
 					<% } %>
 				</select>
 			</div>
-		</div>
-	</div>
-
-<% if (item) { %>
-	<div class="col-sm-6 col-md-3">
-		<div class="form-group">
-			<label for="idqualificador">Professor Qualificador</label>
-			<select id="idqualificador" name="idqualificador" class="form-control" size="1">
-				<option value="">Selecione...</option>
-				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.idqualificador === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
-				<% } %>
-			</select>
 		</div>
 	</div>
 
@@ -95,20 +96,23 @@
 		</div>
 	</div>
 
-	<div class="col-sm-6 col-md-3">
+	<div class="col-sm-6 col-md-3" id="avaliador">
 		<div class="form-group">
 			<label for="iddefesa2">Professor Avaliador</label>
-			<select id="iddefesa2" name="iddefesa2" class="form-control" size="1">
-				<option value="">Selecione...</option>
-				<% for (let i = 0; i < usuarios.length; i++) { %>
-				<option value="<%= usuarios[i].id %>" <%-((item && item.iddefesa2 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
-				<% } %>
-			</select>
+			<div class="cb-search">
+				<select id="iddefesa2" name="iddefesa2" class="form-control" size="1">
+					<option value="">Selecione...</option>
+					<% for (let i = 0; i < usuarios.length; i++) { %>
+					<option value="<%= usuarios[i].id %>" <%-((item && item.iddefesa2 === usuarios[i].id) ? 'selected="selected"' : '') %>><%= usuarios[i].nome %></option>
+					<% } %>
+				</select>
+			</div>
 		</div>
 	</div>
 
+	<% if (item) { %>
 	<div class="col-12">
-		<div class="form-group">
+		<div class="form-group p-10">
 			<label for="anexo">Trabalho</label>
 			<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
 		</div>
@@ -124,28 +128,51 @@
 	"use strict";
 
 	prepareCbSearch(document.getElementById("idorientador1"));
-	prepareCbSearch(document.getElementById("idorientador2"));
+	prepareCbSearch(document.getElementById("idqualificador"));
+	prepareCbSearch(document.getElementById("idorientador2"))
+	prepareCbSearch(document.getElementById("iddefesa2"))
 
-	// Esconde o bloco orientador2 quando o pgt sendo criado não for do 8° semestre
 	document.addEventListener('DOMContentLoaded', function() {
 	const semestreElement = document.getElementById('idsemestre');
+
 	const orientador2Div = document.getElementById('orientador2');
-	const orientador2Select = document.getElementById('idorientador2');
-	const orientador2Label = orientador2Div.querySelector('label');
+	const orientador2Select = document.getElementById('idorientador2')
+
+	const avaliadorDiv = document.getElementById('avaliador');
+	const avaliadorSelect = document.getElementById('iddefesa2');
 
 	function checkSemestre() {
-    if (semestreElement && orientador2Select) {
-      const isDisabled = semestreElement.value != '2';
-      orientador2Select.disabled = isDisabled;
-      orientador2Div.classList.toggle('disabled', isDisabled);
-	  orientador2Label.style.color = isDisabled ? '#6c757d' : '#000';
-    }
-  }
 
-	// Verifica o valor inicial
+		if (semestreElement && orientador2Div) {
+			if (semestreElement.value != '2') {
+				orientador2Div.classList.add("d-none");
+				orientador2Select.disabled = true;
+			}
+			else {
+				if (orientador2Div.classList.contains("d-none")) {
+					orientador2Div.classList.remove("d-none");
+				}
+				orientador2Select.disabled = false;
+			}
+    	}
+	
+		if (semestreElement && avaliadorDiv) {
+			if (semestreElement.value != '2') {
+				avaliadorDiv.classList.add("d-none");
+				avaliadorSelect.disabled = true;
+			}
+			else {
+				if (avaliadorDiv.classList.contains("d-none")) {
+					avaliadorDiv.classList.remove("d-none");
+				}
+				avaliadorSelect.disabled = false;
+			}
+    	}
+
+}
+
 	checkSemestre();
 
-	// Verifica novamente quando o valor for alterado
 	if (semestreElement) {
 		semestreElement.addEventListener('change', checkSemestre);
 	}
@@ -159,6 +186,9 @@
 			idtipo: {
 				required: true
 			}, 
+			idfase: {
+				required: true
+			},
 			idsemestre: {
 				required: true
 			}, 
