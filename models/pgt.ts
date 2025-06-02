@@ -95,7 +95,7 @@ class PGT {
 			return "Orientador 1 inválido";
 
 		if (pgt.idorientador2) {
-			if (isNaN(pgt.idorientador1 = parseInt(pgt.idorientador1 as any)))
+			if (isNaN(pgt.idorientador2 = parseInt(pgt.idorientador2 as any)))
 				return "Orientador 2 inválido";
 		} else {
 			pgt.idorientador2 = null;
@@ -352,12 +352,17 @@ class PGT {
 			}
 
 			if (pgt.iddefesa2) {
+
+				if (pgt.idsemestre !== 2) {
+					throw new Error("O campo de Professor Defesa 2 (ou avaliador) só pode ser preenchido se o PGT for do 8° semestre.");
+				}
+
 				try {
 					await sql.query("insert into conta_pgt (pgt_id, conta_id, funcao_id) values (?, ?, ?)",
 						[pgt.id, pgt.iddefesa2, Funcao.Defesa2]);
 				} catch (e) {
 					if (e.code === "ER_NO_REFERENCED_ROW" || e.code === "ER_NO_REFERENCED_ROW_2") {
-						return "Defesa 2 não encontrada";
+						return "Defesa 2/Avaliador não encontrado";
 					}
 					throw e;
 				}

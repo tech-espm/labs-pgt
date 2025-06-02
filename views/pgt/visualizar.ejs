@@ -1,0 +1,19 @@
+<table class="table table-flush table-striped table-hover" id="tabela"></table>
+
+<%- contentFor("scripts") %>
+<script type="text/javascript">
+    "use strict";
+    var tabela = prepareDataTable("tabela", {
+        order: [[0, "asc"]],
+        deferRender: true,
+        columns: [
+            { title: "Professor", data: "professor", render: encode },
+            { title: "Tipo", data: "tipo", render: encode },
+            { title: "Critério", data: "criterio", render: encode },
+            { title: "Nota", data: "nota" },
+            { title: "Comentário", data: "comentario", render: encode }
+        ],
+        data: <%- JSON.stringify(grid) %>,
+        export: { title: "Atas" }
+    });
+</script>

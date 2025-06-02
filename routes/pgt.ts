@@ -72,18 +72,68 @@ class PGTRoute {
 	}
 
 	public static async visualizar(req: app.Request, res: app.Response) {
-		let u = await Usuario.cookie(req);
-		if (!u || (u.perfil_id !== Perfil.Administrador && u.perfil_id !== Perfil.Professor))
-			res.redirect(app.root + "/acesso");
-		else
-			res.render("pgt/visualizar", {
-				layout: "layout-tabela",
-				titulo: "Gerenciar PGTs",
-				datatables: true,
-				usuario: u,
-				lista: await PGT.listar(u.admin ? 0 : u.id)
-			});
-	}
+    let u = await Usuario.cookie(req);
+    if (!u || (u.perfil_id !== Perfil.Administrador && u.perfil_id !== Perfil.Professor))
+        return res.redirect(app.root + "/acesso");
+
+    const id = parseInt(req.query["id"] as string);
+    if (isNaN(id))
+        return res.render("index/erro", {
+            layout: "layout-externo",
+            titulo: "Não encontrado",
+            mensagem: "ID inválido",
+            usuario: u
+        });
+
+    const item = await PGT.obter(id);
+    if (!item)
+        return res.render("index/erro", {
+            layout: "layout-externo",
+            titulo: "Não encontrado",
+            mensagem: "Não foi possível encontrar o PGT " + id,
+            usuario: u
+        });
+
+    const formularios = await Formulario.listar(id);
+
+    // Busca os critérios corretos conforme fase e tipo do PGT
+    const criteriosPerguntas = Perguntas[item.idfase]?.perguntas?.[item.idtipo] || [];
+
+    const grid: {
+        professor: string,
+        tipo: string,
+        criterio: string,
+        nota: number | undefined,
+        comentario: string | undefined
+    }[] = [];
+
+    for (const formulario of formularios) {
+        const professor = formulario.nomeautor;
+        const tipo = formulario.nometipo;
+        for (let i = 0; i < criteriosPerguntas.length; i++) {
+            const crit = criteriosPerguntas[i];
+            const campoNota = "nota" + (i + 1);
+            const campoComentario = "comentario" + (i + 1);
+            const nota = (formulario as any)[campoNota];
+            const comentario = (formulario as any)[campoComentario];
+            grid.push({
+                professor,
+                tipo,
+                criterio: crit.titulo,
+                nota,
+                comentario
+            });
+        }
+    }
+
+    res.render("pgt/visualizar", {
+        layout: "layout-tabela",
+        titulo: "Visualizar Atas",
+        datatables: true,
+        usuario: u,
+        grid
+    });
+}
 
 	public static async detalhar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
