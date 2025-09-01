@@ -101,18 +101,26 @@
 			if (JsonWebApi.active)
 				return;
 
-			Swal.wait();
+			Swal.okcancel({
+				html: `Tem certeza que deseja salvar a avaliação?<br/><br/><b>Essa operação não pode ser desfeita!</b>`,
+			}).then(function (result) {
+				debugger;
+				if (!result.value)
+					return;
 
-			JsonWebApi.postFormData("<%- root %>/api/pgt/avaliar", form, function (response) {
-                console.log({response})
-				if (response.success) {
-					resetForm("#form");
-					Swal.success("PGT avaliado com sucesso! " + emoji.happy).then(() => {
-						window.location.href = "/pgt/detalhar?id=<%= item.id %>"
-					});
-				} else {
-					Swal.error(response.value + " " + emoji.sad);
-				}
+				Swal.wait();
+
+				JsonWebApi.postFormData("<%- root %>/api/pgt/avaliar", form, function (response) {
+					console.log({response})
+					if (response.success) {
+						resetForm("#form");
+						Swal.success("PGT avaliado com sucesso! " + emoji.happy).then(() => {
+							window.location.href = "/pgt/detalhar?id=<%= item.id %>"
+						});
+					} else {
+						Swal.error(response.value + " " + emoji.sad);
+					}
+				});
 			});
 		}
 	});
