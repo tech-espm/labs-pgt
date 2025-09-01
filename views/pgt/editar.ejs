@@ -133,7 +133,7 @@
 	prepareCbSearch(document.getElementById("iddefesa2"))
 
 	document.addEventListener('DOMContentLoaded', function() {
-	const semestreElement = document.getElementById('idsemestre');
+	const faseElement = document.getElementById('idfase');
 
 	const orientador2Div = document.getElementById('orientador2');
 	const orientador2Select = document.getElementById('idorientador2')
@@ -141,10 +141,10 @@
 	const avaliadorDiv = document.getElementById('avaliador');
 	const avaliadorSelect = document.getElementById('iddefesa2');
 
-	function checkSemestre() {
+	function checkFase() {
 
-		if (semestreElement && orientador2Div) {
-			if (semestreElement.value != '2') {
+		if (faseElement && orientador2Div) {
+			if (faseElement.value < 2) {
 				orientador2Div.classList.add("d-none");
 				orientador2Select.disabled = true;
 			}
@@ -156,8 +156,8 @@
 			}
     	}
 	
-		if (semestreElement && avaliadorDiv) {
-			if (semestreElement.value != '2') {
+		if (faseElement && avaliadorDiv) {
+			if (faseElement.value < 2) {
 				avaliadorDiv.classList.add("d-none");
 				avaliadorSelect.disabled = true;
 			}
@@ -171,10 +171,10 @@
 
 }
 
-	checkSemestre();
+	checkFase();
 
-	if (semestreElement) {
-		semestreElement.addEventListener('change', checkSemestre);
+	if (faseElement) {
+		faseElement.addEventListener('change', checkFase);
 	}
 	});
 
