@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `labs_pgt`.`conta` (
   `token` CHAR(32) NULL,
   `exclusao` DATETIME NULL,
   `telefone` VARCHAR(45) NULL,
-  `registro` VARCHAR(45) NULL,
+  `ra` VARCHAR(45) NULL,
   `criacao` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `conta_perfil_idx` (`perfil_id` ASC),
@@ -300,7 +300,7 @@ insert into
 -- Alunos exemplo
 
 insert into 
-  conta (email, nome, perfil_id, registro, criacao) values 
+  conta (email, nome, perfil_id, ra, criacao) values 
   ('alunoa@acad.espm.br', 'Aluno A', 3, '123123', now()),
   ('alunob@acad.espm.br', 'Aluno B', 3, '234234', now()),
   ('alunoc@acad.espm.br', 'Aluno C', 3, '345345', now()),

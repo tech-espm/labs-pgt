@@ -226,7 +226,7 @@ class PGT {
 	private static async obterAlunos(sql: app.Sql, pgt: PGT): Promise<PGT> {
 		if (pgt)
 			pgt.alunos = (await sql.query(`
-			select c.id, concat(c.registro, ' - ', c.nome) nome 
+			select c.id, concat(c.ra, ' - ', c.nome) nome 
 			from conta_pgt cp
 			inner join conta c on c.id = cp.conta_id
 			where cp.pgt_id = ? and cp.funcao_id = ?
