@@ -30,7 +30,7 @@ let Perguntas = {
           criterios: `<p>- Estrutura do sumário, sequência e conteúdo proposto</p>
           <p>- Apresentação do projeto</p>
           <p>- Contextualização</p>`,
-          peso: 0.15,
+          peso: 0.3,
         },
         {
           titulo: "Fundamentação teórica",

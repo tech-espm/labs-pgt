@@ -39,26 +39,26 @@ class Formulario {
         if (isNaN(formulario.idautor = parseInt(formulario.idautor as any)))
             return "Autor inválido";
 
-        if (isNaN(formulario.nota1 = parseFloat(formulario.nota1 as any)))
-            return "Tipo inválido";
+        if (isNaN(formulario.nota1 = parseFloat(formulario.nota1 as any)) || formulario.nota1 < 0 || formulario.nota1 > 10)
+            return "Nota 1 inválida";
 
-        if (isNaN(formulario.nota2 = parseFloat(formulario.nota2 as any)))
-            return "Tipo inválido";
+        if (isNaN(formulario.nota2 = parseFloat(formulario.nota2 as any)) || formulario.nota2 < 0 || formulario.nota2 > 10)
+            return "Nota 2 inválida";
 
-        if (isNaN(formulario.nota3 = parseFloat(formulario.nota3 as any)))
-            return "Tipo inválido";
+        if (isNaN(formulario.nota3 = parseFloat(formulario.nota3 as any)) || formulario.nota3 < 0 || formulario.nota3 > 10)
+            return "Nota 3 inválida";
 
-        if (isNaN(formulario.nota4 = parseFloat(formulario.nota4 as any)))
-            return "Tipo inválido";
+        if (isNaN(formulario.nota4 = parseFloat(formulario.nota4 as any)) || formulario.nota4 < 0 || formulario.nota4 > 10)
+            return "Nota 4 inválida";
 
         if (formulario.nota5) {
-            if (isNaN(formulario.nota5 = parseFloat(formulario.nota5 as any)))
-                return "Tipo inválido";
+            if (isNaN(formulario.nota5 = parseFloat(formulario.nota5 as any)) || formulario.nota5 < 0 || formulario.nota5 > 10)
+                return "Nota 5 inválida";
         }
 
         if (formulario.nota6) {
-            if (isNaN(formulario.nota6 = parseFloat(formulario.nota6 as any)))
-                return "Tipo inválido";
+            if (isNaN(formulario.nota6 = parseFloat(formulario.nota6 as any)) || formulario.nota6 < 0 || formulario.nota6 > 10)
+                return "Nota 6 inválida";
         }
 
         if (!formulario.comentario1 || !(formulario.comentario1 = formulario.comentario1.normalize().trim()))
