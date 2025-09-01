@@ -4,7 +4,13 @@
 if (!("Promise" in window)) {
 	!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):t.ES6Promise=e()}(this,function(){"use strict";function t(t){var e=typeof t;return null!==t&&("object"===e||"function"===e)}function e(t){return"function"==typeof t}function n(t){W=t}function r(t){z=t}function o(){return function(){return process.nextTick(a)}}function i(){return"undefined"!=typeof U?function(){U(a)}:c()}function s(){var t=0,e=new H(a),n=document.createTextNode("");return e.observe(n,{characterData:!0}),function(){n.data=t=++t%2}}function u(){var t=new MessageChannel;return t.port1.onmessage=a,function(){return t.port2.postMessage(0)}}function c(){var t=setTimeout;return function(){return t(a,1)}}function a(){for(var t=0;t<N;t+=2){var e=Q[t],n=Q[t+1];e(n),Q[t]=void 0,Q[t+1]=void 0}N=0}function f(){try{var t=Function("return this")().require("vertx");return U=t.runOnLoop||t.runOnContext,i()}catch(e){return c()}}function l(t,e){var n=this,r=new this.constructor(p);void 0===r[V]&&x(r);var o=n._state;if(o){var i=arguments[o-1];z(function(){return T(o,r,i,n._result)})}else j(n,r,t,e);return r}function h(t){var e=this;if(t&&"object"==typeof t&&t.constructor===e)return t;var n=new e(p);return w(n,t),n}function p(){}function v(){return new TypeError("You cannot resolve a promise with itself")}function d(){return new TypeError("A promises callback cannot return that same promise.")}function _(t,e,n,r){try{t.call(e,n,r)}catch(o){return o}}function y(t,e,n){z(function(t){var r=!1,o=_(n,e,function(n){r||(r=!0,e!==n?w(t,n):A(t,n))},function(e){r||(r=!0,S(t,e))},"Settle: "+(t._label||" unknown promise"));!r&&o&&(r=!0,S(t,o))},t)}function m(t,e){e._state===Z?A(t,e._result):e._state===$?S(t,e._result):j(e,void 0,function(e){return w(t,e)},function(e){return S(t,e)})}function b(t,n,r){n.constructor===t.constructor&&r===l&&n.constructor.resolve===h?m(t,n):void 0===r?A(t,n):e(r)?y(t,n,r):A(t,n)}function w(e,n){if(e===n)S(e,v());else if(t(n)){var r=void 0;try{r=n.then}catch(o){return void S(e,o)}b(e,n,r)}else A(e,n)}function g(t){t._onerror&&t._onerror(t._result),E(t)}function A(t,e){t._state===X&&(t._result=e,t._state=Z,0!==t._subscribers.length&&z(E,t))}function S(t,e){t._state===X&&(t._state=$,t._result=e,z(g,t))}function j(t,e,n,r){var o=t._subscribers,i=o.length;t._onerror=null,o[i]=e,o[i+Z]=n,o[i+$]=r,0===i&&t._state&&z(E,t)}function E(t){var e=t._subscribers,n=t._state;if(0!==e.length){for(var r=void 0,o=void 0,i=t._result,s=0;s<e.length;s+=3)r=e[s],o=e[s+n],r?T(n,r,o,i):o(i);t._subscribers.length=0}}function T(t,n,r,o){var i=e(r),s=void 0,u=void 0,c=!0;if(i){try{s=r(o)}catch(a){c=!1,u=a}if(n===s)return void S(n,d())}else s=o;n._state!==X||(i&&c?w(n,s):c===!1?S(n,u):t===Z?A(n,s):t===$&&S(n,s))}function M(t,e){try{e(function(e){w(t,e)},function(e){S(t,e)})}catch(n){S(t,n)}}function P(){return tt++}function x(t){t[V]=tt++,t._state=void 0,t._result=void 0,t._subscribers=[]}function C(){return new Error("Array Methods must be provided an Array")}function O(t){return new et(this,t).promise}function k(t){var e=this;return new e(L(t)?function(n,r){for(var o=t.length,i=0;i<o;i++)e.resolve(t[i]).then(n,r)}:function(t,e){return e(new TypeError("You must pass an array to race."))})}function F(t){var e=this,n=new e(p);return S(n,t),n}function Y(){throw new TypeError("You must pass a resolver function as the first argument to the promise constructor")}function q(){throw new TypeError("Failed to construct 'Promise': Please use the 'new' operator, this object constructor cannot be called as a function.")}function D(){var t=void 0;if("undefined"!=typeof global)t=global;else if("undefined"!=typeof self)t=self;else try{t=Function("return this")()}catch(e){throw new Error("polyfill failed because global object is unavailable in this environment")}var n=t.Promise;if(n){var r=null;try{r=Object.prototype.toString.call(n.resolve())}catch(e){}if("[object Promise]"===r&&!n.cast)return}t.Promise=nt}var K=void 0;K=Array.isArray?Array.isArray:function(t){return"[object Array]"===Object.prototype.toString.call(t)};var L=K,N=0,U=void 0,W=void 0,z=function(t,e){Q[N]=t,Q[N+1]=e,N+=2,2===N&&(W?W(a):R())},B="undefined"!=typeof window?window:void 0,G=B||{},H=G.MutationObserver||G.WebKitMutationObserver,I="undefined"==typeof self&&"undefined"!=typeof process&&"[object process]"==={}.toString.call(process),J="undefined"!=typeof Uint8ClampedArray&&"undefined"!=typeof importScripts&&"undefined"!=typeof MessageChannel,Q=new Array(1e3),R=void 0;R=I?o():H?s():J?u():void 0===B&&"function"==typeof require?f():c();var V=Math.random().toString(36).substring(2),X=void 0,Z=1,$=2,tt=0,et=function(){function t(t,e){this._instanceConstructor=t,this.promise=new t(p),this.promise[V]||x(this.promise),L(e)?(this.length=e.length,this._remaining=e.length,this._result=new Array(this.length),0===this.length?A(this.promise,this._result):(this.length=this.length||0,this._enumerate(e),0===this._remaining&&A(this.promise,this._result))):S(this.promise,C())}return t.prototype._enumerate=function(t){for(var e=0;this._state===X&&e<t.length;e++)this._eachEntry(t[e],e)},t.prototype._eachEntry=function(t,e){var n=this._instanceConstructor,r=n.resolve;if(r===h){var o=void 0,i=void 0,s=!1;try{o=t.then}catch(u){s=!0,i=u}if(o===l&&t._state!==X)this._settledAt(t._state,e,t._result);else if("function"!=typeof o)this._remaining--,this._result[e]=t;else if(n===nt){var c=new n(p);s?S(c,i):b(c,t,o),this._willSettleAt(c,e)}else this._willSettleAt(new n(function(e){return e(t)}),e)}else this._willSettleAt(r(t),e)},t.prototype._settledAt=function(t,e,n){var r=this.promise;r._state===X&&(this._remaining--,t===$?S(r,n):this._result[e]=n),0===this._remaining&&A(r,this._result)},t.prototype._willSettleAt=function(t,e){var n=this;j(t,void 0,function(t){return n._settledAt(Z,e,t)},function(t){return n._settledAt($,e,t)})},t}(),nt=function(){function t(e){this[V]=P(),this._result=this._state=void 0,this._subscribers=[],p!==e&&("function"!=typeof e&&Y(),this instanceof t?M(this,e):q())}return t.prototype["catch"]=function(t){return this.then(null,t)},t.prototype["finally"]=function(t){var n=this,r=n.constructor;return e(t)?n.then(function(e){return r.resolve(t()).then(function(){return e})},function(e){return r.resolve(t()).then(function(){throw e})}):n.then(t,t)},t}();return nt.prototype.then=l,nt.all=O,nt.race=k,nt.resolve=h,nt.reject=F,nt._setScheduler=n,nt._setAsap=r,nt._asap=z,nt.polyfill=D,nt.Promise=nt,nt.polyfill(),nt});
 }
-
+if (!("queueMicrotask" in window)) {
+	window.queueMicrotask = function (callback) {
+		Promise.resolve()
+			.then(callback)
+			.catch(function (e) { setTimeout(function () { throw e; }); });
+	};
+}
 window.emoji = {
 	happy: "\uD83D\uDE04",
 	sad: "\uD83D\uDE22"
@@ -35,6 +41,28 @@ window.cancelEvent = function (evt) {
 			evt.stopPropagation();
 	}
 	return false;
+};
+window.zeroObject = function (o, includeFunctions) {
+	for (let p in o) {
+		switch (typeof o[p]) {
+			case "function":
+				if (includeFunctions)
+					o[p] = null;
+				break;
+			case "boolean":
+				o[p] = false;
+				break;
+			case "number":
+				o[p] = 0;
+				break;
+			default:
+				const v = o[p];
+				if (Array.isArray(v))
+					v.fill(null);
+				o[p] = null;
+				break;
+		}
+	}
 };
 window.parseQueryString = function () {
 	var i, pair, assoc = {}, keyValues = location.search.substring(1).split("&");
@@ -1048,7 +1076,7 @@ window.capitalizarFrase = function (s, classe, tag) {
 				}
 			} catch (ex) {
 				if (ex.name === "SyntaxError")
-					return { xhr: xhr, success: false, status: -1, value: xhr.responseText, exceptionType: "SyntaxError" };
+					return { xhr: xhr, success: false, status: -1, value: xhr.responseText || "Nenhuma resposta recebida do servidor. Por favor, verifique a conexão e tente novamente mais tarde.", exceptionType: "SyntaxError" };
 				return buildException(xhr, ex);
 			}
 		},
@@ -1310,7 +1338,7 @@ window.capitalizarFrase = function (s, classe, tag) {
 				callback(buildException(xhr, ex));
 			}
 		},
-		postFormData: function (url, formData, callback) {
+		postFormData: function (url, formData, callback, progressCallback) {
 			//
 			//Para usar isso:
 			//
@@ -1339,6 +1367,9 @@ window.capitalizarFrase = function (s, classe, tag) {
 
 				// Abre a requisição com o método HTTP POST
 
+				if (progressCallback && req.upload)
+					req.upload.onprogress = progressCallback;
+
 				// *** A requisição está sendo aberta em modo assíncrono!
 				req.open("post", url, true);
 
@@ -1366,9 +1397,64 @@ window.capitalizarFrase = function (s, classe, tag) {
 				JsonWebApi.active--;
 				callback(buildException(xhr, ex));
 			}
+		},
+		put: function (url, bodyObject, callback, name0, value0) {
+			if (!url)
+				throw JsonWebApi.messages.invalidURL;
+
+			if (bodyObject === undefined)
+				throw JsonWebApi.messages.invalidBodyObject;
+
+			if (!callback)
+				throw JsonWebApi.messages.invalidCallback;
+
+			if (!(arguments.length & 1))
+				throw JsonWebApi.messages.invalidArgumentCount;
+
+			return sendRequest(true, "put", (arguments.length > 3) ? buildFullUrl(url, arguments, 3) : url, callback, bodyObject);
+		},
+		execAsync: function (method, args, callbackIndex) {
+			return new Promise(function (resolve, reject) {
+				try {
+					while (args.length < callbackIndex)
+						args.push(null);
+					args.splice(callbackIndex, 0, resolve);
+
+					method.apply(JsonWebApi, args);
+				} catch (ex) {
+					reject(ex);
+				}
+			});
+		},
+		getAsync: function (url, name0, value0) {
+			return JsonWebApi.execAsync(JsonWebApi.get, [...arguments], 1);
+		},
+		deleteAsync: function (url, name0, value0) {
+			return JsonWebApi.execAsync(JsonWebApi.delete, [...arguments], 1);
+		},
+		postAsync: function (url, bodyObject, name0, value0) {
+			return JsonWebApi.execAsync(JsonWebApi.post, [...arguments], 2);
+		},
+		postFormAsync: function (url, callback, name0, value0) {
+			return JsonWebApi.execAsync(JsonWebApi.postForm, [...arguments], 1);
+		},
+		postFormDataAsync: function (url, formData, progressCallback) {
+			return JsonWebApi.execAsync(JsonWebApi.postFormData, [...arguments], 2);
 		}
 	};
 })();
+window.Base64String = {
+	atob: function (base64) {
+		if (!base64)
+			return base64;
+		return new TextDecoder().decode(Uint8Array.from(atob(base64), function (x) { return x.codePointAt(0); }));
+	},
+	btoa: function (x) {
+		if (!x)
+			return x;
+		return btoa(Array.from(new TextEncoder().encode(x), function (byte) { return String.fromCodePoint(byte); }).join(""));
+	}
+};
 window.BlobDownloader = {
 	blobURL: null,
 
@@ -1424,7 +1510,25 @@ window.BlobDownloader = {
 };
 // Search for selects
 (function () {
-	var regSlash = /[\/\\]/g, regTrim = /^\s+|\s+$/g, regA = /[ÁÀÃÂÄ]/g, regE = /[ÉÈÊË]/g, regI = /[ÍÌÎ]/g, regO = /[ÓÒÕÔ]/g, regU = /[ÚÙÛ]/g, regC = /[Ç]/g;
+	var regSlash = /[\/\\]/g, regTrim = /^\s+|\s+$/g, regDiacritics = /[\u0300-\u036f]/g; //, regA = /[ÁÀÃÂÄ]/g, regE = /[ÉÈÊË]/g, regI = /[ÍÌÎÏ]/g, regO = /[ÓÒÕÔÖ]/g, regU = /[ÚÙÛÜ]/g, regY = /[ÝŸ]/g, regC = /[Ç]/g;
+	var alwaysFocusLimit = 750;
+
+	function hasTooManyItems(cbSearch) {
+		var count = cbSearch.childElementCount;
+		if (count <= alwaysFocusLimit)
+			return false;
+
+		var children = cbSearch.children;
+		for (var i = count - 1, count = 0; i >= 0; i--) {
+			if (!children[i].hasAttribute("hidden")) {
+				count++;
+				if (count > alwaysFocusLimit)
+					return true;
+			}
+		}
+
+		return false;
+	}
 
 	function cbSearch_SetValue(select, value) {
 		select.value = value;
@@ -1445,22 +1549,24 @@ window.BlobDownloader = {
 	}
 
 	function cbSearch_Normalize(x) {
-		return x.toUpperCase().replace(regSlash, " ").replace(regTrim, "").replace(regA, "A").replace(regE, "E").replace(regI, "I").replace(regO, "O").replace(regU, "U").replace(regC, "C");
+		//return x.toUpperCase().replace(regSlash, " ").replace(regTrim, "").replace(regA, "A").replace(regE, "E").replace(regI, "I").replace(regO, "O").replace(regU, "U").replace(regY, "Y").replace(regC, "C");
+		return (x ? x.normalize("NFD").replace(regDiacritics, "").replace(regSlash, " ").replace(regTrim, "").toUpperCase() : "");
 	}
 
 	window.normalizeAccent = function (x) {
-		return (x ? x.toUpperCase().replace(regTrim, "").replace(regA, "A").replace(regE, "E").replace(regI, "I").replace(regO, "O").replace(regU, "U").replace(regC, "C") : "");
+		//return (x ? x.toUpperCase().replace(regTrim, "").replace(regA, "A").replace(regE, "E").replace(regI, "I").replace(regO, "O").replace(regU, "U").replace(regY, "Y").replace(regC, "C") : "");
+		return (x ? x.normalize("NFD").replace(regDiacritics, "").replace(regTrim, "").toUpperCase() : "");
 	};
 
 	function cbSearch_Change() {
-		var i, opt = this.selectedOptions, v;
+		var i, opt = this.selectedOptions, v, allowZero = this.allowZero;
 		if (opt) {
 			opt = opt[0];
-			this.cbSearchInput.value = ((opt && opt.value && opt.value != "0") ? opt.textContent : "");
+			this.cbSearchInput.value = ((opt && opt.value && (allowZero || opt.value != "0")) ? opt.textContent : "");
 		} else {
 			opt = this.options;
 			v = this.value;
-			if (v && v != "0") {
+			if (v && (allowZero || v != "0")) {
 				for (i = opt.length - 1; i >= 0; i--) {
 					if (opt[i].value == v) {
 						this.cbSearchInput.value = opt[i].textContent;
@@ -1475,7 +1581,11 @@ window.BlobDownloader = {
 	function cbSearch_MouseDown(e) {
 		if (e.button)
 			return;
-		if (e.offsetX >= 0 && e.offsetX < ((this.cbSearchSpan && this.cbSearchSpan.clientWidth) || 38) && e.offsetY >= 0 && (!e.target || e.target.tagName !== "OPTION")) { //(this.offsetWidth - 25)) {
+		if ((
+				hasTooManyItems(this) ||
+				(e.offsetX >= 0 && e.offsetX < ((this.cbSearchSpan && this.cbSearchSpan.clientWidth) || 38) && e.offsetY >= 0)
+		 	) &&
+			(!e.target || e.target.tagName !== "OPTION")) { //(this.offsetWidth - 25)) {
 			this.cbSearchFocusByMouse = false;
 			this.cbSearchInput.focus();
 			if (this.cbSearchInput.setSelectionRange)
@@ -1522,11 +1632,15 @@ window.BlobDownloader = {
 
 	function cbSearch_Focus() {
 		if (this.cbSearchInput) {
-			$(this.cbSearchInput).addClass("forced-focus");
-			if (this.cbSearchFocusByMouse)
-				this.cbSearchFocusByMouse = false;
-			//else
-			//	this.cbSearchInput.focus();
+			if (hasTooManyItems(this)) {
+				this.cbSearchInput.focus();
+			} else {
+				$(this.cbSearchInput).addClass("forced-focus");
+				if (this.cbSearchFocusByMouse)
+					this.cbSearchFocusByMouse = false;
+				//else
+				//	this.cbSearchInput.focus();
+			}
 		}
 	}
 
@@ -1757,14 +1871,14 @@ window.BlobDownloader = {
 	}
 
 	function cbSearch_DataOpen(normalized) {
-		var i, li, left, a, ok = false, cbSearchSelect = this.cbSearchSelect, list = cbSearchSelect.getElementsByTagName("OPTION"), menu = this.menu, txt, norm, value = null, rect;
+		var i, li, left, a, ok = false, allowZero = this.allowZero, cbSearchSelect = this.cbSearchSelect, list = cbSearchSelect.getElementsByTagName("OPTION"), menu = this.menu, txt, norm, value = null, rect;
 
 		while (menu.firstChild)
 			menu.removeChild(menu.firstChild);
 
 		for (i = 0; i < list.length; i++) {
 			li = list[i];
-			if (!(value = li.value) || value == "0")
+			if (!(value = li.value) || li.hasAttribute("hidden") || (!allowZero && value == "0"))
 				continue;
 			txt = li.textContent;
 			norm = li.cbSearchNormalized;
@@ -1850,7 +1964,7 @@ window.BlobDownloader = {
 			select.cbSearchChange();
 	};
 
-	window.prepareCbSearch = function (select) {
+	window.prepareCbSearch = function (select, allowZero) {
 		if (!select)
 			return;
 
@@ -1870,6 +1984,7 @@ window.BlobDownloader = {
 				dropDown: outerdiv,
 				menu: document.createElement("ul"),
 				menuVisible: false,
+				allowZero: !!allowZero,
 				select: cbSearch_DataSelect,
 				updateSelection: cbSearch_DataUpdateSelection,
 				open: cbSearch_DataOpen,
@@ -1884,6 +1999,7 @@ window.BlobDownloader = {
 		select.onmousedown = cbSearch_MouseDown;
 		select.addEventListener("change", cbSearch_Change);
 		select.cbSearchChange = cbSearch_Change;
+		select.allowZero = data.allowZero;
 		select.setAttribute("tabindex", "-1");
 		outerdiv.className = "dropdown";
 		groupdiv.className = "form-group input-group";
@@ -1897,7 +2013,7 @@ window.BlobDownloader = {
 		button.setAttribute("aria-label", "Pesquisar");
 		button.setAttribute("tabindex", "-1");
 		button.cbSearchSelect = select;
-		i.className = "fa fa-nomargin fa-filter";
+		i.className = "fa fa-nomargin fa-search";
 		if (window.prepareCbSearchAllowLower)
 			input.className = "form-control select-arrow" + ((select.className.indexOf("upper") >= 0) ? " upper" : "");
 		else
@@ -1915,6 +2031,8 @@ window.BlobDownloader = {
 		input.onblur = cbSearch_Blur;
 		input.onkeydown = cbSearch_KeyDown;
 		input.onkeyup = cbSearch_KeyUp;
+		if (select.disabled)
+			input.readOnly = true;
 		data.menu.className = "dropdown-menu";
 		data.menu.style.maxHeight = "140px";// 10 (padding) + (26 x item count)
 		data.menu.style.overflowY = "auto";
@@ -1940,7 +2058,7 @@ window.BlobDownloader = {
 
 		parent.appendChild(outerdiv);
 
-		if (select.value && select.value != "0")
+		if (select.value && (allowZero || select.value != "0"))
 			cbSearch_Change.apply(select);
 	};
 
@@ -2015,6 +2133,7 @@ window.prepareFilteredCbState = function (cbState, cbCity, callback) {
 		};
 	}
 };
+
 window.prepareCbState = function (cbState, cbCity, callback) {
 	if (cbCity) {
 		cbState.onchange = function () {
@@ -2052,6 +2171,25 @@ window.prepareCbState = function (cbState, cbCity, callback) {
 			cbState.cbSearchChange();
 	}
 };
+function prepareMultipleSelect(id) {
+	let select = $(id);
+	if (!select || !(select = select[0]))
+		return;
+
+	select.addEventListener("mousedown", function (e) {
+		if (e.button || !e.target || e.target.tagName !== "OPTION")
+			return;
+		const scrollTop = this.scrollTop;
+		setTimeout(() => this.scrollTo(0, scrollTop), 10);
+		this.focus();
+		e.target.selected = !e.target.selected;
+		return cancelEvent(e);
+	});
+
+	select.addEventListener("mousemove", function (e) {
+		return cancelEvent(e);
+	});
+}
 window.DataUtil = {
 	converterISOParaNumero: function (dataISO) {
 		return (dataISO && dataISO.length >= 10) ? (((10000 * parseInt(dataISO.substring(0, 4))) +
@@ -2210,6 +2348,15 @@ window.DataUtil = {
 		return DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
 	},
 
+	horarioDeBrasiliaISOComHorarioObj: function (deltaSegundos) {
+		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
+		const horario_atual = DataUtil.formatarComHorario(hoje.getUTCFullYear(), hoje.getUTCMonth() + 1, hoje.getUTCDate(), hoje.getUTCHours(), hoje.getUTCMinutes(), hoje.getUTCSeconds());
+		return {
+			data: horario_atual.split(" ")[0],
+			horario: (horario_atual.split(" ")[1]).substring(0, 5)
+		}
+	},
+
 	horarioDeBrasiliaISOInicioDoDia: function (deltaSegundos) {
 		const hoje = DataUtil.horarioDeBrasiliaComoDateUTC(deltaSegundos);
 
@@ -2256,7 +2403,94 @@ window.DataUtil = {
 		const hoje = DataUtil.dateUTC(deltaSegundos);
 
 		return DataUtil.formatarBrComHorario(hoje.getFullYear(), hoje.getMonth() + 1, hoje.getDate(), hoje.getHours(), hoje.getMinutes(), hoje.getSeconds());
-	}
+	},
+
+	inicioDoMesComoDateUTC: function (ano, mes) {
+		if (!ano || !mes) {
+			const agora = new Date();
+			if (!ano)
+				ano = agora.getFullYear();
+			if (!mes)
+				mes = agora.getMonth() + 1;
+		}
+
+		return new Date(Date.UTC(ano, mes - 1, 1));
+	},
+
+	fimDoMesComoDateUTC: function (ano, mes) {
+		if (!ano || !mes) {
+			const agora = new Date();
+			if (!ano)
+				ano = agora.getFullYear();
+			if (!mes)
+				mes = agora.getMonth() + 1;
+		}
+
+		if (mes === 12) {
+			mes = 1;
+			ano++;
+		} else {
+			mes++;
+		}
+
+		return new Date(Date.UTC(ano, mes - 1, 1) - (24 * 60 * 60 * 1000));
+	},
+
+	inicioDoMesISO: function (ano, mes) {
+		const inicioDoMes = DataUtil.inicioDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatar(inicioDoMes.getUTCFullYear(), inicioDoMes.getUTCMonth() + 1, inicioDoMes.getUTCDate());
+	},
+
+	fimDoMesISO: function (ano, mes) {
+		const fimDoMes = DataUtil.fimDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatar(fimDoMes.getUTCFullYear(), fimDoMes.getUTCMonth() + 1, fimDoMes.getUTCDate());
+	},
+
+	inicioDoMesBr: function (ano, mes) {
+		const inicioDoMes = DataUtil.inicioDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatarBr(inicioDoMes.getUTCFullYear(), inicioDoMes.getUTCMonth() + 1, inicioDoMes.getUTCDate());
+	},
+
+	fimDoMesBr: function (ano, mes) {
+		const fimDoMes = DataUtil.fimDoMesComoDateUTC(ano, mes);
+
+		return DataUtil.formatarBr(fimDoMes.getUTCFullYear(), fimDoMes.getUTCMonth() + 1, fimDoMes.getUTCDate());
+	},
+
+	adicionarDiasISO: function(dataComOuSemHorario, dias) {
+		const dataISO = DataUtil.converterDataISO(DataUtil.removerHorario(dataComOuSemHorario));
+		if (!dataISO)
+			return null;
+
+		const dataAlterada = new Date((new Date(dataISO + "T00:00:00Z")).getTime() + ((dias | 0) * 24 * 60 * 60 * 1000));
+
+		return DataUtil.formatar(dataAlterada.getUTCFullYear(), dataAlterada.getUTCMonth() + 1, dataAlterada.getUTCDate());
+	},
+
+	adicionarDiasBr: function (dataComOuSemHorario, dias) {
+		const dataISO = DataUtil.converterDataISO(DataUtil.removerHorario(dataComOuSemHorario));
+		if (!dataISO)
+			return null;
+
+		const dataAlterada = new Date((new Date(dataISO + "T00:00:00Z")).getTime() + ((dias | 0) * 24 * 60 * 60 * 1000));
+
+		return DataUtil.formatarBr(dataAlterada.getUTCFullYear(), dataAlterada.getUTCMonth() + 1, dataAlterada.getUTCDate());
+	},
+
+	diferencaEmDias: function (data_inicial, data_final) {
+		const dt1 = new Date(DataUtil.converterDataISO(DataUtil.removerHorario(data_inicial)) + "T00:00:00Z");
+		const dt2 = new Date(DataUtil.converterDataISO(DataUtil.removerHorario(data_final)) + "T00:00:00Z");
+		const dt1Time = dt1.getTime();
+		const dt2Time = dt2.getTime();
+
+		const diffTime = Math.abs(dt2Time - dt1Time);
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+		return ((dt1Time <= dt2Time) ? diffDays : -diffDays);
+	},
 };
 window.prepareDatePicker = function (id, options) {
 	// http://bootstrap-datepicker.readthedocs.org/en/latest/options.html#format
@@ -2277,10 +2511,20 @@ window.prepareDatePicker = function (id, options) {
 
 	d = i$.datepicker(opt);
 
-	if ((i$ = i$[0])) {
-		i$.setAttribute("autocomplete", "off");
-		i$.setAttribute("spellcheck", "false");
+	d.on("changeDate", function (ev) {
+		var t = (ev.target || this);
+		if (t && ("dispatchEvent" in t) && ("Event" in window))
+			t.dispatchEvent(new Event("change"));
+	});
+
+	if (i$.length) {
+		for (i = 0; i < i$.length; i++) {
+			i$[i].setAttribute("autocomplete", "off");
+			i$[i].setAttribute("spellcheck", "false");
+		}
 	}
+
+	i$.mask("00/00/0000");
 
 	return d;
 };
@@ -2328,79 +2572,13 @@ window.prepareMultiselect = function (id, options) {
 		opts = null;
 		items = null;
 
+		btn.multiselectOptions = options;
+
 		btn.onclick = async function () {
 			if (isSwalOpen())
 				return;
 
-			const selection = btn.selection,
-				items = btn.selectionItems;
-
-			let tempSelection = {}, tempSelectionCount = btn.selectionCount,
-				html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div>';
-
-			for (let i = 0; i < items.length; i++)
-				html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[items[i].id] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(items[i].text)) + '" data-id="' + encodeValue(items[i].id) + '">' + ((items[i].color || items[i].backgroundColor) ? ('<span class="badge" style="font-size: 1em;' + (items[i].color ? ("color:" + items[i].color + ";") : "") + (items[i].backgroundColor ? ("background-color:" + items[i].backgroundColor + ";") : "") + '">' + encode(items[i].text) + '</span> ') : encode(items[i].text)) + '</button>';
-
-			for (let i in selection)
-				tempSelection[i] = true;
-
-			Swal.okcancelNoIcon({
-				html: html,
-				title: options && options.title,
-				didOpen: function () {
-					let lastSearch = "";
-
-					const handleChange = function () {
-						const s = normalizeAccent(this.value);
-
-						if (lastSearch === s)
-							return;
-
-						lastSearch = s;
-
-						$("#swal2-html-container .btn.mb-0").each(function () {
-							if (!s || this.getAttribute("data-ntext").indexOf(s) >= 0)
-								this.classList.remove("hidden");
-							else
-								this.classList.add("hidden");
-						});
-					};
-
-					$("#swal2-html-container").on("change", "input", handleChange);
-					$("#swal2-html-container").on("keydown", "input", handleChange);
-					$("#swal2-html-container").on("keyup", "input", handleChange);
-
-					$("#swal2-html-container").on("click", ".btn", function () {
-						const id = this.getAttribute("data-id");
-						if (!id) {
-							if (tempSelectionCount === items.length) {
-								tempSelectionCount = 0;
-								tempSelection = {};
-								$("#swal2-html-container .btn-primary").addClass("btn-light").removeClass("btn-primary");
-							} else {
-								tempSelectionCount = items.length;
-								$("#swal2-html-container .btn-light").addClass("btn-primary").removeClass("btn-light");
-								for (let i = 0; i < items.length; i++)
-									tempSelection[items[i].id] = true;
-							}
-						} else if (tempSelection[id]) {
-							delete tempSelection[id];
-							tempSelectionCount--;
-							$(this).addClass("btn-light").removeClass("btn-primary");
-						} else {
-							tempSelection[id] = true;
-							tempSelectionCount++;
-							$(this).addClass("btn-primary").removeClass("btn-light");
-						}
-					});
-				},
-				preConfirm: function () {
-					btn.selection = tempSelection;
-					btn.selectionCount = tempSelectionCount;
-					btn.textContent = btn.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
-					return true;
-				}
-			});
+			window.showMultiselect(btn);
 		};
 	};
 
@@ -2465,6 +2643,158 @@ window.setMultiselectSelection = function (id, values) {
 		i$.textContent = i$.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === i$.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
 	}
 };
+window.showMultiselect = function (id) {
+	let i$ = $(id);
+
+	if ((i$ = i$[0]) && i$.selection && i$.selectionItems) {
+		const btn = i$,
+			selection = btn.selection,
+			items = btn.selectionItems,
+			options = btn.multiselectOptions;
+
+		let tempSelection = {}, tempSelectionCount = btn.selectionCount,
+			html = '<div class="row mb-3"><div class="col"><input type="text" spellcheck="off" class="form-control form-control-sm" placeholder="Filtro"/></div><div class="col"><button type="button" class="btn btn-secondary btn-sm btn-block">Alternar Tudo</button></div></div><div class="p-1" style="max-height: 55vh; overflow-x: hidden; overflow-y: auto;">';
+
+		for (let i = 0; i < items.length; i++) {
+			const idStr = items[i].id.toString();
+			const textStr = (items[i].text || "").toString();
+			html += '<button type="button" class="btn btn-sm mb-0 ' + (i ? "mt-1" : "mt-0") + ' btn-block ' + (selection[idStr] ? 'btn-primary' : 'btn-light') + '" data-ntext="' + encodeValue(normalizeAccent(textStr)) + '" data-id="' + encodeValue(idStr) + '">' + ((items[i].color || items[i].backgroundColor) ? ('<span class="badge" style="font-size: 1em;' + (items[i].color ? ("color:" + items[i].color + ";") : "") + (items[i].backgroundColor ? ("background-color:" + items[i].backgroundColor + ";") : "") + '">' + encode(textStr) + '</span> ') : encode(textStr)) + '</button>';
+		}
+
+		html += '</div>';
+
+		for (let i in selection)
+			tempSelection[i] = true;
+
+		Swal.okcancelNoIcon({
+			html: html,
+			title: options && options.title,
+			didOpen: function () {
+				let lastSearch = "";
+
+				const handleChange = function () {
+					const s = normalizeAccent(this.value);
+
+					if (lastSearch === s)
+						return;
+
+					lastSearch = s;
+
+					$("#swal2-html-container .btn.mb-0").each(function () {
+						if (!s || this.getAttribute("data-ntext").indexOf(s) >= 0)
+							this.classList.remove("hidden");
+						else
+							this.classList.add("hidden");
+					});
+				};
+
+				$("#swal2-html-container").on("change", "input", handleChange);
+				$("#swal2-html-container").on("keydown", "input", handleChange);
+				$("#swal2-html-container").on("keyup", "input", handleChange);
+
+				$("#swal2-html-container").on("click", ".btn", function () {
+					const id = this.getAttribute("data-id");
+					if (!id) {
+						if (tempSelectionCount === items.length) {
+							tempSelectionCount = 0;
+							tempSelection = {};
+							$("#swal2-html-container .btn-primary").addClass("btn-light").removeClass("btn-primary");
+						} else {
+							tempSelectionCount = items.length;
+							$("#swal2-html-container .btn-light").addClass("btn-primary").removeClass("btn-light");
+							for (let i = 0; i < items.length; i++)
+								tempSelection[items[i].id] = true;
+						}
+					} else if (tempSelection[id]) {
+						delete tempSelection[id];
+						tempSelectionCount--;
+						$(this).addClass("btn-light").removeClass("btn-primary");
+					} else {
+						tempSelection[id] = true;
+						tempSelectionCount++;
+						$(this).addClass("btn-primary").removeClass("btn-light");
+					}
+				});
+			},
+			preConfirm: function () {
+				btn.selection = tempSelection;
+				btn.selectionCount = tempSelectionCount;
+				btn.textContent = btn.getAttribute("data-label") + ": " + (!tempSelectionCount ? "Nada" : (tempSelectionCount === btn.selectionItems.length ? "Tudo" : (tempSelectionCount === 1 ? "1 item" : (tempSelectionCount + " itens"))));
+				if (options && options.callback)
+					options.callback(btn);
+				return true;
+			}
+		});
+	}
+};
+window.showMultiselectItems = function (title, items, idField, textField, callback) {
+	if (!items || !items.length || !idField || !textField)
+		return;
+
+	return new Promise(function (resolve) {
+		let container = document.getElementById("showMultiselectItems_div");
+		if (!container) {
+			container = document.createElement("div");
+			container.setAttribute("id", "showMultiselectItems_div");
+			container.style.display = "none";
+			document.body.appendChild(container);
+		}
+
+		const html = ['<select id="showMultiselectItems_select">'];
+		for (let i = 0; i < items.length; i++)
+			html.push(`<option value="${items[i][idField]}">${encode(items[i][textField])}</option>`);
+		html.push('</select>');
+
+		container.innerHTML = html.join('');
+
+		prepareMultiselect("#showMultiselectItems_select", {
+			title: title || "Selecione",
+			label: "Itens",
+			callback: function (btn) {
+				const selection = getMultiselectSelection("#showMultiselectItems_select");
+				if (callback)
+					callback(selection);
+				resolve(selection);
+			}
+		});
+
+		showMultiselect("#showMultiselectItems_select");
+	});
+};
+window.showSelectItem = function (title, label, items, idField, textField, callback) {
+	if (!items || !items.length || !idField || !textField)
+		return;
+
+	return new Promise(function (resolve) {
+		let selection = null;
+		const html = [`<label for="showSelectItem_select">${encode(label || "Itens")}</label><div class="cb-search"><select id="showSelectItem_select" class="form-control"><option value="">Selecione...</option>`];
+		for (let i = 0; i < items.length; i++)
+			html.push(`<option value="${items[i][idField]}" data-i="${i}">${encode(items[i][textField])}</option>`);
+		html.push('</select></div>');
+
+		Swal.okcancelNoIcon({
+			html: html.join(''),
+			didOpen: function () {
+				prepareCbSearch(document.getElementById("showSelectItem_select"), true);
+				$("#showSelectItem_select").focus();
+			},
+			preConfirm: function () {
+				const i = parseInt($("#showSelectItem_select option:selected").attr("data-i"));
+				if (i >= 0 && i < items.length)
+					selection = items[i];
+				if (!selection) {
+					selection = null;
+					return false;
+				}
+				return true;
+			}
+		}, title || "Selecione").then(function (result) {
+			if (callback)
+				callback(selection);
+			resolve(selection);
+		});
+	});
+};
 
 window.isSwalOpen = function () {
 	return !!Swal.getContainer();
@@ -2483,7 +2813,7 @@ Swal.error = function (message, title) {
 	if (typeof message === "string")
 		options = { text: message };
 
-	if (!options.icon)
+	if (!("icon" in options))
 		options.icon = "error";
 
 	if (!options.title)
@@ -2511,7 +2841,7 @@ Swal.warning = function (message, title) {
 	if (typeof message === "string")
 		options = { text: message };
 
-	if (!options.icon)
+	if (!("icon" in options))
 		options.icon = "warning";
 
 	if (!options.title)
@@ -2539,7 +2869,7 @@ Swal.info = function (message, title) {
 	if (typeof message === "string")
 		options = { text: message };
 
-	if (!options.icon)
+	if (!("icon" in options))
 		options.icon = "info";
 
 	if (!options.title)
@@ -2567,7 +2897,7 @@ Swal.success = function (message, title) {
 	if (typeof message === "string")
 		options = { text: message };
 
-	if (!options.icon)
+	if (!("icon" in options))
 		options.icon = "success";
 
 	if (!options.title)
@@ -2595,7 +2925,7 @@ Swal.okcancel = function (message, title, danger) {
 	if (typeof message === "string")
 		options = { text: message };
 
-	if (!options.icon)
+	if (!("icon" in options))
 		options.icon = (danger ? "warning" : "question");
 
 	if (!options.title)
@@ -2671,6 +3001,11 @@ Swal.okcancelNoIcon = function (message, title) {
 	var waitCalled = false, shouldShowWait = false, fire = Swal.fire;
 
 	Swal.fire = function () {
+		// Ajusta o foco do Swal com um modal aberto
+		const options = arguments[0];
+		if (options && typeof options === "object" && !options.target && window.isModalOpen())
+			options.target = $(".modal.show")[0];
+
 		if (waitCalled) {
 			waitCalled = false;
 			shouldShowWait = true;
