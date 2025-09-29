@@ -88,8 +88,14 @@ class PGT {
 		if (isNaN(pgt.idfase = parseInt(pgt.idfase as any)))
 			return "Fase inválida";
 
+		if (pgt.idfase > 1)
+			return "Não é permitido criar um PGT na fase PGT 2";
+
 		if (isNaN(pgt.idsemestre = parseInt(pgt.idsemestre as any)))
 			return "Semestre inválido";
+
+		if (pgt.idsemestre > 1) 
+        	return "Não é permitido criar um PGT para o 8º semestre.";
 
 		if (isNaN(pgt.idorientador1 = parseInt(pgt.idorientador1 as any)))
 			return "Orientador 1 inválido";
