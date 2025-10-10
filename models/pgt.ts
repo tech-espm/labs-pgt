@@ -1,5 +1,6 @@
 ﻿import app = require("teem");
 import Funcao = require("../enums/conta/funcao");
+import DataUtil = require("../utils/dataUtil");
 
 interface PGTConta {
 	id: number;
@@ -27,6 +28,8 @@ interface PGT {
 	nomedefesa2?: string | null;
 	idsaluno?: number[];
 	defesa: string;
+	data1: string | null;
+	data2: string | null;
 }
 
 class PGT {
@@ -138,6 +141,25 @@ class PGT {
 		if (!numerosDiferentes(idProfessores)) {
 			return "Professores repetidos";
 		}
+
+		if (!pgt.data1) {
+			pgt.data1 = null;
+		} else {
+			pgt.data1 = DataUtil.converterDataISO(pgt.data1);
+			if (!pgt.data1) {
+				return "Data 1 inválida";
+			}
+		}
+
+		if (!pgt.data2) {
+			pgt.data2 = null;
+		} else {
+			pgt.data2 = DataUtil.converterDataISO(pgt.data2);
+			if (!pgt.data2) {
+				return "Data 2 inválida";
+			}
+		}
+
 		return PGT.validarAlunos(pgt);
 	}
 
@@ -155,6 +177,8 @@ class PGT {
 					p.tipo_id,
 					t.nome as tipo,
 					p.semestre_id,
+					date_format(p.data1, '%d/%m/%Y') as data1,
+					date_format(p.data2, '%d/%m/%Y') as data2,
 					date_format(p.criacao, '%d/%m/%Y') as criacao,
 					ori1.nome as nomeorientador1,
 					ori1.id as idorientador1,
@@ -194,6 +218,8 @@ class PGT {
 				t.nome as tipo,
 				p.semestre_id,
 				s.nome as semestre,
+				date_format(p.data1, '%d/%m/%Y') as data1,
+				date_format(p.data2, '%d/%m/%Y') as data2,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
 				ori1.nome as nomeorientador1,
 				ori1.id as idorientador1,
@@ -250,6 +276,8 @@ class PGT {
 				p.nome, 
 				p.fase_id as idfase, 
 				p.tipo_id as idtipo,
+				date_format(p.data1, '%Y-%m-%d') as data1,
+				date_format(p.data2, '%Y-%m-%d') as data2,
 				date_format(p.criacao, '%d/%m/%Y') as criacao,
 				p.semestre_id as idsemestre,
 				ori1.nome as nomeorientador1,
@@ -408,8 +436,8 @@ class PGT {
 			await sql.beginTransaction();
 
 			// Atualizar os dados do PGT
-			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ? where id = ? and exclusao is null",
-				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.id]);
+			await sql.query("update pgt set nome = ?, tipo_id = ?, fase_id = ?, semestre_id = ?, data1 = ?, data2 = ? where id = ? and exclusao is null",
+				[pgt.nome, pgt.idtipo, pgt.idfase, pgt.idsemestre, pgt.data1, pgt.data2, pgt.id]);
 
 			if (!sql.affectedRows)
 				return "PGT não encontrado";

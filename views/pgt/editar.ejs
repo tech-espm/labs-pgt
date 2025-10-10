@@ -5,6 +5,18 @@
 	<input id="nome" name="nome" maxlength="100" class="form-control" type="text" spellcheck="false" value="<%=(item ? item.nome : '') %>" />
 </div>
 
+<div class="form-group">
+	<label for="data1" id="ldata1">Data da banca PGT 1</label>
+	<input id="data1" name="data1" class="form-control" type="date" value="<%=(item ? item.data1 : '') %>" />
+</div>
+
+<div class="form-group">
+	<label for="data2" id="ldata2">Data da banca PGT 2</label>
+	<input id="data2" name="data2" class="form-control" type="date" value="<%=(item ? item.data2 : '') %>" />
+</div>
+
+
+
 <div class="row">
 	<div class="col-sm-6 col-md-3">
 		<div class="form-group">
@@ -138,6 +150,11 @@
 	const orientador2Div = document.getElementById('orientador2');
 	const orientador2Select = document.getElementById('idorientador2')
 
+	const data1Div = document.getElementById('data1')
+	const data1Label = document.getElementById('ldata1')
+	const data2Div = document.getElementById('data2')
+	const data2Label = document.getElementById('ldata2')
+
 	const avaliadorDiv = document.getElementById('avaliador');
 	const avaliadorSelect = document.getElementById('iddefesa2');
 
@@ -147,12 +164,24 @@
 			if (faseElement.value < 2) {
 				orientador2Div.classList.add("d-none");
 				orientador2Select.disabled = true;
+				if (data1Div.classList.contains("d-none")) {
+					data1Div.classList.remove("d-none");
+					data1Label.classList.remove("d-none");
+				}
+				data2Div.classList.add("d-none");
+				data2Label.classList.add("d-none");
 			}
 			else {
 				if (orientador2Div.classList.contains("d-none")) {
 					orientador2Div.classList.remove("d-none");
 				}
 				orientador2Select.disabled = false;
+				if (data2Div.classList.contains("d-none")) {
+					data2Div.classList.remove("d-none");
+					data2Label.classList.remove("d-none");
+				}
+				data1Div.classList.add("d-none");
+				data1Label.classList.add("d-none");
 			}
     	}
 	
