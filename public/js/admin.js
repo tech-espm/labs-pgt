@@ -1,6 +1,6 @@
 "use strict";
 (function () {
-	var initiallyCollapsed = false,
+	var initiallyCollapsed = true,
 		sidebarCollapseHidden = initiallyCollapsed,
 		sidebarSmall = initiallyCollapsed,
 		sidebarShouldBeSmall = initiallyCollapsed,

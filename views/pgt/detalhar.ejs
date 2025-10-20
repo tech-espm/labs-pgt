@@ -30,24 +30,14 @@
                                     <% for (let i=0; i < semestres.length; i++) { %>
                                         <%-((item.idsemestre===semestres[i].id) ? semestres[i].nome  : '' ) %>
                                     <% } %></div>
-                                <%
-                                function formatarData(dateStr) {
-                                    if (!dateStr) return 'Não marcada';
-                                    const d = new Date(dateStr);
-                                    const dia = String(d.getDate()).padStart(2, '0');
-                                    const mes = String(d.getMonth() + 1).padStart(2, '0');
-                                    const ano = d.getFullYear();
-                                    return `${dia}/${mes}/${ano}`;
-                                }
-                                %>
                                 <% if (item.idsemestre === 1) { %>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Banca - <%= formatarData(item.data1) %>
+                                        Banca - <%= item.data1 %>
                                     </div>
                                 <% } %>
                                 <% if (item.idsemestre === 2) { %>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Banca - <%= formatarData(item.data2) %>
+                                        Banca - <%= item.data2 %>
                                     </div>
                                 <% } %>
                             </div>

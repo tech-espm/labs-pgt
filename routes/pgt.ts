@@ -10,6 +10,7 @@ import Formulario = require("../models/formulario");
 import TipoFormulario = require("../enums/formulario/tipo");
 import FasePGT = require("../enums/pgt/fase");
 import Perfil = require("../enums/conta/perfil");
+import DataUtil = require("../utils/dataUtil");
 
 class PGTRoute {
 	public static async criar(req: app.Request, res: app.Response) {
@@ -150,6 +151,9 @@ class PGTRoute {
 					usuario: u
 				});
 			else {
+				item.data1 = DataUtil.converterDataISO(item.data1, true);
+				item.data2 = DataUtil.converterDataISO(item.data2, true);
+
 				let usuarioPreencherQualificaco: boolean = (await Formulario.autores(
 					item.id, TipoFormulario.Qualificacao)).findIndex(autorId => autorId === u.id) === -1
 

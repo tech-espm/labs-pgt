@@ -53,6 +53,7 @@
     blockquote {
       border: $border-width solid $gray-500; // Bootstrap custom code; using `$border-width` instead of 1px
       page-break-inside: avoid;
+      break-inside: avoid;
     }
 
     //
@@ -67,6 +68,7 @@
     tr,
     img {
       page-break-inside: avoid;
+      break-inside: avoid;
     }
 
     p,
@@ -79,6 +81,7 @@
     h2,
     h3 {
       page-break-after: avoid;
+      break-after: avoid;
     }
 
     // Bootstrap specific changes start
