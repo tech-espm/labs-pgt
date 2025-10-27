@@ -209,9 +209,14 @@
     </div>
 </div>
 
-<a target="_blank" class="btn btn-primary mb-3" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=<%- item.idfase%>">
+<a target="_blank" class="btn btn-primary mb-3" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=1">
     <i class="fa fa-paperclip"></i>
-    Projeto
+    Projeto PGT I
+</a>
+
+<a target="_blank" class="btn btn-primary mb-3" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=2">
+    <i class="fa fa-paperclip"></i>
+    Projeto PGT II
 </a>
 
 <a target="_blank" class="btn btn-primary mb-3 ml-3" href="<%= root %>/pgt/visualizar?id=<%= item.id %>">

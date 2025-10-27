@@ -316,7 +316,7 @@ class PGT {
 		res.sendFile(app.fileSystem.absolutePath(caminho));
 	}
 
-	public static async criar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
+	public static async criar(pgt: PGT, anexo?: app.UploadedFile | null, anexo2?: app.UploadedFile): Promise<string> {
 	let res: string;
 	if ((res = PGT.validar(pgt, true)))
 		return res;
@@ -413,6 +413,14 @@ class PGT {
 				}
 			}
 
+			// Salva anexos se enviados (PGT I -> fase 1, PGT II -> fase 2)
+            if (anexo) {
+                await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-1.pdf`, anexo);
+            }
+            if (anexo2) {
+                await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-2.pdf`, anexo2);
+            }
+
 			await sql.commit();
 
 			return null;
@@ -423,7 +431,7 @@ class PGT {
 	});
 }
 
-	public static async editar(pgt: PGT, anexo?: app.UploadedFile | null): Promise<string> {
+	public static async editar(pgt: PGT, anexo?: app.UploadedFile | null, anexo2?: app.UploadedFile): Promise<string> {
 		// Validar se o PGT editado está OK
 		let res: string;
 		if ((res = PGT.validar(pgt, false)))
@@ -446,9 +454,13 @@ class PGT {
 				return updateAlunosResult;
 			}
 
-			if (anexo)
-			await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-${pgt.idfase}.pdf`, anexo);
-
+			// Salva anexos enviados (sempre usar 1 => PGT I, 2 => PGT II)
+            if (anexo) {
+                await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-1.pdf`, anexo);
+            }
+            if (anexo2) {
+                await app.fileSystem.saveUploadedFile(`dados/anexos/${pgt.id}-2.pdf`, anexo2);
+            }
 
 			// Atualizar a conexão dos professores
 			return await PGT.editarProfessores(sql, pgt);

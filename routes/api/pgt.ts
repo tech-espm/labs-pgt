@@ -18,10 +18,13 @@ class PGTApiRoute {
     if (!u) return;
 
     let anexo: app.UploadedFile | null = null;
-    if (req.uploadedFiles)
+    let anexo2: app.UploadedFile | null = null;
+    if (req.uploadedFiles) {
       anexo = req.uploadedFiles.anexo;
+      anexo2 = req.uploadedFiles.anexo2;
+    }
 
-    const erro = await PGT.criar(req.body, anexo);
+    const erro = await PGT.criar(req.body, anexo, anexo2);
 
     if (erro) {
       res.status(400).json(erro);
@@ -40,10 +43,13 @@ class PGTApiRoute {
     const pgt: PGT = req.body;
 
     let anexo: app.UploadedFile | null = null;
-    if (req.uploadedFiles)
+    let anexo2: app.UploadedFile | null = null;
+    if (req.uploadedFiles) {
       anexo = req.uploadedFiles.anexo;
+      anexo2 = req.uploadedFiles.anexo2;
+    }
 
-    const erro = await PGT.editar(pgt, anexo);
+    const erro = await PGT.editar(pgt, anexo, anexo2);
 
     if (erro) {
       res.status(400).json(erro);

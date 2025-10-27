@@ -121,16 +121,24 @@
 			</div>
 		</div>
 	</div>
+</div>
 
-	<% if (item) { %>
-	<div class="col-12">
-		<div class="form-group p-10">
-			<label for="anexo">Trabalho</label>
-			<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
+<% if (item) { %>
+	<div class="row">
+		<div class="col-6">
+			<div class="form-group p-10">
+				<label for="anexo">PGT I</label>
+				<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="form-group p-10">
+				<label for="anexo2">PGT II</label>
+				<input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
+			</div>
 		</div>
 	</div>
-	<% } %>
-</div>
+<% } %>
 
 <%- include("editarAlunos") %>
 
