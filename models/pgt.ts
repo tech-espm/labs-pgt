@@ -30,6 +30,8 @@ interface PGT {
 	defesa: string;
 	data1: string | null;
 	data2: string | null;
+	hasAnexo?: boolean;
+	hasAnexo2?: boolean;
 }
 
 class PGT {
@@ -302,7 +304,14 @@ class PGT {
 			where p.id = ? and p.exclusao is null
 			`, [Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, id]) as PGT[];
 
-			return PGT.obterAlunos(sql, (lista && lista[0]) || null);
+			const pgt = await PGT.obterAlunos(sql, (lista && lista[0]) || null);
+			
+			if (pgt) {
+				pgt.hasAnexo = await app.fileSystem.exists(`dados/anexos/${id}-1.pdf`);
+				pgt.hasAnexo2 = await app.fileSystem.exists(`dados/anexos/${id}-2.pdf`);
+			}
+
+        	return pgt;
 		});
 	}
 
