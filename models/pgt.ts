@@ -326,8 +326,8 @@ class PGT {
 
 		try {
 
-			await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, criacao) values (?, ?, ?, ?, now())",
-				[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre]);
+			await sql.query("insert into pgt (nome, fase_id, tipo_id, semestre_id, data1, data2, criacao) values (?, ?, ?, ?, ?, ?, now())",
+				[pgt.nome, pgt.idfase, pgt.idtipo, pgt.idsemestre, pgt.data1, pgt.data2]);
 
 			pgt.id = await sql.scalar("select last_insert_id()") as number;
 

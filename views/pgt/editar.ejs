@@ -150,8 +150,6 @@
 	const orientador2Div = document.getElementById('orientador2');
 	const orientador2Select = document.getElementById('idorientador2')
 
-	const data1Div = document.getElementById('data1')
-	const data1Label = document.getElementById('ldata1')
 	const data2Div = document.getElementById('data2')
 	const data2Label = document.getElementById('ldata2')
 
@@ -164,10 +162,6 @@
 			if (faseElement.value < 2) {
 				orientador2Div.classList.add("d-none");
 				orientador2Select.disabled = true;
-				if (data1Div.classList.contains("d-none")) {
-					data1Div.classList.remove("d-none");
-					data1Label.classList.remove("d-none");
-				}
 				data2Div.classList.add("d-none");
 				data2Label.classList.add("d-none");
 			}
@@ -180,8 +174,6 @@
 					data2Div.classList.remove("d-none");
 					data2Label.classList.remove("d-none");
 				}
-				data1Div.classList.add("d-none");
-				data1Label.classList.add("d-none");
 			}
     	}
 	
