@@ -224,6 +224,8 @@
     Visualizar avaliações
 </a>
 
+<input type="hidden" id="pgtId" value="<%- item.id %>" />
+
 <div class="modal fade" id="anexosModal" tabindex="-1" role="dialog" aria-labelledby="anexosModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -283,7 +285,63 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" id="btnSalvarUploads" class="btn btn-primary">Salvar</button>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    "use strict";
+
+    (function () {
+        $("#btnSalvarUploads").on("click", function () {
+            var id = document.getElementById("pgtId").value;
+            var f1 = document.getElementById("anexo");
+            var f2 = document.getElementById("anexo2");
+
+            var fd = new FormData();
+            fd.append("id", id);
+
+            if (f1 && f1.files && f1.files.length > 0)
+                fd.append("anexo", f1.files[0]);
+
+            if (f2 && f2.files && f2.files.length > 0)
+                fd.append("anexo2", f2.files[0]);
+
+            Swal.wait();
+
+            if (typeof window.JsonWebApi !== "undefined" && typeof JsonWebApi.postFormData === "function" && JsonWebApi.active) {
+                JsonWebApi.postFormData("<%- root %>/api/pgt/uploadAnexos", fd, function (response) {
+                    if (!response || response.success) {
+                        Swal.success("Uploads salvos com sucesso!").then(function () {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.error((response ? response.value : "Erro ao salvar") + " ");
+                    }
+                });
+                return;
+            }
+
+            fetch("<%- root %>/api/pgt/uploadAnexos", {
+                method: "POST",
+                body: fd,
+                credentials: "same-origin"
+            }).then(function (resp) {
+                if (resp.ok) {
+                    Swal.success("Uploads salvos com sucesso!").then(function () {
+                        location.reload();
+                    });
+                } else {
+                    return resp.text().then(function (txt) {
+                        Swal.error((txt || ("Erro: " + resp.status)) + " ");
+                    });
+                }
+            }).catch(function (err) {
+                console.error(err);
+                Swal.error("Erro ao enviar uploads");
+            });
+        });
+    })();
+</script>

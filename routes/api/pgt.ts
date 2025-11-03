@@ -102,6 +102,46 @@ class PGTApiRoute {
 
     await PGT.downloadAnexo(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
   }
+
+  @app.http.post()
+  @app.route.formData()
+  public static async uploadAnexos(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
+
+    const id = parseInt(req.body["id"] as string);
+    if (isNaN(id)) {
+      res.status(400).json("Id inválido");
+      return;
+    }
+
+    const item = await PGT.obter(id);
+    if (!item) {
+      res.status(404).json("PGT não encontrado");
+      return;
+    }
+
+    if (!u.admin && u.id !== item.idorientador1 && u.id !== item.idorientador2) {
+      res.status(403).json("Sem permissão");
+      return;
+    }
+
+    let anexo: app.UploadedFile | null = null;
+    let anexo2: app.UploadedFile | null = null;
+    if (req.uploadedFiles) {
+      anexo = req.uploadedFiles.anexo;
+      anexo2 = req.uploadedFiles.anexo2;
+    }
+
+    try {
+      if (anexo) await app.fileSystem.saveUploadedFile(`dados/anexos/${id}-1.pdf`, anexo);
+      if (anexo2) await app.fileSystem.saveUploadedFile(`dados/anexos/${id}-2.pdf`, anexo2);
+      res.sendStatus(204);
+    } catch (e) {
+      res.status(500).json("Erro ao salvar anexos");
+    }
+  }
+
 }
 
 export = PGTApiRoute;
