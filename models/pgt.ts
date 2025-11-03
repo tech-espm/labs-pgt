@@ -197,15 +197,15 @@ class PGT {
 				left join conta_pgt cpori1 on cpori1.pgt_id = p.id and cpori1.funcao_id = ?
 				left join conta ori1 on ori1.id = cpori1.conta_id
 				left join conta_pgt cpori2 on cpori2.pgt_id = p.id and cpori2.funcao_id = ?
-				left join conta ori on ori2.id = cpori2.conta_id
+				left join conta ori2 on ori2.id = cpori2.conta_id
 				left join conta_pgt cpqual on cpqual.pgt_id = p.id and cpqual.funcao_id = ?
 				left join conta qual on qual.id = cpqual.conta_id
 				left join conta_pgt cpdef1 on cpdef1.pgt_id = p.id and cpdef1.funcao_id = ?
 				left join conta def1 on def1.id = cpdef1.conta_id
 				left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
 				left join conta def2 on def2.id = cpdef2.conta_id
-				where ori1.id = ? and p.exclusao is null`,
-					[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador]) as PGT[];
+				where (ori1.id = ? or ori2.id = ?) and p.exclusao is null`,
+					[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador, idorientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select distinct

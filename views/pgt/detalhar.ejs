@@ -209,21 +209,81 @@
     </div>
 </div>
 
-<% if (item.hasAnexo) { %>
-<a target="_blank" class="btn btn-primary mb-3" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=1">
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#anexosModal">
     <i class="fa fa-paperclip"></i>
-    Projeto PGT I
-</a>
-<% } %>
+    Visualizar Anexos
+</button>
 
-<% if (item.hasAnexo2) { %>
-<a target="_blank" class="btn btn-primary mb-3" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=2">
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#uploadModal">
     <i class="fa fa-paperclip"></i>
-    Projeto PGT II
-</a>
-<% } %>
+    Fazer Uploads
+</button>
 
 <a target="_blank" class="btn btn-primary mb-3 ml-3" href="<%= root %>/pgt/visualizar?id=<%= item.id %>">
     <i class="far fa-file"></i>
     Visualizar avaliações
 </a>
+
+<div class="modal fade" id="anexosModal" tabindex="-1" role="dialog" aria-labelledby="anexosModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anexosModalLabel">Anexos do PGT</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column">
+                    <% if (item.hasAnexo) { %>
+                    <a target="_blank" class="btn btn-primary mb-2" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=1">
+                        <i class="fa fa-paperclip"></i>
+                        Projeto PGT I
+                    </a>
+                    <% } %>
+
+                    <% if (item.hasAnexo2) { %>
+                    <a target="_blank" class="btn btn-primary" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=2">
+                        <i class="fa fa-paperclip"></i>
+                        Projeto PGT II
+                    </a>
+                    <% } %>
+                    <% if (!item.hasAnexo && !item.hasAnexo2) { %>
+                        <p> Não há anexos para esse pgt. </p>
+                    <% } %>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Uploads do PGT</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column">
+                    <div class="form-group p-10">
+                        <label for="anexo">PGT I</label>
+                        <input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
+                    </div>
+                    <div class="form-group p-10">
+                        <label for="anexo2">PGT II</label>
+                        <input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -131,7 +131,7 @@
 				<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
 			</div>
 		</div>
-		<div class="col-6">
+		<div class="col-6" id="pgt2">
 			<div class="form-group p-10">
 				<label for="anexo2">PGT II</label>
 				<input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
@@ -164,6 +164,8 @@
 	const avaliadorDiv = document.getElementById('avaliador');
 	const avaliadorSelect = document.getElementById('iddefesa2');
 
+	const pgt2Div = document.getElementById('pgt2');
+
 	function checkFase() {
 
 		if (faseElement && orientador2Div) {
@@ -172,6 +174,9 @@
 				orientador2Select.disabled = true;
 				data2Div.classList.add("d-none");
 				data2Label.classList.add("d-none");
+				pgt2Div.classList.add("d-none");
+				avaliadorDiv.classList.add("d-none");
+				avaliadorSelect.disabled = true;
 			}
 			else {
 				if (orientador2Div.classList.contains("d-none")) {
@@ -182,15 +187,9 @@
 					data2Div.classList.remove("d-none");
 					data2Label.classList.remove("d-none");
 				}
-			}
-    	}
-	
-		if (faseElement && avaliadorDiv) {
-			if (faseElement.value < 2) {
-				avaliadorDiv.classList.add("d-none");
-				avaliadorSelect.disabled = true;
-			}
-			else {
+				if (pgt2Div.classList.contains("d-none")) {
+					pgt2Div.classList.remove("d-none")
+				}
 				if (avaliadorDiv.classList.contains("d-none")) {
 					avaliadorDiv.classList.remove("d-none");
 				}

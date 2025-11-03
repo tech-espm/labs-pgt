@@ -138,7 +138,7 @@ class PGTRoute {
 
 	public static async detalhar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u || !u.admin) {
+		if (!u) {
 			res.redirect(app.root + "/acesso");
 		} else {
 			let id = parseInt(req.query["id"] as string);
@@ -151,6 +151,11 @@ class PGTRoute {
 					usuario: u
 				});
 			else {
+				
+				if (!u.admin && u.id !== item.idorientador1 && u.id !== item.idorientador2) {
+					return res.redirect(app.root + "/acesso");
+        		}
+
 				item.data1 = DataUtil.converterDataISO(item.data1, true);
 				item.data2 = DataUtil.converterDataISO(item.data2, true);
 
