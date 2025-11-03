@@ -226,57 +226,9 @@
 	<div class="col-lg-6">
 
 		<!-- Calendario -->
-		<div class="FullCalendar">
-			<div class="calendar">
-				<div class="calendar__picture">
-				  <h2>8, Quinta</h2>
-				  <h3>Dezembro</h3>
-				</div>
-				<div class="calendar__date">
-				  <div class="calendar__day">M</div>
-				  <div class="calendar__day">T</div>
-				  <div class="calendar__day">W</div>
-				  <div class="calendar__day">T</div>
-				  <div class="calendar__day">F</div>
-				  <div class="calendar__day">S</div>
-				  <div class="calendar__day">S</div>
-				  <div class="calendar__number"></div>
-				  <div class="calendar__number"></div>
-				  <div class="calendar__number"></div>
-				  <div class="calendar__number">1</div>
-				  <div class="calendar__number">2</div>
-				  <div class="calendar__number">3</div>
-				  <div class="calendar__number">4</div>
-				  <div class="calendar__number">5</div>
-				  <div class="calendar__number">6</div>
-				  <div class="calendar__number">7</div>
-				  <div class="calendar__number calendar__number--current">8</div>
-				  <div class="calendar__number">9</div>
-				  <div class="calendar__number">10</div>
-				  <div class="calendar__number">11</div>
-				  <div class="calendar__number">12</div>
-				  <div class="calendar__number">13</div>
-				  <div class="calendar__number">14</div>
-				  <div class="calendar__number">15</div>
-				  <div class="calendar__number">16</div>
-				  <div class="calendar__number">17</div>
-				  <div class="calendar__number">18</div>
-				  <div class="calendar__number">19</div>
-				  <div class="calendar__number">20</div>
-				  <div class="calendar__number">21</div>
-				  <div class="calendar__number">22</div>
-				  <div class="calendar__number">23</div>
-				  <div class="calendar__number">24</div>
-				  <div class="calendar__number">25</div>
-				  <div class="calendar__number">26</div>
-				  <div class="calendar__number">27</div>
-				  <div class="calendar__number">28</div>
-				  <div class="calendar__number">29</div>
-				  <div class="calendar__number">30</div>
-				</div>
-			  </div>
-			</div>
+		<div id="calendario">
 		</div>
+	</div>
 
 		<!-- Approach -->
 		
@@ -313,8 +265,65 @@
 		</div>
 </div>
 
+<%- contentFor("styles") %>
+
+<link rel="stylesheet" href="<%- staticRoot %>/lib/fullcalendar/main.min.css" />
+
 <%- contentFor("scripts") %>
 
+<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/main.min.js"></script>
+<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/locales-all.min.js"></script>
 <script src="<%- staticRoot %>/lib/chart.js/chart.min.js"></script>
 <script src="<%- staticRoot %>/js/exemplo/chart-area.js"></script>
 <script src="<%- staticRoot %>/js/exemplo/chart-pie.js"></script>
+
+<script type="text/javascript">
+	let anoAtual = parseInt("<%= ano %>");
+	let mesAtual = parseInt("<%= mes %>");
+
+	let eventos = [
+		{
+			title: "Título 1",
+			backgroundColor: "#00ff00",
+			borderColor: "#00ff00",
+			textColor: textColorForBackground("#00ff00"),
+			start: "2025-11-10",
+			extendedProps: {
+				exemploExtraInt: 123,
+				exemploExtraStr: "abc",
+			},
+		},
+		{
+			title: "Título 2",
+			backgroundColor: "#0000ff",
+			borderColor: "#0000ff",
+			textColor: textColorForBackground("#0000ff"),
+			start: "2025-11-12",
+			extendedProps: {
+				exemploExtraInt: 1234,
+				exemploExtraStr: "abcd",
+			},
+		}
+	];
+
+	// https://fullcalendar.io/docs/v5/height
+	// https://fullcalendar.io/docs/v5/validRange
+	let calendar = new FullCalendar.Calendar(document.getElementById("calendario"), {
+		initialView: "dayGridMonth",
+		initialDate: `${anoAtual}-${(mesAtual < 10 ? ("0" + mesAtual) : mesAtual)}-01`,
+		locale: "pt-br",
+		editable: false,
+		events: eventos,
+		height: "auto",
+		headerToolbar: {
+			left: "title",
+			center: "",
+			right: ""
+		},
+		eventClick: function(info) {
+			alert(JSON.stringify(info.event));
+		},
+	});
+
+	calendar.render();
+</script>

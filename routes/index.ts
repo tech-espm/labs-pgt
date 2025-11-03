@@ -1,18 +1,24 @@
 ﻿import app = require("teem");
 import appsettings = require("../appsettings");
 import Usuario = require("../models/conta");
+import DataUtil = require("../utils/dataUtil");
 
 class IndexRoute {
 	public static async index(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u)
+		if (!u) {
 			res.redirect(app.root + "/login");
-		else
+		} else {
+			const hoje = DataUtil.horarioDeBrasiliaComoDateUTC();
+
 			res.render("index/index", {
 				layout: "layout-sem-form",
 				titulo: "Olá, "+ Usuario.name,
+				ano: hoje.getUTCFullYear(),
+				mes: hoje.getUTCMonth() + 1,
 				usuario: u
 			});
+		}
 	}
 
 	@app.http.all()
