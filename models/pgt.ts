@@ -32,6 +32,8 @@ interface PGT {
 	data2: string | null;
 	hasAnexo?: boolean;
 	hasAnexo2?: boolean;
+	hasAta1?: boolean;
+	hasAta2?: boolean;
 }
 
 class PGT {
@@ -309,6 +311,8 @@ class PGT {
 			if (pgt) {
 				pgt.hasAnexo = await app.fileSystem.exists(`dados/anexos/${id}-1.pdf`);
 				pgt.hasAnexo2 = await app.fileSystem.exists(`dados/anexos/${id}-2.pdf`);
+				pgt.hasAta1 = await app.fileSystem.exists(`dados/atas/${id}-1.pdf`);
+                pgt.hasAta2 = await app.fileSystem.exists(`dados/atas/${id}-2.pdf`);
 			}
 
         	return pgt;
@@ -319,6 +323,16 @@ class PGT {
 		const caminho = `dados/anexos/${id}-${idfase}.pdf`;
 		if (!await app.fileSystem.exists(caminho)) {
 			res.status(404).json("Anexo não encontrado");
+			return;
+		}
+
+		res.sendFile(app.fileSystem.absolutePath(caminho));
+	}
+
+	public static async downloadAta(res: app.Response, id: number, idfase: number): Promise<void> {
+		const caminho = `dados/atas/${id}-${idfase}.pdf`;
+		if (!await app.fileSystem.exists(caminho)) {
+			res.status(404).json("Ata não encontrada");
 			return;
 		}
 

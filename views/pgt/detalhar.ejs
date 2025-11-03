@@ -245,12 +245,27 @@
                     <% } %>
 
                     <% if (item.hasAnexo2) { %>
-                    <a target="_blank" class="btn btn-primary" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=2">
+                    <a target="_blank" class="btn btn-primary mb-2" href="<%- root %>/api/pgt/downloadAnexo?id=<%- item.id %>&idfase=2">
                         <i class="fa fa-paperclip"></i>
                         Projeto PGT II
                     </a>
                     <% } %>
-                    <% if (!item.hasAnexo && !item.hasAnexo2) { %>
+
+                    <% if (item.hasAta1) { %>
+                    <a target="_blank" class="btn btn-primary mb-2" href="<%- root %>/api/pgt/downloadAta?id=<%- item.id %>&idfase=1">
+                        <i class="fa fa-file-alt"></i>
+                        Ata PGT I
+                    </a>
+                    <% } %>
+
+                    <% if (item.hasAta2) { %>
+                    <a target="_blank" class="btn btn-primary mb-2" href="<%- root %>/api/pgt/downloadAta?id=<%- item.id %>&idfase=2">
+                        <i class="fa fa-file-alt"></i>
+                        Ata PGT II
+                    </a>
+                    <% } %>
+
+                    <% if (!item.hasAnexo && !item.hasAnexo2 && !item.hasAta1 && !item.hasAta2) { %>
                         <p> Não há anexos para esse pgt. </p>
                     <% } %>
                 </div>
@@ -281,6 +296,14 @@
                         <label for="anexo2">PGT II</label>
                         <input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
                     </div>
+                    <div class="form-group p-10">
+                        <label for="ata1">Ata PGT I</label>
+                        <input class="form-control" type="file" id="ata1" name="ata1" accept=".pdf" />
+                    </div>
+                    <div class="form-group p-10">
+                        <label for="ata2">Ata PGT II</label>
+                        <input class="form-control" type="file" id="ata2" name="ata2" accept=".pdf" />
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -293,26 +316,30 @@
 
 <script type="text/javascript">
     "use strict";
-
     (function () {
         $("#btnSalvarUploads").on("click", function () {
             var id = document.getElementById("pgtId").value;
             var f1 = document.getElementById("anexo");
             var f2 = document.getElementById("anexo2");
+            var a1 = document.getElementById("ata1");
+            var a2 = document.getElementById("ata2");
 
             var fd = new FormData();
             fd.append("id", id);
 
             if (f1 && f1.files && f1.files.length > 0)
                 fd.append("anexo", f1.files[0]);
-
             if (f2 && f2.files && f2.files.length > 0)
                 fd.append("anexo2", f2.files[0]);
+            if (a1 && a1.files && a1.files.length > 0)
+                fd.append("ata1", a1.files[0]);
+            if (a2 && a2.files && a2.files.length > 0)
+                fd.append("ata2", a2.files[0]);
 
             Swal.wait();
 
             if (typeof window.JsonWebApi !== "undefined" && typeof JsonWebApi.postFormData === "function" && JsonWebApi.active) {
-                JsonWebApi.postFormData("<%- root %>/api/pgt/uploadAnexos", fd, function (response) {
+                JsonWebApi.postFormData("<%- root %>/api/pgt/uploadAnexosEAtas", fd, function (response) {
                     if (!response || response.success) {
                         Swal.success("Uploads salvos com sucesso!").then(function () {
                             location.reload();
@@ -324,7 +351,7 @@
                 return;
             }
 
-            fetch("<%- root %>/api/pgt/uploadAnexos", {
+            fetch("<%- root %>/api/pgt/uploadAnexosEAtas", {
                 method: "POST",
                 body: fd,
                 credentials: "same-origin"

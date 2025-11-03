@@ -103,9 +103,16 @@ class PGTApiRoute {
     await PGT.downloadAnexo(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
   }
 
+  public static async downloadAta(req: app.Request, res: app.Response) {
+    const u = await Usuario.cookie(req, res, true);
+    if (!u) return;
+
+    await PGT.downloadAta(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
+  }
+
   @app.http.post()
   @app.route.formData()
-  public static async uploadAnexos(req: app.Request, res: app.Response) {
+  public static async uploadAnexosEAtas(req: app.Request, res: app.Response) {
     const u = await Usuario.cookie(req, res, true);
     if (!u) return;
 
@@ -128,14 +135,20 @@ class PGTApiRoute {
 
     let anexo: app.UploadedFile | null = null;
     let anexo2: app.UploadedFile | null = null;
+    let ata1: app.UploadedFile | null = null;
+    let ata2: app.UploadedFile | null = null;
     if (req.uploadedFiles) {
       anexo = req.uploadedFiles.anexo;
       anexo2 = req.uploadedFiles.anexo2;
+      ata1 = req.uploadedFiles.ata1;
+      ata2 = req.uploadedFiles.ata2;
     }
 
     try {
       if (anexo) await app.fileSystem.saveUploadedFile(`dados/anexos/${id}-1.pdf`, anexo);
       if (anexo2) await app.fileSystem.saveUploadedFile(`dados/anexos/${id}-2.pdf`, anexo2);
+      if (ata1) await app.fileSystem.saveUploadedFile(`dados/atas/${id}-1.pdf`, ata1);
+      if (ata2) await app.fileSystem.saveUploadedFile(`dados/atas/${id}-2.pdf`, ata2);
       res.sendStatus(204);
     } catch (e) {
       res.status(500).json("Erro ao salvar anexos");
