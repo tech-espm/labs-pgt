@@ -1,5 +1,7 @@
 ﻿import app = require("teem");
 import appsettings = require("../appsettings");
+import fases = require("../models/fase");
+import PGT = require("../models/pgt");
 import Usuario = require("../models/conta");
 import DataUtil = require("../utils/dataUtil");
 
@@ -16,7 +18,8 @@ class IndexRoute {
 				titulo: "Olá, "+ Usuario.name,
 				ano: hoje.getUTCFullYear(),
 				mes: hoje.getUTCMonth() + 1,
-				usuario: u
+				usuario: u,
+				lista: await PGT.listar()
 			});
 		}
 	}
@@ -68,6 +71,18 @@ class IndexRoute {
 		else
 			res.render("index/perfil", {
 				titulo: "Meu Perfil",
+				usuario: u
+			});
+	}
+
+	public static async entregas(req: app.Request, res: app.Response) {
+		let u = await Usuario.cookie(req);
+		if (!u || !u.admin)
+			res.redirect(app.root + "/acesso");
+		else
+			res.render("index/entregas", {
+				titulo: "Datas de Entrega",
+				fases: fases.lista,
 				usuario: u
 			});
 	}
