@@ -1,6 +1,8 @@
 ﻿import app = require("teem");
 import appsettings = require("../appsettings");
 import fases = require("../models/fase");
+import entregas = require("../models/tipo-entrega")
+import semestres = require("../models/semestre-entrega")
 import PGT = require("../models/pgt");
 import Usuario = require("../models/conta");
 import DataUtil = require("../utils/dataUtil");
@@ -83,7 +85,9 @@ class IndexRoute {
 			res.render("index/entregas", {
 				titulo: "Datas de Entrega",
 				fases: fases.lista,
-				usuario: u
+				usuario: u,
+				entregas: entregas.lista,
+				semestres: semestres.lista
 			});
 	}
 

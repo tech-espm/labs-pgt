@@ -1,22 +1,57 @@
 <div class="row">
 	<div class="col-sm-6">
 		<div class="form-group">
-	        <label for="dataentrega" id="dataentrega">Data de entrega</label>
-	        <input id="dataentrega" name="dataentrega" class="form-control" type="date" placeholder="dd/mm/yyyy" />
+	        <label for="ano">Ano</label>
+	        <input id="ano" name="ano" class="form-control" type="number" placeholder="Ex: 2025"/>
         </div>
 	</div>
 
 	<div class="col-sm-6">
 		<div class="form-group">
+	        <label for="semestre">Semestre</label>
+	        <select id="semestre" name="semestre" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < semestres.length; i++) { %>
+				<option value="<%= semestres[i].id %>"><%= semestres[i].nome %></option>
+				<% } %>
+			</select>
+        </div>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-sm-4">
+		<div class="form-group">
 			<label for="idfase">Fase</label>
 			<select id="idfase" name="idfase" class="form-control" size="1">
 				<option value="">Selecione...</option>
-				<% for (let i = 0; i < fases.length; i++) { %>
+				<% for (let i = 0; i < fases.length - 1; i++) { %>
 				<option value="<%= fases[i].id %>"><%= fases[i].nome %></option>
 				<% } %>
 			</select>
 		</div>
 	</div>
+
+	<div class="col-sm-4">
+		<div class="form-group">
+			<label for="tipoentrega">Tipo de Entrega</label>
+			<select id="tipoentrega" name="tipoentrega" class="form-control" size="1">
+				<option value="">Selecione...</option>
+				<% for (let i = 0; i < entregas.length; i++) { %>
+				<option value="<%= entregas[i].id %>"><%= entregas[i].nome %></option>
+				<% } %>
+			</select>
+		</div>
+	</div>
+	
+	<div class="col-sm-4">
+		<div class="form-group">
+	        <label for="dataentrega">Data de entrega</label>
+	        <input id="dataentrega" name="dataentrega" class="form-control" type="date" placeholder="dd/mm/yyyy" />
+        </div>
+	</div>
+
 </div>
 
 <%- contentFor("scripts") %>
