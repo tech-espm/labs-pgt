@@ -1,6 +1,6 @@
 import ItemNomeado = require("../data/itemNomeado");
 import ListaNomeada = require("../data/listaNomeada");
-import SemestreEntrega = require("../enums/datalim/semestre-entrega");
+import SemestreEntrega = require("../enums/dataent/semestre-entrega");
 
 const semestreEntregas = new ListaNomeada([
 	new ItemNomeado(SemestreEntrega.primeiro, "1° Semestre do ano"),

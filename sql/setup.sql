@@ -195,29 +195,6 @@ CREATE TABLE IF NOT EXISTS `labs_pgt`.`etapa` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `labs_pgt`.`cronograma`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `labs_pgt`.`cronograma` ;
-
-CREATE TABLE IF NOT EXISTS `labs_pgt`.`cronograma` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `data` DATETIME NOT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
-  `descr` MEDIUMTEXT NULL,
-  `tipo` VARCHAR(12) NOT NULL,
-  `pgt_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `cronograma_pgt_idx` (`pgt_id` ASC),
-  CONSTRAINT `cronograma_pgt`
-    FOREIGN KEY (`pgt_id`)
-    REFERENCES `labs_pgt`.`pgt` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `labs_pgt`.`tipo_formulario`
 -- -----------------------------------------------------
