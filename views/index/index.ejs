@@ -1,199 +1,46 @@
-﻿<style>
-	* {
-		box-sizing: border-box;
-		font-family: Verdana, sans-serif;
-	}
+﻿<div class="card shadow mb-4">
+	<div class="card-body">
+		<!-- ===== FILTRO DE MÊS/ANO ===== -->
+		<div class="row mb-3">
+			<div class="col-lg-3">
+				<label>Mês:</label>
+				<select id="filtroMes" class="form-control">
+					<option value="1">Janeiro</option>
+					<option value="2">Fevereiro</option>
+					<option value="3">Março</option>
+					<option value="4">Abril</option>
+					<option value="5">Maio</option>
+					<option value="6">Junho</option>
+					<option value="7">Julho</option>
+					<option value="8">Agosto</option>
+					<option value="9">Setembro</option>
+					<option value="10">Outubro</option>
+					<option value="11">Novembro</option>
+					<option value="12">Dezembro</option>
+				</select>
+			</div>
 
-	.mySlides {
-		display: none;
-	}
+			<div class="col-lg-3">
+				<label>Ano:</label>
+				<input id="filtroAno" type="number" class="form-control" min="1900" max="2100" value="<%= ano %>">
+			</div>
 
-	img {
-		vertical-align: middle;
-	}
-
-	/* Slideshow container */
-	.slideshow-container {
-		max-width: 1000px;
-		position: relative;
-		margin: auto;
-	}
-
-	/* Caption text */
-	.text {
-		color: #f2f2f2;
-		font-size: 15px;
-		padding: 8px 12px;
-		position: absolute;
-		bottom: 8px;
-		width: 100%;
-		text-align: center;
-		background-color: grey;
-	}
-
-	/* Number text (1/3 etc) */
-	.numbertext {
-		color: #f2f2f2;
-		font-size: 12px;
-		padding: 8px 12px;
-		position: absolute;
-		top: 0;
-	}
-
-	/* The dots/bullets/indicators */
-	.dot {
-		height: 15px;
-		width: 15px;
-		margin: 0 2px;
-		background-color: #bbb;
-		border-radius: 50%;
-		display: inline-block;
-		transition: background-color 8.0s ease;
-		margin-bottom: 10%;
-	}
-
-	.active {
-		background-color: #717171;
-	}
-
-	/* Fading animation */
-	.fade {
-		animation-name: fade;
-		animation-duration: 4.0s;
-	}
-
-	@keyframes fade {
-		from {
-			opacity: .4
-		}
-
-		to {
-			opacity: 1
-		}
-	}
-
-	/* On smaller screens, decrease text size */
-	@media only screen and (max-width: 300px) {
-		.text {
-			font-size: 11px
-		}
-	}
-</style>
-
-<div class="container-fluid">
-
-	<!-- ===== FILTRO DE MÊS/ANO ===== -->
-	<div class="row mb-3">
-		<div class="col-lg-3">
-			<label>Mês:</label>
-			<select id="filtroMes" class="form-control">
-				<option value="1">Janeiro</option>
-				<option value="2">Fevereiro</option>
-				<option value="3">Março</option>
-				<option value="4">Abril</option>
-				<option value="5">Maio</option>
-				<option value="6">Junho</option>
-				<option value="7">Julho</option>
-				<option value="8">Agosto</option>
-				<option value="9">Setembro</option>
-				<option value="10">Outubro</option>
-				<option value="11">Novembro</option>
-				<option value="12">Dezembro</option>
-			</select>
-		</div>
-
-		<div class="col-lg-3">
-			<label>Ano:</label>
-			<input id="filtroAno" type="number" class="form-control" min="1900" max="2100" value="<%= ano %>">
-		</div>
-
-		<div class="col-lg-3 d-flex align-items-end">
-			<button id="btnFiltrar" class="btn btn-primary w-100">
-				Filtrar
-			</button>
-		</div>
-	</div>
-
-	<!-- Calendario -->
-	<div class="row mb-4">
-		<div class="col-12">
-			<div id="calendario"></div>
-		</div>
-	</div>
-
-	<div class="row mb-4">
-		<!-- Content Column -->
-		<div class="col-12 mb-4">
-			<div class="Slides">
-				<!-- Carrosel -->
-				<div class="row"></div>
-				<div class="slideshow-container col-lg-6">
-
-					<div class="mySlides fade">
-						<div class="numbertext">1 / 3</div>
-						<a href="https://www.espm.br/" target="_blank">
-							<img src="https://canaldemarketingdigital.com.br/wp-content/uploads/2020/07/ESPM-scaled-1-1024x684.jpg"
-								style="width:100%">
-						</a>
-						<div class="text">Acesse o site oficial da ESPM</div>
-					</div>
-
-					<div class="mySlides fade">
-						<div class="numbertext">2 / 3</div>
-						<a href="https://www.businesswire.com/news/home/20220831005237/en/Palantir-Announces-Partnership-with-Beckett-Collectibles"
-							target="_blank">
-							<img src="https://unboxingstartups.com/wp-content/uploads/2021/11/Palantir-Technologies-is-a-Public-American-Software-Company-That-Specializes-in-Big-Data-Analytics.jpg"
-								style="width:100%">
-						</a>
-						<div class="text">Grande Startup fechando negocios</div>
-					</div>
-
-					<div class="mySlides fade">
-						<div class="numbertext">3 / 3</div>
-						<a href="https://istoe.com.br/tiktok-e-black-rocks-startups-confirmam-participacao-no-befly-tech-day/"
-							target="_blank">
-							<img src="https://cdn.panrotas.com.br/portal-panrotas-statics/media-files-cache/316268/2221eea8254b78dde6c5bba87640b8b8whatsappimage20211028at17.25.32/203,91,890,531/1206,720,0.56/0/default.jpeg"
-								style="width:100%">
-						</a>
-						<div class="text">O TECH day</div>
-					</div>
-
-				</div>
-				<br>
-
-				<div style="text-align:center">
-					<span class="dot"></span>
-					<span class="dot"></span>
-					<span class="dot"></span>
-				</div>
-				<script>
-					let slideIndex = 0;
-					showSlides();
-
-					function showSlides() {
-						let i;
-						let slides = document.getElementsByClassName("mySlides");
-						let dots = document.getElementsByClassName("dot");
-						for (i = 0; i < slides.length; i++) {
-							slides[i].style.display = "none";
-						}
-						slideIndex++;
-						if (slideIndex > slides.length) { slideIndex = 1 }
-						for (i = 0; i < dots.length; i++) {
-							dots[i].className = dots[i].className.replace(" active", "");
-						}
-						slides[slideIndex - 1].style.display = "block";
-						dots[slideIndex - 1].className += " active";
-						setTimeout(showSlides, 3400); // Change image every 2 seconds
-					}
-				</script>
+			<div class="col-lg-3 d-flex align-items-end">
+				<button id="btnFiltrar" class="btn btn-primary w-100">
+					Filtrar
+				</button>
 			</div>
 		</div>
-	</div>
 
-	<!-- Approach -->
-	<div class="row">
-		<div class="card shadow mb-3 col-lg-6" style="padding: 20px;">
+		<!-- Calendario -->
+		<div id="calendario"></div>
+	</div>
+</div>
+
+<!-- Approach -->
+<div class="row">
+	<div class="col-sm-6">
+		<div class="card shadow mb-4">
 			<div class="card-header" style="padding: 20px;">
 				Objetivos acadêmicos do PGT para a instituição ESPM
 			</div>
@@ -211,7 +58,9 @@
 				</p>
 			</div>
 		</div>
-		<div class="card shadow mb-3 col-lg-6" style="padding: 20px;">
+	</div>
+	<div class="col-sm-6">
+		<div class="card shadow mb-4">
 			<div class="card-header" style="padding: 20px;">
 				Origem do Sistema de controle PGT
 			</div>
@@ -231,83 +80,86 @@
 
 <%- contentFor("styles") %>
 
-	<link rel="stylesheet" href="<%- staticRoot %>/lib/fullcalendar/main.min.css" />
+<link rel="stylesheet" href="<%- staticRoot %>/lib/fullcalendar/main.min.css" />
 
-	<%- contentFor("scripts") %>
+<style type="text/css">
+	.fc-h-event {
+		cursor: pointer;
+	}
+</style>
 
-		<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/main.min.js"></script>
-		<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/locales-all.min.js"></script>
-		<script src="<%- staticRoot %>/lib/chart.js/chart.min.js"></script>
-		<script src="<%- staticRoot %>/js/exemplo/chart-area.js"></script>
-		<script src="<%- staticRoot %>/js/exemplo/chart-pie.js"></script>
+<%- contentFor("scripts") %>
 
-		<script type="text/javascript">
-			//<![CDATA[
-			"use strict";
+<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/main.min.js"></script>
+<script type="text/javascript" src="<%- staticRoot %>/lib/fullcalendar/locales-all.min.js"></script>
 
-			let listaPGTs = <%- JSON.stringify(lista) %>;
+<script type="text/javascript">
+	//<![CDATA[
+	"use strict";
 
-			let anoAtual = parseInt("<%= ano %>");
-			let mesAtual = parseInt("<%= mes %>");
-			let eventos = [];
+	let listaPGTs = <%- JSON.stringify(lista) %>;
 
-			for (const pgt of listaPGTs) {
-				if (!pgt.data2 && pgt.data1) {
-					eventos.push({
-						title: pgt.nome,
-						start: DataUtil.converterDataISO(pgt.data1),
-						backgroundColor: "#007bff",
-						borderColor: "#007bff",
-						textColor: textColorForBackground("#007bff"),
-						extendedProps: { idpgt: pgt.id }
-					});
-				}
+	let anoAtual = parseInt("<%= ano %>");
+	let mesAtual = parseInt("<%= mes %>");
+	let eventos = [];
 
-				if (pgt.data2) {
-					eventos.push({
-						title: pgt.nome,
-						start: DataUtil.converterDataISO(pgt.data2),
-						backgroundColor: "#e91e63",
-						borderColor: "#e91e63",
-						textColor: textColorForBackground("#e91e63"),
-						extendedProps: { idpgt: pgt.id }
-					});
-				}
-			}
-
-			// https://fullcalendar.io/docs/v5/height
-			// https://fullcalendar.io/docs/v5/validRange
-			let calendar = new FullCalendar.Calendar(document.getElementById("calendario"), {
-				initialView: "dayGridMonth",
-				initialDate: `${anoAtual}-${(mesAtual < 10 ? ("0" + mesAtual) : mesAtual)}-01`,
-				locale: "pt-br",
-				editable: false,
-				events: eventos,
-				height: "auto",
-				headerToolbar: false,
-				eventClick: function (info) {
-					alert(JSON.stringify(info.event));
-				},
+	for (const pgt of listaPGTs) {
+		if (!pgt.data2 && pgt.data1) {
+			eventos.push({
+				title: pgt.nome,
+				start: DataUtil.converterDataISO(pgt.data1),
+				backgroundColor: "#007bff",
+				borderColor: "#007bff",
+				textColor: textColorForBackground("#007bff"),
+				extendedProps: { idpgt: pgt.id }
 			});
+		}
 
-			const inputMes = document.getElementById("filtroMes");
-			const inputAno = document.getElementById("filtroAno");
-			const botaoFiltrar = document.getElementById("btnFiltrar");
-
-			document.getElementById("filtroMes").value = mesAtual;
-
-			botaoFiltrar.addEventListener("click", function () {
-				let mes = parseInt(inputMes.value);
-				let ano = parseInt(inputAno.value);
-
-				if (!ano || !mes) return alert("Selecione mês e ano válidos!");
-
-				let mesFormatado = mes < 10 ? "0" + mes : mes;
-
-				calendar.gotoDate(`${ano}-${mesFormatado}-01`);
+		if (pgt.data2) {
+			eventos.push({
+				title: pgt.nome,
+				start: DataUtil.converterDataISO(pgt.data2),
+				backgroundColor: "#e91e63",
+				borderColor: "#e91e63",
+				textColor: textColorForBackground("#e91e63"),
+				extendedProps: { idpgt: pgt.id }
 			});
+		}
+	}
+
+	// https://fullcalendar.io/docs/v5/height
+	// https://fullcalendar.io/docs/v5/validRange
+	let calendar = new FullCalendar.Calendar(document.getElementById("calendario"), {
+		initialView: "dayGridMonth",
+		initialDate: `${anoAtual}-${(mesAtual < 10 ? ("0" + mesAtual) : mesAtual)}-01`,
+		locale: "pt-br",
+		editable: false,
+		events: eventos,
+		height: "auto",
+		headerToolbar: false,
+		eventClick: function (info) {
+			alert(JSON.stringify(info.event));
+		},
+	});
+
+	const inputMes = document.getElementById("filtroMes");
+	const inputAno = document.getElementById("filtroAno");
+	const botaoFiltrar = document.getElementById("btnFiltrar");
+
+	document.getElementById("filtroMes").value = mesAtual;
+
+	botaoFiltrar.addEventListener("click", function () {
+		let mes = parseInt(inputMes.value);
+		let ano = parseInt(inputAno.value);
+
+		if (!ano || !mes) return alert("Selecione mês e ano válidos!");
+
+		let mesFormatado = mes < 10 ? "0" + mes : mes;
+
+		calendar.gotoDate(`${ano}-${mesFormatado}-01`);
+	});
 
 
-			calendar.render();
-			//]]>
-		</script>
+	calendar.render();
+	//]]>
+</script>
