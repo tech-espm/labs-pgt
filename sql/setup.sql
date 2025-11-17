@@ -274,6 +274,39 @@ CREATE TABLE IF NOT EXISTS `labs_pgt`.`formulario` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+-- Tabela de Tipo de Entrega
+
+DROP TABLE IF EXISTS `labs_pgt`.`tipo_entrega`;
+
+CREATE TABLE IF NOT EXISTS `labs_pgt`.`tipo_entrega` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- Tabela de Data Limite
+
+DROP TABLE IF EXISTS `labs_pgt`.`data_limite`;
+
+CREATE TABLE IF NOT EXISTS `labs_pgt`.`data_limite` (
+  `ano` INT NOT NULL,
+  `semestre` INT NOT NULL,
+  `fase_id` INT NOT NULL,
+  `tipo_entrega_id` INT NOT NULL,
+  `data` DATE NOT NULL,
+  PRIMARY KEY (`ano`, `semestre`, `fase_id`, `tipo_entrega_id`),
+  CONSTRAINT `data_fase`
+    FOREIGN KEY (`fase_id`)
+    REFERENCES `labs_pgt`.`fase` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `data_tipo_entrega`
+    FOREIGN KEY (`tipo_entrega_id`)
+    REFERENCES `labs_pgt`.`tipo_entrega` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
@@ -287,6 +320,7 @@ insert into tipo_pgt (id, nome) values (1, 'Pesquisa'), (2, 'Caso'), (3, 'Empree
 insert into semestre_pgt (id, nome) values (1, '7º Semestre'), (2, '8º Semestre');
 insert into fase (id, nome) values (1, 'PGT1'), (2, 'PGT2'), (3, 'Concluido');
 insert into tipo_formulario (id, nome) values (1, 'Qualificacao'), (2, 'Defesa');
+insert into tipo_entrega (id, nome) values (1, 'Biblioteca'), (2, 'Banca');
 
 -- Dados da conta admin
 
