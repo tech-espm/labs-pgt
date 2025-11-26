@@ -111,7 +111,10 @@
 				backgroundColor: "#007bff",
 				borderColor: "#007bff",
 				textColor: textColorForBackground("#007bff"),
-				extendedProps: { idpgt: pgt.id }
+				extendedProps: { 
+					idpgt: pgt.id,
+					 url: `<%= root %>/pgt/detalhar?id=${pgt.id}`
+				}
 			});
 		}
 
@@ -138,7 +141,10 @@
 		height: "auto",
 		headerToolbar: false,
 		eventClick: function (info) {
-			alert(JSON.stringify(info.event));
+			const url = info.event.extendedProps.url;
+			if (url) {
+				window.location.href = url;
+			}
 		},
 	});
 
