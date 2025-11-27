@@ -1,6 +1,7 @@
 ﻿import app = require("teem");
 import appsettings = require("../appsettings");
 import PGT = require("../models/pgt");
+import DataEnt = require("../models/dataent");
 import Usuario = require("../models/conta");
 import DataUtil = require("../utils/dataUtil");
 
@@ -18,7 +19,8 @@ class IndexRoute {
 				ano: hoje.getUTCFullYear(),
 				mes: hoje.getUTCMonth() + 1,
 				usuario: u,
-				lista: await PGT.listar()
+				lista: await PGT.listar(),
+				listad: await DataEnt.listar()
 			});
 		}
 	}

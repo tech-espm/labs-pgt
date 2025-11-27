@@ -1,0 +1,65 @@
+<table class="table table-flush table-striped table-hover" id="tabela"></table>
+
+<%- contentFor("scripts") %>
+<script type="text/javascript">
+    //<![CDATA[
+    "use strict";
+
+    var tabela = prepareDataTable("tabela", {
+        order: [[1, "asc"]],
+        deferRender: true,
+        columns: [
+            { title: "", "class": "col-min", searchable: false, orderable: false, data: null, render: function (v, type, row) {
+                return '<button title="Excluir" type="button" data-excluir="1" class="btn btn-sm btn-outline-danger"><i class="fa fa-fw fa-times"></i></button>';
+            } },
+            { title: "Data", data: "data" },
+            { title: "Semestre", data: "semestre" },
+            { title: "Fase", data: "idfase" },
+            { title: "Tipo", data: "idtipo" }
+        ],
+        data: <%- JSON.stringify(lista) %>,
+        export: { title: "Datas de Entrega" }
+    });
+
+    $("#tabela").on("click", "tbody button", function () {
+        if (JsonWebApi.active) return;
+
+        var trClicada = this.parentNode.parentNode,
+            item = tabela.row(trClicada).data();
+
+        if (this.getAttribute("data-excluir")) {
+            Swal.fire({
+                title: "Excluir data de entrega?",
+                html: 'Tem certeza que deseja excluir a data de entrega <strong>' + (item.data) + '</strong>?<br/><br/>Esta operação NÃO pode ser desfeita.',
+                icon: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Não",
+                confirmButtonText: "Sim",
+                cancelButtonColor: "#6c757d",
+                confirmButtonColor: "#dc3545",
+                reverseButtons: true
+            }).then(function (result) {
+                if (JsonWebApi.active || !trClicada) return;
+
+                if (result.isConfirmed) {
+                    Swal.wait();
+
+                    JsonWebApi.delete("<%- root %>/api/dataent/excluir", function (response) {
+                        if (response.success) {
+                            Swal.success("Data de entrega excluída! " + emoji.happy);
+                            tabela.row(trClicada).remove().draw();
+                        } else {
+                            Swal.error(response.value + " " + emoji.sad);
+                        }
+                        trClicada = null;
+                    },
+                    "ano", item.ano,
+                    "semestre", item.semestre,
+                    "idfase", item.idfase,
+                    "idtipo", item.idtipo);
+                }
+            });
+        }
+    });
+    //]]>
+</script>

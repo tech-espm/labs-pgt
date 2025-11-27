@@ -19,6 +19,25 @@ class DataEnt {
             return "Data de entrega inválida";
         }
 
+        datae.data = DataUtil.converterDataISO(datae.data);
+		if (!datae.data) {
+			return "Data inválida";
+		}
+
+        if (!datae.ano) {
+            let year: number | null = null;
+            const m = /^(\d{4})-/.exec(datae.data);
+            if (m) {
+                year = parseInt(m[1], 10);
+            } else {
+                const dt = new Date(datae.data);
+                if (!isNaN(dt.getTime())) year = dt.getFullYear();
+            }
+
+            if (!year) return "Ano inválido";
+            datae.ano = year;
+        }
+
         if (!datae.ano || datae.ano < 2000 || datae.ano > 2200) {
             return "Ano inválido";
         }
@@ -34,11 +53,6 @@ class DataEnt {
         if (isNaN(datae.idtipo = parseInt(datae.idtipo as any))) {
             return "Tipo de entrega inválido";
         }
-
-        datae.data = DataUtil.converterDataISO(datae.data);
-		if (!datae.data) {
-			return "Data inválida";
-		}
 
         return null;
 
@@ -108,22 +122,37 @@ class DataEnt {
         return await app.sql.connect(async (sql) => {
             await sql.beginTransaction();
 
-            await sql.query("update data_limite set ano = ?, semestre = ?, fase_id = ?, tipo_entrega_id = ?, data = ? where ano = ? and semestre = ? and fase_id = ? and tipo_entrega_id = ?",
-                [datae.ano, datae.semestre, datae.idfase, datae.idtipo, datae.data, datae.ano_old, datae.semestre_old, datae.idfase_old, datae.idtipo_old]);
-            
-            if (!sql.affectedRows)
-				return "PGT não encontrado";
+            try {
+                await sql.query(
+                    "update data_limite set ano = ?, semestre = ?, fase_id = ?, tipo_entrega_id = ?, data = ? where ano = ? and semestre = ? and fase_id = ? and tipo_entrega_id = ?",
+                    [datae.ano, datae.semestre, datae.idfase, datae.idtipo, datae.data,
+                    datae.ano_old, datae.semestre_old, datae.idfase_old, datae.idtipo_old]
+                );
 
-            return null;
+                if (!sql.affectedRows) {
+                    return "Data limite não encontrada";
+                }
+
+                await sql.commit();
+                return null;
+
+            } catch (e) {
+                throw e;
+            }
         });
     }
 
     public static async excluir(datae: IDataEnt): Promise<string> {
         return app.sql.connect(async (sql) => {
-            await sql.query("delete from data_limite where ano = ? and semestre = ? and fase_id = ? and tipo_entrega_id = ?", [datae.ano, datae.semestre, datae.idfase, datae.idtipo])
+            await sql.query(
+                "delete from data_limite where ano = ? and semestre = ? and fase_id = ? and tipo_entrega_id = ?",
+                [datae.ano, datae.semestre, datae.idfase, datae.idtipo]
+            );
 
             return (sql.affectedRows ? null : "Data limite não encontrada");
         });
     }
 
 }
+
+export = DataEnt;

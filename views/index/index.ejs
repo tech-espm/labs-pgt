@@ -98,6 +98,7 @@
 	"use strict";
 
 	let listaPGTs = <%- JSON.stringify(lista) %>;
+	let listaDatas = <%- JSON.stringify(listad) %>;
 
 	let anoAtual = parseInt("<%= ano %>");
 	let mesAtual = parseInt("<%= mes %>");
@@ -113,7 +114,7 @@
 				textColor: textColorForBackground("#007bff"),
 				extendedProps: { 
 					idpgt: pgt.id,
-					 url: `<%= root %>/pgt/detalhar?id=${pgt.id}`
+					url: `<%= root %>/pgt/detalhar?id=${pgt.id}`
 				}
 			});
 		}
@@ -128,6 +129,19 @@
 				extendedProps: { idpgt: pgt.id }
 			});
 		}
+	}
+
+	for (const data of listaDatas) {
+		eventos.push({
+			title: "Entrega " + data.idtipo + " da fase " + data.idfase,
+			start: DataUtil.converterDataISO(data.data),
+			backgroundColor: "#008000",
+			borderColor: "#008000",
+			textColor: textColorForBackground("#007bff"),
+			extendedProps: { 
+				url: `<%= root %>/dataent/listar`
+			}
+		});
 	}
 
 	// https://fullcalendar.io/docs/v5/height
