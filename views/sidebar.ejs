@@ -52,12 +52,15 @@
 
 		<div id="collapsePGT" class="collapse" data-parent="#accordionSidebar">
 			<div class="bg-white py-2 collapse-inner rounded">
+				<% if (usuario.admin) { %>
 				<a class="collapse-item" href="<%- root %>/pgt/criar">Criar</a>
+				<% } %>
 				<a class="collapse-item" href="<%- root %>/pgt/listar">Gerenciar</a>
 			</div>
 		</div>
 	</li>
 
+	<% if (usuario.admin) { %>
 	<!-- DATAENT SIDEBAR -->
 	<li class="nav-item">
 		<a class="nav-link collapsed" href="<%- root %>/" data-toggle="collapse" data-target="#collapseDataEnt" aria-expanded="true" aria-controls="collapseDataEnt">
@@ -72,7 +75,9 @@
 			</div>
 		</div>
 	</li>
+	<% } %>
 
+	<!--
 	<hr class="sidebar-divider">
 
 	<div class="sidebar-heading">
@@ -148,6 +153,7 @@
 			<span>Tabelas</span>
 		</a>
 	</li>
+	-->
 
 	<hr class="sidebar-divider d-none d-md-block">
 

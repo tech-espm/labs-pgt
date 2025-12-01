@@ -83,10 +83,27 @@ class PGTApiRoute {
 
   @app.http.post()
   public static async avaliar(req: app.Request, res: app.Response) {
-    const u = await Usuario.cookie(req, res, true);
+    const u = await Usuario.cookie(req, res);
     if (!u) return;
 
-    const erro = await Formulario.criar(req.body);
+	const formulario = req.body as Formulario;
+
+	let pgt: PGT | null = null;
+
+	if (formulario)
+		pgt = await PGT.obter(formulario.idpgt);
+
+	if (!pgt) {
+		res.status(404).json("PGT não encontrado");
+		return;
+	}
+
+	if (!(await PGT.usuarioPodeAcessar(pgt, u.id, u.perfil_id, true))) {
+		res.status(403).json("Sem permissão");
+		return;
+	}
+
+	const erro = await Formulario.criar(formulario);
 
     if (erro) {
       res.status(400).json(erro);
@@ -97,23 +114,47 @@ class PGTApiRoute {
   }
 
   public static async downloadAnexo(req: app.Request, res: app.Response) {
-    const u = await Usuario.cookie(req, res, true);
+    const u = await Usuario.cookie(req, res);
     if (!u) return;
 
-    await PGT.downloadAnexo(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
+	let pgt = await PGT.obter(parseInt(req.query["id"] as string));
+
+	if (!pgt) {
+		res.status(404).json("PGT não encontrado");
+		return;
+	}
+
+	if (!(await PGT.usuarioPodeAcessar(pgt, u.id, u.perfil_id))) {
+		res.status(403).json("Sem permissão");
+		return;
+	}
+
+    await PGT.downloadAnexo(res, pgt.id, parseInt(req.query["idfase"] as string));
   }
 
   public static async downloadAta(req: app.Request, res: app.Response) {
-    const u = await Usuario.cookie(req, res, true);
+    const u = await Usuario.cookie(req, res);
     if (!u) return;
 
-    await PGT.downloadAta(res, parseInt(req.query["id"] as string), parseInt(req.query["idfase"] as string));
+	let pgt = await PGT.obter(parseInt(req.query["id"] as string));
+
+	if (!pgt) {
+		res.status(404).json("PGT não encontrado");
+		return;
+	}
+
+	if (!(await PGT.usuarioPodeAcessar(pgt, u.id, u.perfil_id))) {
+		res.status(403).json("Sem permissão");
+		return;
+	}
+
+    await PGT.downloadAta(res, pgt.id, parseInt(req.query["idfase"] as string));
   }
 
   @app.http.post()
   @app.route.formData()
   public static async uploadAnexosEAtas(req: app.Request, res: app.Response) {
-    const u = await Usuario.cookie(req, res, true);
+    const u = await Usuario.cookie(req, res);
     if (!u) return;
 
     const id = parseInt(req.body["id"] as string);
@@ -128,7 +169,7 @@ class PGTApiRoute {
       return;
     }
 
-    if (!u.admin && u.id !== item.idorientador1 && u.id !== item.idorientador2) {
+    if (!(await PGT.usuarioPodeAcessar(item, u.id, u.perfil_id))) {
       res.status(403).json("Sem permissão");
       return;
     }

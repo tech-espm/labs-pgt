@@ -35,7 +35,7 @@
 			<label for="idfase">Fase</label>
 			<select id="idfase" name="idfase" class="form-control" size="1">
 				<option value="">Selecione...</option>
-				<% for (let i = 0; i < fases.length; i++) { %>
+				<% for (let i = 0; i < fases.length; i++) { if (!item && fases[i].id !== FasePGT.PGT1) continue;  %>
 				<option value="<%= fases[i].id %>" <%-((item && item.idfase === fases[i].id) ? 'selected="selected"' : '') %>><%= fases[i].nome %></option>
 				<% } %>
 			</select>
@@ -189,7 +189,7 @@
 					data2Div.classList.remove("d-none");
 					data2Label.classList.remove("d-none");
 				}
-				if (pgt2div && pgt2Div.classList.contains("d-none")) {
+				if (pgt2Div && pgt2Div.classList.contains("d-none")) {
 					pgt2Div.classList.remove("d-none")
 				}
 				if (avaliadorDiv.classList.contains("d-none")) {

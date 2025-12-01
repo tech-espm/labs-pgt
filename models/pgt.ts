@@ -1,6 +1,8 @@
 ﻿import app = require("teem");
 import Funcao = require("../enums/conta/funcao");
 import DataUtil = require("../utils/dataUtil");
+import Perfil = require("../enums/conta/perfil");
+import FasePGT = require("../enums/pgt/fase");
 
 interface PGTConta {
 	id: number;
@@ -206,8 +208,8 @@ class PGT {
 				left join conta def1 on def1.id = cpdef1.conta_id
 				left join conta_pgt cpdef2 on cpdef2.pgt_id = p.id and cpdef2.funcao_id = ?
 				left join conta def2 on def2.id = cpdef2.conta_id
-				where (ori1.id = ? or ori2.id = ?) and p.exclusao is null`,
-					[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador, idorientador]) as PGT[];
+				where (ori1.id = ? or ori2.id = ? or qual.id = ? or def2.id = ?) and p.exclusao is null`,
+					[Funcao.Orientador1, Funcao.Orientador2, Funcao.Qualificador, Funcao.Defesa1, Funcao.Defesa2, idorientador, idorientador, idorientador, idorientador]) as PGT[];
 			else
 				lista = await sql.query(`
 			select distinct
@@ -638,6 +640,30 @@ class PGT {
 
 			return (sql.affectedRows ? null : "PGT não encontrado");
 		});
+	}
+
+	public static async usuarioPodeAcessar(pgt: PGT | number | null, idconta: number, perfil_id: Perfil, paraAvaliacao?: boolean | null): Promise<boolean> {
+		if (!pgt)
+			return false;
+
+		if (perfil_id === Perfil.Aluno)
+			return false;
+
+		if (perfil_id === Perfil.Administrador)
+			return !paraAvaliacao;
+
+		if (typeof pgt === "number") {
+			pgt = await PGT.obter(pgt);
+			if (!pgt)
+				return false;
+		}
+
+		switch (pgt.idfase) {
+			case FasePGT.PGT1:
+				return (idconta === pgt.idorientador1 || idconta === pgt.idqualificador);
+			default:
+				return (idconta === pgt.idorientador1 || idconta === pgt.idorientador2 || idconta === pgt.idqualificador || idconta === pgt.iddefesa2);
+		}
 	}
 }
 

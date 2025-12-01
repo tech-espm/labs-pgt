@@ -86,10 +86,10 @@
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1 align-items-center" style="font-size: 23px;">
                             Qualificação</div>
                         <div class="h5 mb-2 text-gray-800" style="font-size: 30px;">
-                            <%=(qualificacao.nota ? qualificacao.nota.toFixed(1) : 'Não Avaliado') %>
+                            <%=(qualificacao.nota ? qualificacao.nota.toFixed(1).replace('.', ',') : 'Não Avaliado') %>
                         </div>
                         <div>
-                            <% if((usuario.id === item.idqualificador || usuario.id === item.idorientador1 || usuario.id === item.idorientador2) && qualificacao.preencher) { %>
+                            <% if(item.idfase === FasePGT.PGT1 && (usuario.id === item.idqualificador || usuario.id === item.idorientador1) && qualificacao.preencher) { %>
                                 <a class="btn btn-primary" href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar</a>
                             <% } %>    
                         </div>
@@ -107,9 +107,9 @@
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1 align-items-center" style="font-size: 23px;">
                             Defesa</div>
                         <div class="h5 text-gray-800 mb-1" style="font-size: 30px;">
-                            <%=(defesa.nota ? defesa.nota.toFixed(1) : 'Não Avaliado') %>
+                            <%=(defesa.nota ? defesa.nota.toFixed(1).replace('.', ',') : 'Não Avaliado') %>
                         </div>
-                        <% if((usuario.id === item.iddefesa1 || usuario.id === item.iddefesa2) && defesa.preencher) { %>
+                        <% if(item.idfase === FasePGT.PGT2 && (usuario.id === item.idqualificador || usuario.id === item.idorientador2 || usuario.id === item.iddefesa2) && defesa.preencher) { %>
                                 <a class="btn btn-primary" href="<%- root %>/pgt/avaliar?pgt=<%- item.id %>">Avaliar</a>
                         <% } %>    
                     </div>
@@ -266,7 +266,7 @@
                     <% } %>
 
                     <% if (!item.hasAnexo && !item.hasAnexo2 && !item.hasAta1 && !item.hasAta2) { %>
-                        <p> Não há anexos para esse pgt. </p>
+                        <p> Não há anexos para esse PGT. </p>
                     <% } %>
                 </div>
             </div>
@@ -288,27 +288,27 @@
             </div>
             <div class="modal-body">
                 <div class="d-flex flex-column">
-                    <div class="form-group p-10">
+                    <div class="form-group p-10 <%- (item.idfase === FasePGT.PGT1 ? '' : 'd-none') %>">
                         <label for="anexo">PGT I</label>
                         <input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
                     </div>
-                    <div class="form-group p-10">
+                    <div class="form-group p-10 <%- (item.idfase === FasePGT.PGT2 ? '' : 'd-none') %>">
                         <label for="anexo2">PGT II</label>
                         <input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
                     </div>
-                    <div class="form-group p-10">
+                    <div class="form-group p-10 <%- (item.idfase === FasePGT.PGT1 ? '' : 'd-none') %>">
                         <label for="ata1">Ata PGT I</label>
                         <input class="form-control" type="file" id="ata1" name="ata1" accept=".pdf" />
                     </div>
-                    <div class="form-group p-10">
+                    <div class="form-group p-10 <%- (item.idfase === FasePGT.PGT2 ? '' : 'd-none') %>">
                         <label for="ata2">Ata PGT II</label>
                         <input class="form-control" type="file" id="ata2" name="ata2" accept=".pdf" />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 <button type="button" id="btnSalvarUploads" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>

@@ -292,11 +292,11 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- Dados dos Enums
 insert into perfil (id, nome) values (1, 'Administrador'), (2, 'Professor'), (3, 'Aluno');
-insert into funcao (id, nome) values (1, 'Qualificador'), (2, 'Defesa1'), (3, 'Defesa2'), (4, 'Orientador1'), (5, 'Aluno'), (6, 'Orientador2');
+insert into funcao (id, nome) values (1, 'Qualificador'), (2, 'Defesa 1'), (3, 'Defesa 2'), (4, 'Orientador 1'), (5, 'Aluno'), (6, 'Orientador 2');
 insert into tipo_pgt (id, nome) values (1, 'Pesquisa'), (2, 'Caso'), (3, 'Empreendimento');
 insert into semestre_pgt (id, nome) values (1, '7º Semestre'), (2, '8º Semestre');
-insert into fase (id, nome) values (1, 'PGT1'), (2, 'PGT2'), (3, 'Concluido');
-insert into tipo_formulario (id, nome) values (1, 'Qualificacao'), (2, 'Defesa');
+insert into fase (id, nome) values (1, 'PGT1'), (2, 'PGT2'), (3, 'Concluído');
+insert into tipo_formulario (id, nome) values (1, 'Qualificação'), (2, 'Defesa');
 insert into tipo_entrega (id, nome) values (1, 'Biblioteca'), (2, 'Banca');
 
 -- Dados da conta admin

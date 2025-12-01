@@ -1,6 +1,7 @@
 ﻿import app = require("teem");
 import appsettings = require("./appsettings");
 import Perfil = require("./enums/conta/perfil");
+import FasePGT = require("./enums/pgt/fase");
 
 app.run({
 	root: appsettings.root,
@@ -8,6 +9,7 @@ app.run({
 	sqlConfig: appsettings.sqlConfig,
 
 	onInit: function () {
+		app.express.locals.FasePGT = FasePGT;
 		app.express.locals.Perfil = Perfil;
 	},
 

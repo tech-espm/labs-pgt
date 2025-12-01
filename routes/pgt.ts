@@ -152,7 +152,7 @@ class PGTRoute {
 				});
 			else {
 				
-				if (!u.admin && u.id !== item.idorientador1 && u.id !== item.idorientador2) {
+				if (!(await PGT.usuarioPodeAcessar(item, u.id, u.perfil_id))) {
 					return res.redirect(app.root + "/acesso");
         		}
 
@@ -194,7 +194,7 @@ class PGTRoute {
 
 	public static async avaliar(req: app.Request, res: app.Response) {
 		let u = await Usuario.cookie(req);
-		if (!u || !u.admin) {
+		if (!u) {
 			res.redirect(app.root + "/acesso");
 		} else {
 			let id = parseInt(req.query["pgt"] as string);
@@ -207,9 +207,31 @@ class PGTRoute {
 					mensagem: "Não foi possível encontrar o PGT " + id,
 					usuario: u
 				});
-			} else if ((u.id === item.iddefesa1 || u.id === item.iddefesa2) && item.idfase === FasePGT.PGT1) {
+			} else if (!(await PGT.usuarioPodeAcessar(item, u.id, u.perfil_id, true))) {
 				res.redirect(app.root + "/acesso");
 			} else {
+				let podeAvaliar = false;
+
+				if (item.idfase === FasePGT.PGT1) {
+					if (u.id === item.idqualificador || u.id === item.idorientador1) {
+						podeAvaliar = ((await Formulario.autores(item.id, TipoFormulario.Qualificacao)).findIndex(autorId => autorId === u.id) === -1);
+					}
+				} else if (item.idfase === FasePGT.PGT2) {
+					if (u.id === item.idqualificador || u.id === item.idorientador2 || u.id === item.iddefesa2) {
+						podeAvaliar = ((await Formulario.autores(item.id, TipoFormulario.Defesa)).findIndex(autorId => autorId === u.id) === -1);
+					}
+				}
+
+				if (!podeAvaliar) {
+					res.render("index/erro", {
+						layout: "layout-externo",
+						titulo: "Não encontrado",
+						mensagem: "PGT não pode ser avaliado",
+						usuario: u
+					});
+					return;
+				}
+
 				let perguntas = Perguntas[`${item.idfase}`].perguntas[`${item.idtipo}`];
 
 				res.render("pgt/avaliar", {
