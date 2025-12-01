@@ -131,7 +131,7 @@
 				<input class="form-control" type="file" id="anexo" name="anexo" accept=".pdf" />
 			</div>
 		</div>
-		<div class="col-6" id="pgt2">
+		<div id="pgt2" class="col-6">
 			<div class="form-group p-10">
 				<label for="anexo2">PGT II</label>
 				<input class="form-control" type="file" id="anexo2" name="anexo2" accept=".pdf" />
@@ -174,9 +174,11 @@
 				orientador2Select.disabled = true;
 				data2Div.classList.add("d-none");
 				data2Label.classList.add("d-none");
-				pgt2Div.classList.add("d-none");
 				avaliadorDiv.classList.add("d-none");
 				avaliadorSelect.disabled = true;
+				if (pgt2Div) {
+					pgt2Div.classList.add("d-none");
+				}
 			}
 			else {
 				if (orientador2Div.classList.contains("d-none")) {
@@ -187,7 +189,7 @@
 					data2Div.classList.remove("d-none");
 					data2Label.classList.remove("d-none");
 				}
-				if (pgt2Div.classList.contains("d-none")) {
+				if (pgt2div && pgt2Div.classList.contains("d-none")) {
 					pgt2Div.classList.remove("d-none")
 				}
 				if (avaliadorDiv.classList.contains("d-none")) {
