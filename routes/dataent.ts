@@ -30,7 +30,8 @@ class DataEntRoute {
 				titulo: "Gerenciar Datas de Entrega",
 				datatables: true,
 				usuario: u,
-				lista: await DataEnt.listar()
+				lista: await DataEnt.listar(),
+				semestres: semestres.lista
 			});
 	}
 }

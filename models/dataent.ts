@@ -7,10 +7,6 @@ interface IDataEnt {
     idfase: number;
     idtipo: number;
     data: string;
-    ano_old?: number;
-    semestre_old?: number;
-    idfase_old?: number;
-    idtipo_old?: number;
 }
 
 class DataEnt {
@@ -63,7 +59,7 @@ class DataEnt {
 
         await app.sql.connect(async (sql) => {
             lista = await sql.query(`
-                select d.ano, d.semestre, f.id as idfase, t.id as idtipo, date_format(d.data, '%d/%m/%Y') as data
+                select d.ano, d.semestre, f.id as idfase, t.id as idtipo, f.nome as nmfase, t.nome as nmtipo, date_format(d.data, '%d/%m/%Y') as data
                     from data_limite d
                     inner join fase f on f.id = d.fase_id
                     inner join tipo_entrega t on t.id = d.tipo_entrega_id;
@@ -103,38 +99,6 @@ class DataEnt {
                 await sql.commit();
 
 			    return null;
-
-            } catch (e) {
-                throw e;
-            }
-        });
-    }
-
-    public static async editar(datae: IDataEnt): Promise<string> {
-        let res: string;
-        if ((res = DataEnt.validar(datae)))
-            return res;
-
-        if (datae.ano_old == null || datae.semestre_old == null || datae.idfase_old == null || datae.idtipo_old == null) {
-            return "Dados antigos não estabelecidos.";
-        }
-
-        return await app.sql.connect(async (sql) => {
-            await sql.beginTransaction();
-
-            try {
-                await sql.query(
-                    "update data_limite set ano = ?, semestre = ?, fase_id = ?, tipo_entrega_id = ?, data = ? where ano = ? and semestre = ? and fase_id = ? and tipo_entrega_id = ?",
-                    [datae.ano, datae.semestre, datae.idfase, datae.idtipo, datae.data,
-                    datae.ano_old, datae.semestre_old, datae.idfase_old, datae.idtipo_old]
-                );
-
-                if (!sql.affectedRows) {
-                    return "Data limite não encontrada";
-                }
-
-                await sql.commit();
-                return null;
 
             } catch (e) {
                 throw e;
