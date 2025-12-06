@@ -116,20 +116,23 @@ class PGTRoute {
             const campoNota = "nota" + (i + 1);
             const campoComentario = "comentario" + (i + 1);
             const nota = (formulario as any)[campoNota];
-            const comentario = (formulario as any)[campoComentario];
-            grid.push({
-                professor,
-                tipo,
-                criterio: crit.titulo,
-                nota,
-                comentario
-            });
+			
+			if (nota !== null && nota !== undefined) {
+				const comentario = (formulario as any)[campoComentario];
+				grid.push({
+					professor,
+					tipo,
+					criterio: crit.titulo,
+					nota,
+					comentario
+				});
+			}
         }
     }
 
     res.render("pgt/visualizar", {
         layout: "layout-tabela",
-        titulo: "Visualizar Atas",
+        titulo: "Visualizar Avaliações",
         datatables: true,
         usuario: u,
         grid

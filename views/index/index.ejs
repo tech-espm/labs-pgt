@@ -126,7 +126,10 @@
 				backgroundColor: "#e91e63",
 				borderColor: "#e91e63",
 				textColor: textColorForBackground("#e91e63"),
-				extendedProps: { idpgt: pgt.id }
+				extendedProps: { 
+					idpgt: pgt.id,
+					url: `<%= root %>/pgt/detalhar?id=${pgt.id}`
+				}
 			});
 		}
 	}
@@ -139,7 +142,7 @@
 			borderColor: "#008000",
 			textColor: textColorForBackground("#007bff"),
 			extendedProps: { 
-				url: `<%= root %>/dataent/listar`
+				alert: "Data de entrega da " + data.nmtipo + " para PGTs fase " + data.idfase
 			}
 		});
 	}
@@ -158,6 +161,8 @@
 			const url = info.event.extendedProps.url;
 			if (url) {
 				window.location.href = url;
+			} else {
+				alert(info.event.extendedProps.alert)
 			}
 		},
 	});

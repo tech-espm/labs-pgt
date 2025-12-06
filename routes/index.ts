@@ -12,6 +12,13 @@ class IndexRoute {
 			res.redirect(app.root + "/login");
 		} else {
 			const hoje = DataUtil.horarioDeBrasiliaComoDateUTC();
+			let listapgt;
+
+			if (u.admin) {
+				listapgt = await PGT.listar()
+			} else {
+				listapgt = await PGT.listar(u.id)
+			}
 
 			res.render("index/index", {
 				layout: "layout-sem-form",
@@ -19,7 +26,7 @@ class IndexRoute {
 				ano: hoje.getUTCFullYear(),
 				mes: hoje.getUTCMonth() + 1,
 				usuario: u,
-				lista: await PGT.listar(),
+				lista: listapgt,
 				listad: await DataEnt.listar()
 			});
 		}
